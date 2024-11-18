@@ -1,0 +1,78 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ['patient', 'doctor', 'admin'],
+    default: 'patient',
+  },
+  contactNumber: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other'],
+    required: function () {
+      return this.role === 'patient';
+    },
+  },
+  dateOfBirth: {
+    type: Date,
+    required: function () {
+      return this.role === 'patient';
+    },
+  },
+  address: {
+    type: String,
+    required: true,
+  },
+
+  // Only for doctors
+  specialization: {
+    type: String,
+    required: function () {
+      return this.role === 'doctor';
+    },
+  },
+
+  availability: {
+    type: [String], // e.g., ["Monday 9-11 AM", "Tuesday 2-5 PM"]
+    required: function () {
+      return this.role === 'doctor';
+    },
+  },
+  fees: {
+    type: Number,
+    required: function () {
+      return this.role === 'doctor';
+    },
+  },
+
+  // Audit Information
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+
+module.exports = mongoose.model('User', userSchema);
