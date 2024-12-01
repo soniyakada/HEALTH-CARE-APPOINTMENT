@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Appointment = require('../models/appointment');
 const User = require("../models/User"); // Adjust the path as needed
+const Appointment = require("../models/appointment");
 
 router.get("/profile/:id", async (req, res) => {
   const userId = req.params.id;
@@ -91,37 +91,6 @@ router.post('/appointment', async (req, res) => {
 });
 
 
-// router.get('/patients/:id', async (req, res) => {
-//   try {
-//     // Fetch the user by ID and populate appointments
-//     const patient = await User.findById(req.params.id)
-//       .populate({
-//         path: 'appointments',
-//         model: 'Appointment', // Ensure this matches your Appointment model name
-//       });
-
-//     // Ensure the user exists and is a patient
-//     if (!patient || patient.role !== 'patient') {
-//       return res.status(404).json({ error: 'Patient not found or invalid role' });
-//     }
-
-//     // Return patient details
-//     res.json({
-//       patient: {
-//         name: patient.name,
-//         email: patient.email,
-//         contactNumber: patient.contactNumber,
-//         gender: patient.gender,
-//         dateOfBirth: patient.dateOfBirth,
-//         address: patient.address,
-//         appointments: patient.appointments, // Populated appointment data
-//       },
-//     });
-//   } catch (err) {
-//     console.error('Error fetching patient details:', err);
-//     res.status(500).json({ error: 'Failed to fetch patient details' });
-//   }
-// });
 router.get('/patients/:id', async (req, res) => {
   try {
     // Fetch the user by ID and populate appointments
@@ -131,7 +100,7 @@ router.get('/patients/:id', async (req, res) => {
         model: 'Appointment', // Ensure this matches your Appointment model name
       });
 
-    // Ensure the user exists and is a patient
+    // Ensure the user exsts and is a patient
     if (!patient || patient.role !== 'patient') {
       return res.status(404).json({ error: 'Patient not found or invalid role' });
     }
@@ -155,6 +124,33 @@ router.get('/patients/:id', async (req, res) => {
 });
 
 
+router.get('/patients/:id/appointments', async (req, res) => {
+  try {
+    const patient = await User.findById(req.params.id);
 
+    if (!patient || patient.role !== 'patient') {
+      return res.status(404).json({ error: 'Patient not found or invalid role' });
+    }
+
+    // Fetch all appointments for the patient
+    const appointments = await Appointment.find({ patient: req.params.id })
+      .populate('doctor', 'name') // Populate doctor details
+      .sort({ date: 1 }); // Sort by date (ascending)
+
+    const currentDate = new Date();
+
+    // Separate appointments into upcoming and past
+    const upcomingAppointments = appointments.filter(appointment => new Date(appointment.date) > currentDate);
+    const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
+
+    res.status(200).json({
+      upcomingAppointments,
+      pastAppointments,
+    });
+  } catch (err) {
+    console.error('Error fetching patient appointments:', err);
+    res.status(500).json({ error: 'Failed to fetch patient appointments' });
+  }
+});
 
 module.exports = router;

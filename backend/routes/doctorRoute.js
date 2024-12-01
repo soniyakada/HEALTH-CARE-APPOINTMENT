@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/User'); // Assuming your schema is in models/User.js
+const Appointment = require('../models/Appointment'); // Ensure you have the Appointment model imported
 const router = express.Router();
 
 
@@ -24,6 +25,8 @@ router.get('/doctors/specialization/:specialization', async (req, res) => {
     res.status(500).json({ message: 'Server error. Could not fetch doctors.' });
   }
 });
+
+
 router.get('/doctor/:id', async (req, res) => {
   try {
     const doctor = await User.findById(req.params.id)
@@ -47,6 +50,36 @@ router.get('/doctor/:id', async (req, res) => {
   }
 });
 
+
+
+router.get('/patients/:id/appointments', async (req, res) => {
+  try {
+    const patient = await User.findById(req.params.id);
+
+    if (!patient || patient.role !== 'patient') {
+      return res.status(404).json({ error: 'Patient not found or invalid role' });
+    }
+
+    // Fetch all appointments for the patient
+    const appointments = await Appointment.find({ patient: req.params.id })
+      .populate('doctor', 'name') // Populate doctor details
+      .sort({ date: 1 }); // Sort by date (ascending)
+
+    const currentDate = new Date();
+
+    // Separate appointments into upcoming and past
+    const upcomingAppointments = appointments.filter(appointment => new Date(appointment.date) > currentDate);
+    const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
+
+    res.status(200).json({
+      upcomingAppointments,
+      pastAppointments,
+    });
+  } catch (err) {
+    console.error('Error fetching patient appointments:', err);
+    res.status(500).json({ error: 'Failed to fetch patient appointments' });
+  }
+});
 
 
 module.exports = router;
