@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorProfile from "./DoctorProfile";
+import PatientProfile from "./PatientProfile";
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
@@ -151,6 +152,10 @@ const Profile = () => {
               </div>
             </div>
           )}
+
+          {(userDetails.role ==="patient") && <div>
+            <PatientProfile userId={id}/>
+            </div>}
         </div>
       ) : (
         <p>Loading...</p>
