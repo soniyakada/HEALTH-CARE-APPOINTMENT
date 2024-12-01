@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
@@ -8,8 +9,8 @@ const Profile = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const navigate = useNavigate();
 
-  console.log("Frontend id", id);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -29,6 +30,7 @@ const Profile = () => {
       const response = await axios.get(
         `http://localhost:3000/doctors/specialization/${specialization}`
       );
+     console.log("<-------- doctors.......>",response.data.doctors)
       setFilteredDoctors(response.data.doctors);
     } catch (error) {
       console.error("Error fetching filtered doctors:", error);
@@ -36,8 +38,14 @@ const Profile = () => {
     }
   };
 
+
+  const onHandleappointment=(doctor)=>{
+    console.log("doctorname",doctor.name)
+    navigate(`/appointment/${id}`,{state:{doctor}});
+  }
+
   if (errorMessage) {
-    return <p>{errorMessage}</p>;
+    return <p className="text-xs text-red-500">{errorMessage}</p>;
   }
 
   return (
@@ -130,11 +138,12 @@ const Profile = () => {
                         <p>
                           <strong>Availability:</strong> {doctor.availability}
                         </p>
+                        <button onClick={()=>{onHandleappointment(doctor)}}>Take appointment</button>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p>No doctors found for the specified specialization.</p>
+                  <p  className="text-m text-red-500">No doctors found for the specified specialization.</p>
                 )}
               </div>
             </div>

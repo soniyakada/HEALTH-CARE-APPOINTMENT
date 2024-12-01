@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Appointment = require('../models/appointment');
 const User = require("../models/User"); // Adjust the path as needed
 
 router.get("/profile/:id", async (req, res) => {
@@ -41,5 +42,50 @@ router.get("/profile/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
+
+
+// POST route to book an appointment
+router.post('/appointment', async (req, res) => {
+  try {
+    const { patient, doctor, date, timeSlot } = req.body;
+
+    // Validate all required fields
+    if (!patient || !doctor || !date || !timeSlot) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    // Validate that the doctor and patient exist
+    const patientExists = await User.findById(patient);
+    const doctorExists = await User.findById(doctor);
+
+    if (!patientExists || !doctorExists) {
+      return res.status(400).json({ error: 'Invalid patient or doctor' });
+    }
+
+    // Ensure the doctor has a "doctor" role
+    if (doctorExists.role !== 'doctor') {
+      return res.status(400).json({ error: 'The selected doctor is not valid' });
+    }
+
+    // Create a new appointment
+    const newAppointment = new Appointment({
+      patient,
+      doctor,
+      date,
+      timeSlot,
+    });
+
+    // Save the appointment to the database
+    await newAppointment.save();
+
+    // Send a success response
+    res.status(201).json({ message: 'Appointment booked successfully!', appointment: newAppointment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to book appointment' });
+  }
+});
+
+
 
 module.exports = router;
