@@ -19,10 +19,10 @@ const Signin = () => {
         email,
         password,
       });
-      console.log (response.data   )
-      const { message, token, user } = response.data;
-     console.log("Tokenn--------------------",token)
-     navigate("/profile"); 
+      console.log (response.data)
+      const { user } = response.data;
+       console.log(user.id)
+     navigate(`/profile/${user.id}`); 
      
     } catch (error) {
       // Handle errors
