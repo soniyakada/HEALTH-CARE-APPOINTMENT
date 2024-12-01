@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
-import Calendar from 'react-calendar'; // You can install react-calendar via npm
+import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
+
 const AppointmentForm = () => {
-  const { id } = useParams(); // Get user ID from the URL
+  const { id } = useParams(); 
   const [date, setDate] = useState(new Date());
   const location = useLocation();
   const [doctor, setDoctor] = useState(location.state?.doctor|| '');
   const [timeSlot, setTimeSlot] = useState('');
-  
+  const [patient, setPatient] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   
@@ -38,6 +38,21 @@ const AppointmentForm = () => {
   //   };
   //   fetchDoctors();
   // }, []);
+
+  useEffect(() => {
+    const fetchPatient = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/patients/${id}`);
+        setPatient(response.data.patient);
+      } catch (err) {
+        setError('Failed to fetch patient details');
+      }
+    };
+
+    fetchPatient();
+  }, [id]);
+
+  console.log(patient)
 
   const handleSubmit = async (e) => {
     e.preventDefault();

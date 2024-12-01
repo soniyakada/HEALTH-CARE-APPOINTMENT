@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import DoctorProfile from "./DoctorProfile";
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
@@ -24,7 +25,7 @@ const Profile = () => {
     };
     fetchUserDetails();
   }, [id]);
-
+  console.log("id:-----",id)
   const handleDoctorFilter = async () => {
     try {
       const response = await axios.get(
@@ -78,7 +79,9 @@ const Profile = () => {
               <p>
                 <strong>Fees:</strong> {userDetails.fees}
               </p>
+              <DoctorProfile userId={id} />
             </div>
+            
           )}
 
           {userDetails.role === "patient" && (

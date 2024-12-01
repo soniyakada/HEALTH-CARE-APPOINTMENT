@@ -19,7 +19,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['patient', 'doctor', 'admin'],
     default: 'patient',
+    
   },
+  appointments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }], // Reference to appointments
   contactNumber: {
     type: String,
     required: true,

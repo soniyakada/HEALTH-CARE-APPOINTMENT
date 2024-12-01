@@ -78,6 +78,10 @@ router.post('/appointment', async (req, res) => {
     // Save the appointment to the database
     await newAppointment.save();
 
+    // Update the doctor's profile with the new appointment
+    doctorExists.appointments.push(newAppointment._id);
+    await doctorExists.save();
+
     // Send a success response
     res.status(201).json({ message: 'Appointment booked successfully!', appointment: newAppointment });
   } catch (err) {
@@ -85,6 +89,71 @@ router.post('/appointment', async (req, res) => {
     res.status(500).json({ error: 'Failed to book appointment' });
   }
 });
+
+
+// router.get('/patients/:id', async (req, res) => {
+//   try {
+//     // Fetch the user by ID and populate appointments
+//     const patient = await User.findById(req.params.id)
+//       .populate({
+//         path: 'appointments',
+//         model: 'Appointment', // Ensure this matches your Appointment model name
+//       });
+
+//     // Ensure the user exists and is a patient
+//     if (!patient || patient.role !== 'patient') {
+//       return res.status(404).json({ error: 'Patient not found or invalid role' });
+//     }
+
+//     // Return patient details
+//     res.json({
+//       patient: {
+//         name: patient.name,
+//         email: patient.email,
+//         contactNumber: patient.contactNumber,
+//         gender: patient.gender,
+//         dateOfBirth: patient.dateOfBirth,
+//         address: patient.address,
+//         appointments: patient.appointments, // Populated appointment data
+//       },
+//     });
+//   } catch (err) {
+//     console.error('Error fetching patient details:', err);
+//     res.status(500).json({ error: 'Failed to fetch patient details' });
+//   }
+// });
+router.get('/patients/:id', async (req, res) => {
+  try {
+    // Fetch the user by ID and populate appointments
+    const patient = await User.findById(req.params.id)
+      .populate({
+        path: 'appointments',
+        model: 'Appointment', // Ensure this matches your Appointment model name
+      });
+
+    // Ensure the user exists and is a patient
+    if (!patient || patient.role !== 'patient') {
+      return res.status(404).json({ error: 'Patient not found or invalid role' });
+    }
+
+    // Return patient details
+    res.json({
+      patient: {
+        name: patient.name,
+        email: patient.email,
+        contactNumber: patient.contactNumber,
+        gender: patient.gender,
+        dateOfBirth: patient.dateOfBirth,
+        address: patient.address,
+        appointments: patient.appointments, // Populated appointment data
+      },
+    });
+  } catch (err) {
+    console.error('Error fetching patient details:', err);
+    res.status(500).json({ error: 'Failed to fetch patient details' });
+  }
+});
+
 
 
 

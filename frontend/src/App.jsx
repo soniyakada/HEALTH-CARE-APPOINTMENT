@@ -4,6 +4,7 @@ import Signin from "./components/Signin"
 import Signup from "./components/Signup"
 import Profile from "./components/Profile"
 import AppointmentForm from "./components/AppointmentForm"
+import DoctorProfile from "./components/DoctorProfile"
 
 function App() {
 
@@ -16,6 +17,8 @@ function App() {
    <Route path="/signup" element={<Signup/>}></Route>
    <Route path="/profile/:id" element={<Profile/>}></Route>
    <Route path="/appointment/:id" element={<AppointmentForm/>}></Route>
+   <Route path="/doctor/:id" element={<DoctorProfile/>}></Route>
+
 
 
    
