@@ -1,0 +1,49 @@
+.main{
+    height: 100vh;
+    width: 230vh;
+    background-color: rgb(245, 242, 247);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 0%;
+    
+}
+
+
+.header{
+    /* position: fixed; */
+    background-color: rgb(235, 222, 244);
+    /* top: 0;
+    left: 0; */
+    width: 100%;
+    height: 2rem; /* Adjust height as needed */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    color: rgb(26, 25, 25);
+    z-index: 1000; /* Ensures it stays above other elements */
+    border-radius: 3rem;
+    margin-top: 10px;
+    
+
+}
+
+.header div {
+    display: flex;
+    align-items: center;
+    gap:5rem;
+}   
+.inner {
+    height: 80vh;
+    width: 200vh;
+    background-color: rgb(235, 222, 244);
+    border-radius: 7rem;
+    margin-top: 2rem; /* Add margin to avoid overlap with the fixed header */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+   
+
+}

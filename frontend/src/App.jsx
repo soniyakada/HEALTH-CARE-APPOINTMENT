@@ -5,6 +5,7 @@ import Signup from "./components/Signup"
 import Profile from "./components/Profile"
 import AppointmentForm from "./components/AppointmentForm"
 import DoctorProfile from "./components/DoctorProfile"
+import Home from "./components/Home"
 
 function App() {
 
@@ -13,7 +14,8 @@ function App() {
    <Router>
    <div>
     <Routes>
-   <Route path="/" element={<Signin/>}></Route>
+   <Route path="/" element={<Home/>}></Route>
+   <Route path="/signin" element={<Signin/>}></Route>
    <Route path="/signup" element={<Signup/>}></Route>
    <Route path="/profile/:id" element={<Profile/>}></Route>
    <Route path="/appointment/:id" element={<AppointmentForm/>}></Route>
