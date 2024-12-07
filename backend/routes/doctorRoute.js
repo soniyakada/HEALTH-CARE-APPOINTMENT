@@ -81,5 +81,24 @@ router.get('/patients/:id/appointments', async (req, res) => {
   }
 });
 
+router.put('/appointment/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body; // "approved" or "rejected"
+    const appointment = await Appointment.findById(req.params.id);
+
+    if (!appointment) {
+      return res.status(404).json({ error: 'Appointment not found' });
+    }
+
+    appointment.status = status;
+    await appointment.save();
+    res.status(200).json({ message: 'Appointment status updated', appointment });
+  } catch (error) {
+    console.error('Error updating appointment status:', error);
+    res.status(500).json({ error: 'Failed to update appointment status' });
+  }
+});
+
+
 
 module.exports = router;
