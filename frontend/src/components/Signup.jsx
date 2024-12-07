@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from 'axios';
+import { Link } from "react-router-dom";
+import './Signup.css'
 
 const Signup= () => {
   // Separate state variables for each field
@@ -49,81 +51,72 @@ const Signup= () => {
 };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-100 rounded shadow-md">
-      <h2 className="text-xl font-bold mb-4">Signup</h2>
-      <form onSubmit={handleSubmit}>
+    <><div className="main">
+    <div className="header">
+      <div>Logo</div>
+      <div>
+        <Link to="/signin"><h3>Signin</h3></Link>
+        <Link to="/signup"><h3>Signup</h3></Link>
+      </div>
+    </div>
+    <div className="inner">
+      <form onSubmit={handleSubmit} className="signup-form">
+        <h2>Signup</h2>
+  
         {/* Name */}
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Name</label>
+        <div>
+          <label>Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full p-2 border rounded"
           />
         </div>
-
+  
         {/* Email */}
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Email</label>
+        <div>
+          <label>Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full p-2 border rounded"
           />
         </div>
-
+  
         {/* Password */}
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Password</label>
+        <div>
+          <label>Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full p-2 border rounded"
           />
         </div>
-
+  
         {/* Role */}
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Role</label>
+        <div>
+          <label>Role</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full p-2 border rounded"
           >
             <option value="patient">Patient</option>
             <option value="doctor">Doctor</option>
             <option value="admin">Admin</option>
           </select>
         </div>
-
-        {/* Contact Number */}
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Contact Number</label>
-          <input
-            type="text"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
-            required
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
+  
         {/* Conditional Fields */}
         {role === "patient" && (
           <>
-            {/* Gender */}
-            <div className="mb-4">
-              <label className="block font-medium mb-1">Gender</label>
+            <div>
+              <label>Gender</label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full p-2 border rounded"
               >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
@@ -131,81 +124,65 @@ const Signup= () => {
                 <option value="other">Other</option>
               </select>
             </div>
-
-            {/* Date of Birth */}
-            <div className="mb-4">
-              <label className="block font-medium mb-1">Date of Birth</label>
+            <div>
+              <label>Date of Birth</label>
               <input
                 type="date"
                 value={dateOfBirth}
                 onChange={(e) => setDateOfBirth(e.target.value)}
-                className="w-full p-2 border rounded"
               />
             </div>
           </>
         )}
-
+  
         {role === "doctor" && (
           <>
-            {/* Specialization */}
-            <div className="mb-4">
-              <label className="block font-medium mb-1">Specialization</label>
+            <div>
+              <label>Specialization</label>
               <input
                 type="text"
                 value={specialization}
                 onChange={(e) => setSpecialization(e.target.value)}
-                className="w-full p-2 border rounded"
               />
             </div>
-
-            {/* Availability */}
-            <div className="mb-4">
-              <label className="block font-medium mb-1">Availability</label>
+            <div>
+              <label>Availability</label>
               <input
                 type="text"
-                placeholder="e.g., Monday 9-11 AM"
                 value={availability}
                 onChange={(e) => setAvailability(e.target.value)}
-                className="w-full p-2 border rounded"
               />
             </div>
-
-            {/* Fees */}
-            <div className="mb-4">
-              <label className="block font-medium mb-1">Fees</label>
+            <div>
+              <label>Fees</label>
               <input
                 type="number"
                 value={fees}
                 onChange={(e) => setFees(e.target.value)}
-                className="w-full p-2 border rounded"
               />
             </div>
           </>
         )}
-
+  
         {/* Address */}
-        <div className="mb-4">
-          <label className="block font-medium mb-1">Address</label>
+        <div>
+          <label>Address</label>
           <input
             type="text"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
-            className="w-full p-2 border rounded"
           />
         </div>
-
+  
         {/* Submit Button */}
-        <div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-          >
-            Signup
-          </button>
-        </div>
+        <button type="submit">Signup</button>
       </form>
     </div>
+  </div>
+  
+    </>
+    
   );
 };
 

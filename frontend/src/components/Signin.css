@@ -7,8 +7,9 @@
     flex-direction: column;
     align-items: center;
     padding: 0%;
-
+    
 }
+
 
 .header{
     /* position: fixed; */
@@ -25,6 +26,8 @@
     z-index: 1000; /* Ensures it stays above other elements */
     border-radius: 3rem;
     margin-top: 10px;
+    
+
 }
 
 .header div {
@@ -32,7 +35,6 @@
     align-items: center;
     gap:5rem;
 }   
-
 .inner {
     height: 80vh;
     width: 200vh;
@@ -40,7 +42,7 @@
     border-radius: 7rem;
     margin-top: 2rem; /* Add margin to avoid overlap with the fixed header */
     display: flex;
-    justify-content: space-around;
-    align-items: center;
    
+   
+
 }

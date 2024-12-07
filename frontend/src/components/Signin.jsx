@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import './signin.css';
+import { Link } from "react-router-dom";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -33,8 +35,19 @@ const Signin = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-100 rounded shadow-md">
-      <h2 className="text-xl font-bold mb-4">Sign In</h2>
+    <>  
+     <div className='main '>
+     <div className='header'>
+        <div>Logo</div>
+        <div>
+            <Link to="/signin"><h3>Signin</h3></Link>
+            <Link to="/signup"><h3>Signup</h3></Link>
+        </div>
+    </div>
+
+      <div className='inner flex  '>
+      <div className=" h-96 w-96 p-6 bg-zinc-50 rounded-md shadow-md">
+      <h2 className="text-xl font-bold mb-4 ">Sign In</h2>
       <form onSubmit={handleSignIn}>
         {/* Email Input */}
         <div className="mb-4">
@@ -90,6 +103,14 @@ const Signin = () => {
         </div>
       )}
     </div>
+      
+
+
+      </div>
+     </div>
+     <div>
+</div>
+   </>
   );
 };
 
