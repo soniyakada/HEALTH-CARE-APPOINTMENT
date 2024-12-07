@@ -90,6 +90,31 @@ router.post('/appointment', async (req, res) => {
   }
 });
 
+router.get('/doctor/:id/patient-history', async (req, res) => {
+  try {
+    const doctor = await User.findById(req.params.id).populate({
+      path: 'appointments',
+      populate: { path: 'patient' },
+    });
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    const patientHistory = doctor.appointments.map((appointment) => ({
+      patientName: appointment.patient.name,
+      date: appointment.date,
+      timeSlot: appointment.timeSlot,
+      status: appointment.status,
+    }));
+
+    res.status(200).json({ patientHistory });
+  } catch (error) {
+    console.error('Error fetching patient history:', error);
+    res.status(500).json({ error: 'Failed to fetch patient history' });
+  }
+});
+
 
 router.get('/patients/:id', async (req, res) => {
   try {

@@ -3,6 +3,17 @@ import axios from 'axios';
 
 const DoctorProfile = ({ userId }) => {
   const [doctor, setDoctor] = useState(null);
+  const [patientHistory, setPatientHistory] = useState([]);
+
+  
+  const fetchPatientHistory = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/doctor/${userId}/patient-history`);
+      setPatientHistory(response.data.patientHistory);
+    } catch (error) {
+      console.error('Error fetching patient history:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -45,6 +56,17 @@ const DoctorProfile = ({ userId }) => {
           </ul>
         </div>
       )}
+      
+    <h1><button onClick={()=>{fetchPatientHistory(userId)}}>Patient histoy</button></h1>
+    <ul>
+      {patientHistory.map((history, index) => (
+        <li key={index}>
+          <p>Patient: {history.patientName}</p>
+          <p>Date: {new Date(history.date).toLocaleDateString()}</p>
+          <p>Status: {history.status}</p>
+        </li>
+      ))}
+    </ul>
     </div>
   );
 };
