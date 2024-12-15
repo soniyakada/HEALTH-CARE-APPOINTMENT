@@ -5,6 +5,7 @@ const PatientProfile = ({ userId }) => {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -22,11 +23,26 @@ const PatientProfile = ({ userId }) => {
     fetchAppointments();
   }, [userId]);
 
+  const fetchNotifications = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/notifications', {
+        params: { userId }, // Pass userId as a query parameter
+      });
+      setNotifications(response.data.notifications);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications(); // Fetch notifications when component mounts
+  }, [userId]); // Fetch again if userId changes
   if (loading) {
     return <p>Loading...</p>;
   }
 
   return (
+    <>
     <div>
       <h2>Patient Profile</h2>
       <h3>Upcoming Appointments</h3>
@@ -59,6 +75,19 @@ const PatientProfile = ({ userId }) => {
         <p>No past appointments.</p>
       )}
     </div>
+    <div>
+      <h2>Patient Profile</h2>
+      <h3>Notifications:</h3>
+      <ul>
+        {notifications.map((notification) => (
+          <li key={notification._id}>
+            <p>{notification.message}</p>
+            <p>{new Date(notification.date).toLocaleString()}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    </>
   );
 };
 

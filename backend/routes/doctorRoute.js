@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User'); //Assuming your schema is in models/User.js
 const Appointment = require('../models/Appointment'); //Ensure you have the Appointment model imported
+const Notification = require('../models/notification.js')
 const router = express.Router();
 
 
@@ -81,21 +82,46 @@ router.get('/patients/:id/appointments', async (req, res) => {
   }
 });
 
+
 router.put('/appointment/:id/status', async (req, res) => {
   try {
-    const { status } = req.body; // "approved" or "rejected"
-    const appointment = await Appointment.findById(req.params.id);
+    const { status } = req.body;  // "approved" or "rejected"
+    const appointment = await Appointment.findById(req.params.id).populate('patient doctor');
 
     if (!appointment) {
       return res.status(404).json({ error: 'Appointment not found' });
     }
 
+    // Update appointment status
     appointment.status = status;
     await appointment.save();
-    res.status(200).json({ message: 'Appointment status updated', appointment });
+
+    // Create a notification for the patient
+    const notification = new Notification({
+      patient: appointment.patient._id,
+      message: `Your appointment with Dr. ${appointment.doctor.name} has been ${status}.`,
+      date: new Date(),
+    });
+
+    await notification.save();
+
+    res.status(200).json({ message: 'Appointment status updated and notification sent', appointment });
   } catch (error) {
     console.error('Error updating appointment status:', error);
     res.status(500).json({ error: 'Failed to update appointment status' });
+  }
+});
+
+
+// Fetch notifications for a specific patient using userId in query parameters
+router.get('/notifications', async (req, res) => {
+  try {
+    const { userId } = req.query;  // Get userId from query string
+    const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });
+    res.status(200).json({ notifications });
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Failed to fetch notifications' });
   }
 });
 
