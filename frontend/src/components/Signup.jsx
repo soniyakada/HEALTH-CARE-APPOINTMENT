@@ -40,6 +40,18 @@ const Signup = () => {
       setLoading(true); // Set loading to true before API call
       const response = await axios.post("http://localhost:3000/register", formData); // Make sure the endpoint is correct
       alert("Signup successful!");
+      setName("");
+      setEmail("");
+      setPassword("");
+      setRole("patient");
+      setContactNumber("");
+      setGender("");
+      setDateOfBirth("");
+      setAddress("");
+      setSpecialization("");
+      setAvailability("");
+      setFees("");
+      
       setLoading(false); // Set loading to false after response
     } catch (error) {
       setLoading(false); // Set loading to false if there's an error
