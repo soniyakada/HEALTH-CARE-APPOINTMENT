@@ -1,6 +1,6 @@
 const express = require('express');
-const User = require('../models/User'); // Assuming your schema is in models/User.js
-const Appointment = require('../models/Appointment'); // Ensure you have the Appointment model imported
+const User = require('../models/User'); //Assuming your schema is in models/User.js
+const Appointment = require('../models/Appointment'); //Ensure you have the Appointment model imported
 const router = express.Router();
 
 

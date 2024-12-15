@@ -6,7 +6,7 @@ const User = require('../models/User');
 const router = express.Router();
 
 // Sign-Up API
-router.post('/signup', async (req, res) => {
+router.post('/register', async (req, res) => {
   const {
     name,
     email,
@@ -21,7 +21,7 @@ router.post('/signup', async (req, res) => {
     availability,
     fees,
   } = req.body;
-
+  
   try {
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
@@ -33,7 +33,7 @@ router.post('/signup', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user object
+    // Create the user data object
     const userData = {
       name,
       email,
@@ -54,13 +54,14 @@ router.post('/signup', async (req, res) => {
       userData.fees = fees;
     }
 
-    // Save the user
+    // Save the user to the database
     const user = new User(userData);
     await user.save();
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error registering user', error });
+    console.error("Error during registration:", error);
+    res.status(500).json({ message: 'Error registering user', error: error.message });
   }
 });
 

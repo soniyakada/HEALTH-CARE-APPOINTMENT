@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { Link } from "react-router-dom";
-import './Signup.css'
+import "./Signup.css";
 
-const Signup= () => {
-  // Separate state variables for each field
+const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,11 +15,11 @@ const Signup= () => {
   const [specialization, setSpecialization] = useState("");
   const [availability, setAvailability] = useState("");
   const [fees, setFees] = useState("");
+  const [loading, setLoading] = useState(false); // New state for loading
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare data for submission
     const formData = {
       name,
       email,
@@ -37,152 +36,161 @@ const Signup= () => {
 
     console.log("Form Data Submitted:", formData);
 
-    
-  try {
-    const response = await axios.post("http://localhost:3000/signup", formData);
-    alert("Signup successful!");
-  } catch (error) {
-    console.error(
-      "Error submitting form:",
-      error.response?.data || error.message
-    );
-    alert("Failed to sign up. Please try again.");
-  }
-};
+    try {
+      setLoading(true); // Set loading to true before API call
+      const response = await axios.post("http://localhost:3000/register", formData); // Make sure the endpoint is correct
+      alert("Signup successful!");
+      setLoading(false); // Set loading to false after response
+    } catch (error) {
+      setLoading(false); // Set loading to false if there's an error
+      console.error("Error submitting form:", error.response?.data || error.message);
+      alert("Failed to sign up. Please try again.");
+    }
+  };
 
   return (
-    <><div className="main">
-    <div className="header">
-      <div>Logo</div>
-      <div>
-        <Link to="/signin"><h3>Signin</h3></Link>
-        <Link to="/signup"><h3>Signup</h3></Link>
-      </div>
-    </div>
-    <div className="inner">
-      <form onSubmit={handleSubmit} className="signup-form">
-        <h2>Signup</h2>
-  
-        {/* Name */}
-        <div>
-          <label>Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+    <>
+      <div className="main">
+        <div className="header">
+          <div>Logo</div>
+          <div>
+            <Link to="/signin">
+              <h3>Signin</h3>
+            </Link>
+            <Link to="/signup">
+              <h3>Signup</h3>
+            </Link>
+          </div>
         </div>
-  
-        {/* Email */}
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-  
-        {/* Password */}
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-  
-        {/* Role */}
-        <div>
-          <label>Role</label>
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="patient">Patient</option>
-            <option value="doctor">Doctor</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-  
-        {/* Conditional Fields */}
-        {role === "patient" && (
-          <>
+        <div className="inner">
+          <form onSubmit={handleSubmit} className="signup-form">
+            <h2>Signup</h2>
+
+            {/* Name */}
             <div>
-              <label>Gender</label>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+              <label>Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label>Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+  <label>Contact Number</label>
+  <input
+    type="text"
+    value={contactNumber}
+    onChange={(e) => setContactNumber(e.target.value)}
+    required
+  />
+</div>
+            {/* Password */}
+            <div>
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label>Role</label>
+              <select value={role} onChange={(e) => setRole(e.target.value)}>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
+
+            {/* Conditional Fields */}
+            {role === "patient" && (
+              <>
+                <div>
+                  <label>Gender</label>
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Date of Birth</label>
+                  <input
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {role === "doctor" && (
+              <>
+                <div>
+                  <label>Specialization</label>
+                  <input
+                    type="text"
+                    value={specialization}
+                    onChange={(e) => setSpecialization(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label>Availability</label>
+                  <input
+                    type="text"
+                    value={availability}
+                    onChange={(e) => setAvailability(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label>Fees</label>
+                  <input
+                    type="number"
+                    value={fees}
+                    onChange={(e) => setFees(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Address */}
             <div>
-              <label>Date of Birth</label>
-              <input
-                type="date"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
-              />
-            </div>
-          </>
-        )}
-  
-        {role === "doctor" && (
-          <>
-            <div>
-              <label>Specialization</label>
+              <label>Address</label>
               <input
                 type="text"
-                value={specialization}
-                onChange={(e) => setSpecialization(e.target.value)}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
               />
             </div>
-            <div>
-              <label>Availability</label>
-              <input
-                type="text"
-                value={availability}
-                onChange={(e) => setAvailability(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Fees</label>
-              <input
-                type="number"
-                value={fees}
-                onChange={(e) => setFees(e.target.value)}
-              />
-            </div>
-          </>
-        )}
-  
-        {/* Address */}
-        <div>
-          <label>Address</label>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-          />
+
+            {/* Submit Button */}
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing Up..." : "Signup"}
+            </button>
+          </form>
         </div>
-  
-        {/* Submit Button */}
-        <button type="submit">Signup</button>
-      </form>
-    </div>
-  </div>
-  
+      </div>
     </>
-    
   );
 };
 
