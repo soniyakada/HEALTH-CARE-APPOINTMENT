@@ -81,21 +81,22 @@ const AppointmentForm = () => {
   };
 
   return (
-    <div className="appointment-form">
-      <h2>Book Appointment</h2>
+    <>
+    <div className="appointment-form w-full h-screen bg-violet-100">
+      <div className='text-xl italic flex justify-center '><h2 className='mt-3'>Book Appointment</h2></div>
       {error && <p className="error-message">{error}</p>}
       {message && <p className="success-message">{message}</p>}
 
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Select Date</label>
+        <div className='flex justify-center'>
+          <div className=''>
           <Calendar
             value={date}
             onChange={setDate}
+            
           />
-        </div>
-
-        <div>
+          </div>
+          <div>
           <label>Select Time Slot</label>
           <select onChange={(e) => setTimeSlot(e.target.value)} value={timeSlot}>
             <option value="">--Select Time Slot--</option>
@@ -106,6 +107,9 @@ const AppointmentForm = () => {
           </select>
 
         </div>
+        </div>
+
+      
 
         <div>
         <h1>{doctor.name}</h1>
@@ -116,10 +120,10 @@ const AppointmentForm = () => {
 
 
         </div>
-
-        <button type="submit">Book Appointment</button>
+       <button type="submit">Book Appointment</button>
       </form>
     </div>
+    </>
   );
 };
 

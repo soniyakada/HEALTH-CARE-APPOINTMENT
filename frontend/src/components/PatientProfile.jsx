@@ -43,49 +43,116 @@ const PatientProfile = ({ userId }) => {
 
   return (
     <>
-    <div>
-      <h2>Patient Profile</h2>
-      <h3>Upcoming Appointments</h3>
-      {upcomingAppointments.length > 0 ? (
-        <ul>
-          {upcomingAppointments.map((appointment) => (
-            <li key={appointment._id}>
-              <p><strong>Doctor:</strong> {appointment.doctor?.name}</p>
-              <p><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString()}</p>
-              <p><strong>Time Slot:</strong> {appointment.timeSlot}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No upcoming appointments.</p>
-      )}
+    <div className='bg-violet-100'>
+    <div className='w-full h-screen'>
+  <div className="mt-8">
+  {/* Heading */}
+  <div className="text-2xl italic flex justify-center items-center mb-6">
+    <h2>Appointments</h2>
+  </div>
 
-      <h3>Past Appointments</h3>
-      {pastAppointments.length > 0 ? (
-        <ul>
-          {pastAppointments.map((appointment) => (
-            <li key={appointment._id}>
-              <p><strong>Doctor:</strong> {appointment.doctor?.name}</p>
-              <p><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString()}</p>
-              <p><strong>Time Slot:</strong> {appointment.timeSlot}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No past appointments.</p>
-      )}
-    </div>
-    <div>
-      <h2>Patient Profile</h2>
-      <h3>Notifications:</h3>
-      <ul>
-        {notifications.map((notification) => (
-          <li key={notification._id}>
-            <p>{notification.message}</p>
-            <p>{new Date(notification.date).toLocaleString()}</p>
-          </li>
+  {/* Upcoming Appointments */}
+  <div className="mb-6">
+    <h3 className="text-lg font-semibold mb-4">Upcoming Appointments</h3>
+    {upcomingAppointments.length > 0 ? (
+      <div className="space-y-4">
+        {upcomingAppointments.map((appointment) => (
+          <div
+            key={appointment._id}
+            className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow-md border border-blue-300"
+          >
+            <div>
+              <p className="text-sm text-gray-700">
+                <strong>Doctor:</strong> {appointment.doctor?.name}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Date:</strong>{" "}
+                {new Date(appointment.date).toLocaleDateString()}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Time Slot:</strong> {appointment.timeSlot}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm text-blue-700 font-medium">
+                Upcoming
+              </span>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
+    ) : (
+      <p className="text-gray-500">No upcoming appointments.</p>
+    )}
+  </div>
+
+  {/* Past Appointments */}
+  <div>
+    <h3 className="text-lg font-semibold mb-4">Past Appointments</h3>
+    {pastAppointments.length > 0 ? (
+      <div className="space-y-4">
+        {pastAppointments.map((appointment) => (
+          <div
+            key={appointment._id}
+            className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-md border border-gray-300"
+          >
+            <div>
+              <p className="text-sm text-gray-700">
+                <strong>Doctor:</strong> {appointment.doctor?.name}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Date:</strong>{" "}
+                {new Date(appointment.date).toLocaleDateString()}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Time Slot:</strong> {appointment.timeSlot}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm text-gray-700 font-medium">Past</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500">No past appointments.</p>
+    )}
+  </div>
+</div>
+</div>
+
+
+
+<div className="mt-8">
+  <h3 className="text-lg font-semibold mb-4">Notifications:</h3>
+  {notifications.length > 0 ? (
+    <div className="space-y-4">
+      {notifications.map((notification) => (
+        <div
+          key={notification._id}
+          className="flex items-center justify-between bg-green-100 p-4 rounded-lg shadow-md border border-green-300"
+        >
+          {/* Notification Message */}
+          <div>
+            <p className="text-sm text-gray-700 font-medium">
+              {notification.message}
+            </p>
+          </div>
+          {/* Notification Date */}
+          <div>
+            <span className="text-xs text-gray-600">
+              {new Date(notification.date).toLocaleString()}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-500">No notifications.</p>
+  )}
+</div>
+
+
     </div>
     </>
   );

@@ -54,21 +54,10 @@ const Profile = () => {
 
   return (
     <>
-    <div className='header'>
-            <div><img src={logo} className='h-12'></img></div>
-            <div>
-                <Link to="/signin"><h3>Signin</h3></Link>
-                <Link to="/signup"><h3>Signup</h3></Link>
-            </div>
-        </div>
-    
-      {userDetails ? (
-        <div>
-          
-
-
-          {/* Doctor Filter Section */}
-          <div className="w-full h-screen bg-slate-400">
+     {userDetails ? (
+        <div className="w-full h-auto  bg-violet-100">
+           {/* Doctor Filter Section */}
+          <div className="w-full h-screen bg-violet-100 rounded-lg">
             <div className="flex justify-center items-center">
           <h2 className="text-4xl italic font-bold mb-4 mt-4 font-sans">Welcome {userDetails.name}</h2>
           </div>
@@ -139,7 +128,7 @@ const Profile = () => {
           </div>
 
         
-          <div className="w-full h-screen bg-indigo-200">
+          <div className="w-full h-screen">
           {(userDetails.role ==="patient") && <div>
             <PatientProfile userId={id}/>
             </div>}
