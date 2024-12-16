@@ -40,19 +40,59 @@ const DoctorProfile = ({ userId }) => {
     <div>
       {doctor && (
         <div>
-          <h2>Doctor Profile</h2>
-          <h3>Name: {doctor.name}</h3>
+          <div className='flex justify-center items-center text-2xl'>
           <h3>Appointments:</h3>
+          </div>
           <ul>
-            {doctor.appointments.map((appointment) => (
-              <li key={appointment._id}>
-                <p><strong>Patient:</strong> {appointment.patient.name}</p>
-                <p><strong>Date:</strong> {new Date(appointment.date).toLocaleDateString()}</p>
-                <p><strong>Time Slot:</strong> {appointment.timeSlot}</p>
-                <button onClick={() => updateAppointmentStatus(appointment._id, 'approved')}>Approve</button>
-                <button onClick={() => updateAppointmentStatus(appointment._id, 'rejected')}>Reject</button>
-              </li>
-            ))}
+          <div className="mt-4">
+  {doctor.appointments.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {doctor.appointments.map((appointment) => (
+        <div
+          key={appointment._id}
+          className="border border-gray-300 shadow-md rounded-lg p-4 bg-white"
+        >
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">
+            Appointment Details
+          </h2>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Patient:</strong> {appointment.patient.name}
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Date:</strong>{" "}
+            {new Date(appointment.date).toLocaleDateString()}
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Time Slot:</strong> {appointment.timeSlot}
+          </p>
+          <div className="mt-3 flex justify-between">
+            <button
+              onClick={() =>
+                updateAppointmentStatus(appointment._id, "approved")
+              }
+              className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 transition"
+            >
+              Approve
+            </button>
+            <button
+              onClick={() =>
+                updateAppointmentStatus(appointment._id, "rejected")
+              }
+              className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-md text-red-500">
+      No appointments found for this doctor.
+    </p>
+  )}
+</div>
+
           </ul>
         </div>
       )}

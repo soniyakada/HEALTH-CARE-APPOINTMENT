@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import './signin.css';
-import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
+
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -37,13 +38,7 @@ const Signin = () => {
   return (
     <>  
      <div className='main '>
-     <div className='header'>
-        <div>Logo</div>
-        <div>
-            <Link to="/signin"><h3>Signin</h3></Link>
-            <Link to="/signup"><h3>Signup</h3></Link>
-        </div>
-    </div>
+     <Navbar/>
 
       <div className='inner flex  '>
       <div className=" h-96 w-96 p-6 bg-zinc-50 rounded-md shadow-md">

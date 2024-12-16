@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import "./Signup.css";
+import Navbar from "./Navbar";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -63,17 +63,7 @@ const Signup = () => {
   return (
     <>
       <div className="main">
-        <div className="header">
-          <div>Logo</div>
-          <div>
-            <Link to="/signin">
-              <h3>Signin</h3>
-            </Link>
-            <Link to="/signup">
-              <h3>Signup</h3>
-            </Link>
-          </div>
-        </div>
+       <Navbar/>
         <div className="inner">
           <form onSubmit={handleSubmit} className="signup-form">
             <h2>Signup</h2>

@@ -3,20 +3,16 @@ import "./Home.css";
 import doctor from '../assets/doctor.jpg'
 import doctor2 from '../assets/doctor2.jpg'
 import doctor3 from '../assets/doctor3.jpg'
-import {Link} from 'react-router-dom'
+import Navbar from './Navbar';
+
+
 
 
 function Home() {
   return (
      <>
      <div className='main '>
-     <div className='header'>
-        <div>Logo</div>
-        <div>
-            <Link to="/signin"><h3>Signin</h3></Link>
-            <Link to="/signup"><h3>Signup</h3></Link>
-        </div>
-    </div>
+      <Navbar/>
       <div className='inner'>
         <img src={doctor} className='h-80 w-52 rounded-md'></img>
         <div>

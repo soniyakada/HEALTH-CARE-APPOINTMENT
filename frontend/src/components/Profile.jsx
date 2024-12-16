@@ -4,6 +4,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorProfile from "./DoctorProfile";
 import PatientProfile from "./PatientProfile";
+import logo from "../assets/logo.webp"
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
@@ -51,116 +53,105 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-100 rounded shadow-md">
-      <h2 className="text-xl font-bold mb-4">User Profile</h2>
+    <>
+    <div className='header'>
+            <div><img src={logo} className='h-12'></img></div>
+            <div>
+                <Link to="/signin"><h3>Signin</h3></Link>
+                <Link to="/signup"><h3>Signup</h3></Link>
+            </div>
+        </div>
+    
       {userDetails ? (
         <div>
-          <p>
-            <strong>Name:</strong> {userDetails.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {userDetails.email}
-          </p>
-          <p>
-            <strong>Role:</strong> {userDetails.role}
-          </p>
+          
 
-          {/* Show role-specific fields */}
-          {userDetails.role === "doctor" && (
-            <div className="mt-4">
-              <p>
-                <strong>Specialization:</strong> {userDetails.specialization}
-              </p>
-              <p>
-                <strong>Experience:</strong> {userDetails.experience}
-              </p>
-              <p>
-                <strong>Availability:</strong> {userDetails.availability}
-              </p>
-              <p>
-                <strong>Fees:</strong> {userDetails.fees}
-              </p>
-              <DoctorProfile userId={id} />
-            </div>
-            
-          )}
-
-          {userDetails.role === "patient" && (
-            <div className="mt-4">
-              <p>
-                <strong>Gender:</strong> {userDetails.gender}
-              </p>
-              <p>
-                <strong>Date of Birth:</strong> {userDetails.dateOfBirth}
-              </p>
-            </div>
-          )}
-
-          <div className="mt-4">
-            <p>
-              <strong>Contact Number:</strong> {userDetails.contactNumber}
-            </p>
-            <p>
-              <strong>Address:</strong> {userDetails.address}
-            </p>
-          </div>
 
           {/* Doctor Filter Section */}
+          <div className="w-full h-screen bg-slate-400">
+            <div className="flex justify-center items-center">
+          <h2 className="text-4xl italic font-bold mb-4 mt-4 font-sans">Welcome {userDetails.name}</h2>
+          </div>
+          <div>
+          {userDetails.role === "doctor" && <DoctorProfile userId={id}/>}
+          </div>
           {(userDetails.role === "admin" || userDetails.role === "patient") && (
-            <div className="mt-6">
-              <h3 className="font-bold mb-4">Filter Doctors by Specialization</h3>
+            <div className="">
+              <div className="flex justify-center items-center">
+              <h3 className="font-bold mb-4 text-xl">Find your Doctor</h3>
+              </div>
+              <div className="flex justify-center items-center gap-2">
               <input
                 type="text"
                 placeholder="Enter specialization (e.g., Cardiology)"
                 value={specialization}
                 onChange={(e) => setSpecialization(e.target.value)}
-                className="w-full px-3 py-2 border rounded mb-4"
+                className=" px-3 py-2 border rounded mb-4 w-96"
               />
               <button
                 onClick={handleDoctorFilter}
-                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                className="p-3 bg-blue-600 mb-4 text-white py-2 rounded hover:bg-blue-700"
               >
                 Search
               </button>
-              <div className="mt-4">
-                {filteredDoctors.length > 0 ? (
-                  <ul>
-                    {filteredDoctors.map((doctor) => (
-                      <li key={doctor.id} className="mb-4">
-                        <p>
-                          <strong>Name:</strong> {doctor.name}
-                        </p>
-                        <p>
-                          <strong>Specialization:</strong> {doctor.specialization}
-                        </p>
-                        <p>
-                          <strong>Experience:</strong> {doctor.experience} years
-                        </p>
-                        <p>
-                          <strong>Fees:</strong> ${doctor.fees}
-                        </p>
-                        <p>
-                          <strong>Availability:</strong> {doctor.availability}
-                        </p>
-                        <button onClick={()=>{onHandleappointment(doctor)}}>Take appointment</button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p  className="text-m text-red-500">No doctors found for the specified specialization.</p>
-                )}
               </div>
+              <div className="mt-4">
+  {filteredDoctors.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredDoctors.map((doctor) => (
+        <div
+          key={doctor.id}
+          className="border border-gray-300 shadow-md rounded-lg p-4 bg-white"
+        >
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">Dr. 
+            {doctor.name}
+          </h2>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Specialization:</strong> {doctor.specialization}
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Experience:</strong> {doctor.experience} years
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Fees:</strong> ${doctor.fees}
+          </p>
+          <p className="text-sm text-gray-600 mb-1">
+            <strong>Availability:</strong> {doctor.availability}
+          </p>
+          <button
+            onClick={() => onHandleappointment(doctor)}
+            className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
+          >
+            Take Appointment
+          </button>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="flex justify-center"><p className="text-md text-red-500">
+    No doctors found for the specified specialization.
+  </p></div>
+  )}
+</div>
+
             </div>
           )}
+          </div>
 
+        
+          <div className="w-full h-screen bg-indigo-200">
           {(userDetails.role ==="patient") && <div>
             <PatientProfile userId={id}/>
             </div>}
+            </div>
+
+            
         </div>
       ) : (
         <p>Loading...</p>
       )}
-    </div>
+   
+    </>
   );
 };
 
