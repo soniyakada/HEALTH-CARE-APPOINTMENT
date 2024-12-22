@@ -1,7 +1,8 @@
 .main{
     height: 100%;
     width: 100%;
-    background-color: rgb(31, 66, 66);
+    /* background-color: rgb(31, 66, 66); */
+    background-color: rgb(56, 53, 53);
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -38,9 +39,10 @@
     height: 80vh;
     width: 200vh;
     /* background-color: rgb(136, 198, 198); */
-    border-radius: 7rem;
+    /* border-radius: 7rem; */
     margin-top: 2rem; /* Add margin to avoid overlap with the fixed header */
     display: flex;
+    color: white;
     justify-content: space-around;
     align-items: center;
    
