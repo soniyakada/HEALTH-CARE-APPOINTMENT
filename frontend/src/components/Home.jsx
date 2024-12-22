@@ -11,7 +11,7 @@ import Navbar from './Navbar';
 function Home() {
   return (
      <>
-     <div className='main '>
+     <div className='main'>
       <Navbar/>
       <div className='inner'>
         <img src={doctor} className='h-80 w-52 rounded-md'></img>
