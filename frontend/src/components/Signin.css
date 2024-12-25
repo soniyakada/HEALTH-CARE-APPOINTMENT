@@ -40,7 +40,7 @@
     width: 200vh;
     /* background-color: rgb(235, 222, 244); */
     border-radius: 7rem;
-    margin-top: 2rem; /* Add margin to avoid overlap with the fixed header */
+    margin-top: 8rem; /* Add margin to avoid overlap with the fixed header */
     display: flex;
    
    

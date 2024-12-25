@@ -47,7 +47,10 @@ function Home() {
      <div className='main '>
     
       <div className='inner'>
-        <img src={doctor} className='h-80 w-52 rounded-md'></img>
+      <div className="w-1/3 p-4 shadow-lg rounded-md border border-gray-200">
+  <img src={doctor} className="h-80 w-52 rounded-md" alt="Doctor" />
+</div>
+
         <img src={doctor2} className='h-80 w-52 rounded-md'></img>
         <img src={doctor3} className='h-80 w-52 rounded-md'></img>
     </div>
