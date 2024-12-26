@@ -15,11 +15,17 @@ const Profile = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const navigate = useNavigate();
 
-
-  useEffect(() => {
+   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/profile/${id}`);
+        const res = await axios.get(`http://localhost:3000/token/${id}`);
+  
+      // Extract the token from the response
+        const token = res.data.token;
+        const response = await axios.get(`http://localhost:3000/profile/${id}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in the header
+          }});
         setUserDetails(response.data.user);
       } catch (error) {
         setErrorMessage("Error fetching user details");
@@ -28,13 +34,20 @@ const Profile = () => {
     };
     fetchUserDetails();
   }, [id]);
-  console.log("id:-----",id)
+  
   const handleDoctorFilter = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3000/doctors/specialization/${specialization}`
+      const res = await axios.get(`http://localhost:3000/token/${id}`);
+  
+      // Extract the token from the response
+        const token = res.data.token;
+        const response = await axios.get(
+        `http://localhost:3000/doctors/specialization/${specialization}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in the header
+          }}
       );
-     console.log("<-------- doctors.......>",response.data.doctors)
+     console.log("<-------- hello...>")
       setFilteredDoctors(response.data.doctors);
     } catch (error) {
       console.error("Error fetching filtered doctors:", error);

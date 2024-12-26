@@ -10,7 +10,12 @@ const PatientProfile = ({ userId }) => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/patients/${userId}/appointments`);
+        const res = await axios.get(`http://localhost:3000/token/${userId}`);
+        const token = res.data.token;
+        const response = await axios.get(`http://localhost:3000/patients/${userId}/appointments`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in the header
+          }});
         setUpcomingAppointments(response.data.upcomingAppointments);
         setPastAppointments(response.data.pastAppointments);
         setLoading(false);
@@ -25,9 +30,14 @@ const PatientProfile = ({ userId }) => {
 
   const fetchNotifications = async () => {
     try {
+      const res = await axios.get(`http://localhost:3000/token/${userId}`);
+      const token = res.data.token;
       const response = await axios.get('http://localhost:3000/notifications', {
         params: { userId }, // Pass userId as a query parameter
-      });
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach token in the header
+        }});
       setNotifications(response.data.notifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
