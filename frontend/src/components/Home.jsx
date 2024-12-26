@@ -46,14 +46,23 @@ function Home() {
     </div>
      <div className='main '>
     
-      <div className='inner'>
-      <div className="w-1/3 p-4 shadow-lg rounded-md border border-gray-200">
-  <img src={doctor} className="h-80 w-52 rounded-md" alt="Doctor" />
+     <div className='inner flex flex-wrap justify-center gap-4'>
+  <div className="w-1/4 p-4 shadow-lg rounded-md border-none bg-teal-800 flex justify-center items-center">
+    <img src={doctor} className="h-80 w-52 rounded-md" alt="Doctor" />
+    <h1 className='px-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. A voluptatum aut ullam earum rerum magnam, amet adipisci consectetur quasi dolor!</h1>
+  </div>
+
+  <div className="w-1/4 p-4 shadow-lg rounded-md border-none bg-teal-800 flex justify-center items-center">
+    <img src={doctor2} className="h-80 w-52 rounded-md" alt="Doctor" />
+    <h1 className='px-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. A voluptatum aut ullam earum rerum magnam, amet adipisci consectetur quasi dolor!</h1>
+  </div>
+
+  <div className="w-1/4 p-4 shadow-lg rounded-md border-none bg-teal-800 flex justify-center items-center">
+    <img src={doctor3} className="h-80 w-52 rounded-md" alt="Doctor" />
+    <h1 className='px-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. A voluptatum aut ullam earum rerum magnam, amet adipisci consectetur quasi dolor!</h1>
+  </div>
 </div>
 
-        <img src={doctor2} className='h-80 w-52 rounded-md'></img>
-        <img src={doctor3} className='h-80 w-52 rounded-md'></img>
-    </div>
      </div>
      </>
   )
