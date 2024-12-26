@@ -19,7 +19,14 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/profile/${id}`);
+        const res = await axios.get(`http://localhost:3000/token/${id}`);
+  
+      // Extract the token from the response
+        const token = res.data.token;
+        const response = await axios.get(`http://localhost:3000/profile/${id}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in the header
+          }});
         setUserDetails(response.data.user);
       } catch (error) {
         setErrorMessage("Error fetching user details");

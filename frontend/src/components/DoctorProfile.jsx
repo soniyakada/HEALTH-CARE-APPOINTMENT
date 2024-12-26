@@ -5,7 +5,31 @@ const DoctorProfile = ({ userId }) => {
   const [doctor, setDoctor] = useState(null);
   const [patientHistory, setPatientHistory] = useState([]);
 
+ 
+
+useEffect(() => {
+  const getToken = async () => {
+    try {
+      // Make a GET request to fetch the token
+      const response = await axios.get(`http://localhost:3000/token/${userId}`);
   
+      // Extract the token from the response
+      const token = response.data.token;
+  
+      // Log or store the token (e.g., localStorage or state)
+      console.log("Token fetched:", token);
+    } catch (error) {
+      console.log("eror")
+    }
+  };
+  getToken();
+ 
+});
+
+
+
+
+
   const fetchPatientHistory = async () => {
     try {
       const response = await axios.get(`http://localhost:3000/doctor/${userId}/patient-history`);

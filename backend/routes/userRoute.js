@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User"); // Adjust the path as needed
 const Appointment = require("../models/appointment");
+const authenticate = require("../middleware/authenticate.js")
 
-router.get("/profile/:id", async (req, res) => {
+router.get("/profile/:id",authenticate, async (req, res) => {
   const userId = req.params.id;
 
   // Validate the ID format (Optional, depending on your database type)
