@@ -42,7 +42,14 @@ const AppointmentForm = () => {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/patients/${id}`);
+        const res = await axios.get(`http://localhost:3000/token/${id}`);
+  
+        // Extract the token from the response
+        const token = res.data.token;
+        const response = await axios.get(`http://localhost:3000/patients/${id}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in the header
+          }});
         setPatient(response.data.patient);
       } catch (err) {
         setError('Failed to fetch patient details');
@@ -65,13 +72,19 @@ const AppointmentForm = () => {
     try {
       console.log("patient id----",id);
       console.log("Doctor id----",doctor._id);
-
+      const res = await axios.get(`http://localhost:3000/token/${id}`);
+  
+      // Extract the token from the response
+      const token = res.data.token;
       const response = await axios.post(`http://localhost:3000/appointment`, {
         patient: id, // Replace with the actual logged-in user ID
         doctor:doctor._id,
         date,
         timeSlot,
-      });
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach token in the header
+        }});
      console.log(response)
       setMessage('Appointment booked successfully!');
       setError('');

@@ -64,6 +64,9 @@ const userSchema = new mongoose.Schema({
       return this.role === 'doctor';
     },
   },
+  token:{
+    type:String,
+  },
 
   // Audit Information
   createdAt: {

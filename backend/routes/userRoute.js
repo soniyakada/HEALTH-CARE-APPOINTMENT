@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User"); // Adjust the path as needed
 const Appointment = require("../models/appointment");
+const authenticate = require("../middleware/authenticate.js")
 
-router.get("/profile/:id", async (req, res) => {
+router.get("/profile/:id",authenticate, async (req, res) => {
   const userId = req.params.id;
 
   // Validate the ID format (Optional, depending on your database type)
@@ -45,7 +46,7 @@ router.get("/profile/:id", async (req, res) => {
 
 
 // POST route to book an appointment
-router.post('/appointment', async (req, res) => {
+router.post('/appointment', authenticate, async (req, res) => {
   try {
     const { patient, doctor, date, timeSlot } = req.body;
 
@@ -90,7 +91,7 @@ router.post('/appointment', async (req, res) => {
   }
 });
 
-router.get('/doctor/:id/patient-history', async (req, res) => {
+router.get('/doctor/:id/patient-history',authenticate, async (req, res) => {
   try {
     const doctor = await User.findById(req.params.id).populate({
       path: 'appointments',
@@ -116,9 +117,10 @@ router.get('/doctor/:id/patient-history', async (req, res) => {
 });
 
 
-router.get('/patients/:id', async (req, res) => {
+router.get('/patients/:id', authenticate,async (req, res) => {
   try {
     // Fetch the user by ID and populate appointments
+     
     const patient = await User.findById(req.params.id)
       .populate({
         path: 'appointments',
@@ -129,7 +131,7 @@ router.get('/patients/:id', async (req, res) => {
     if (!patient || patient.role !== 'patient') {
       return res.status(404).json({ error: 'Patient not found or invalid role' });
     }
-
+  console.log("patient nhi chl rha hai")
     // Return patient details
     res.json({
       patient: {
@@ -149,7 +151,7 @@ router.get('/patients/:id', async (req, res) => {
 });
 
 
-router.get('/patients/:id/appointments', async (req, res) => {
+router.get('/patients/:id/appointments', authenticate, async (req, res) => {
   try {
     const patient = await User.findById(req.params.id);
 

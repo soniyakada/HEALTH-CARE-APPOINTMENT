@@ -3,9 +3,10 @@ const User = require('../models/User'); //Assuming your schema is in models/User
 const Appointment = require('../models/Appointment'); //Ensure you have the Appointment model imported
 const Notification = require('../models/notification.js')
 const router = express.Router();
+const authenticate = require("../middleware/authenticate.js")
 
 
-router.get('/doctors/specialization/:specialization', async (req, res) => {
+router.get('/doctors/specialization/:specialization', authenticate, async (req, res) => {
 
   const { specialization } = req.params;
 
@@ -28,7 +29,7 @@ router.get('/doctors/specialization/:specialization', async (req, res) => {
 });
 
 
-router.get('/doctor/:id', async (req, res) => {
+router.get('/doctor/:id', authenticate, async (req, res) => {
   try {
     const doctor = await User.findById(req.params.id)
       .populate({
@@ -53,7 +54,7 @@ router.get('/doctor/:id', async (req, res) => {
 
 
 
-router.get('/patients/:id/appointments', async (req, res) => {
+router.get('/patients/:id/appointments', authenticate, async (req, res) => {
   try {
     const patient = await User.findById(req.params.id);
 
@@ -83,7 +84,7 @@ router.get('/patients/:id/appointments', async (req, res) => {
 });
 
 
-router.put('/appointment/:id/status', async (req, res) => {
+router.put('/appointment/:id/status', authenticate, async (req, res) => {
   try {
     const { status } = req.body;  // "approved" or "rejected"
     const appointment = await Appointment.findById(req.params.id).populate('patient doctor');
@@ -114,7 +115,7 @@ router.put('/appointment/:id/status', async (req, res) => {
 
 
 // Fetch notifications for a specific patient using userId in query parameters
-router.get('/notifications', async (req, res) => {
+router.get('/notifications', authenticate, async (req, res) => {
   try {
     const { userId } = req.query;  // Get userId from query string
     const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });

@@ -5,10 +5,41 @@ const DoctorProfile = ({ userId }) => {
   const [doctor, setDoctor] = useState(null);
   const [patientHistory, setPatientHistory] = useState([]);
 
+ 
+
+useEffect(() => {
+  const getToken = async () => {
+    try {
+      // Make a GET request to fetch the token
+      const response = await axios.get(`http://localhost:3000/token/${userId}`);
   
+      // Extract the token from the response
+      const token = response.data.token;
+  
+      // Log or store the token (e.g., localStorage or state)
+      console.log("Token fetched:", token);
+    } catch (error) {
+      console.log("eror")
+    }
+  };
+  getToken();
+ 
+});
+
+
+
+
+
   const fetchPatientHistory = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/doctor/${userId}/patient-history`);
+      const res = await axios.get(`http://localhost:3000/token/${userId}`);
+  
+      // Extract the token from the response
+      const token = res.data.token;
+      const response = await axios.get(`http://localhost:3000/doctor/${userId}/patient-history`,{
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach token in the header
+        }});
       setPatientHistory(response.data.patientHistory);
     } catch (error) {
       console.error('Error fetching patient history:', error);
@@ -18,7 +49,14 @@ const DoctorProfile = ({ userId }) => {
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/doctor/${userId}`);
+      const res = await axios.get(`http://localhost:3000/token/${userId}`);
+  
+      // Extract the token from the response
+       const token = res.data.token;
+       const response = await axios.get(`http://localhost:3000/doctor/${userId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`, // Attach token in the header
+          }});
         setDoctor(response.data.doctor); // Store the doctor data
       } catch (error) {
         console.error('Error fetching doctor profile:', error);
@@ -29,11 +67,23 @@ const DoctorProfile = ({ userId }) => {
 
   const updateAppointmentStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:3000/appointment/${id}/status`, { status });
+
+      const res = await axios.get(`http://localhost:3000/token/${userId}`);
+  
+      // Extract the token from the response
+       const token = res.data.token;
+
+      await axios.put(`http://localhost:3000/appointment/${id}/status`, { status },{
+        headers: {
+          Authorization: `Bearer ${token}`, // Attach token in the header
+        }});
      
 
        // Re-fetch doctor data to update appointments list
-     const response = await axios.get(`http://localhost:3000/doctor/${userId}`);
+     const response = await axios.get(`http://localhost:3000/doctor/${userId}`,{
+      headers: {
+        Authorization: `Bearer ${token}`, // Attach token in the header
+      }});
      const updatedDoctor = response.data.doctor;
    
      // Filter only pending appointments
