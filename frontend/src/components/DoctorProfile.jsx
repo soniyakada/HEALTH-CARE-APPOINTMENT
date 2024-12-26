@@ -30,7 +30,22 @@ const DoctorProfile = ({ userId }) => {
   const updateAppointmentStatus = async (id, status) => {
     try {
       await axios.put(`http://localhost:3000/appointment/${id}/status`, { status });
-      alert(`Appointment ${status} successfully`);
+     
+
+       // Re-fetch doctor data to update appointments list
+     const response = await axios.get(`http://localhost:3000/doctor/${userId}`);
+     const updatedDoctor = response.data.doctor;
+   
+     // Filter only pending appointments
+    const pendingAppointments = updatedDoctor.appointments.filter(
+      (appointment) => appointment.status === "pending"
+    );
+
+    // Update state
+    setDoctor({ ...updatedDoctor, appointments: pendingAppointments });
+
+    alert(`Appointment ${status} successfully`);
+
     } catch (error) {
       console.error('Error updating appointment status:', error);
     }
@@ -47,7 +62,8 @@ const DoctorProfile = ({ userId }) => {
           <div className="mt-4">
         {doctor.appointments.length > 0 ? (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {doctor.appointments.map((appointment) => (
+      {doctor.appointments
+      .filter((appointment) => appointment.status === "pending").map((appointment) => (
         <div
           key={appointment._id}
           className="border border-gray-300 shadow-md rounded-lg p-4 bg-white"
