@@ -91,8 +91,9 @@ router.post('/appointment', authenticate, async (req, res) => {
   }
 });
 
-router.get('/doctor/:id/patient-history',authenticate, async (req, res) => {
+router.get('/doctor/:id/patient-history', async (req, res) => {
   try {
+    console.log("Received doctor ID:", req.params.id);
     const doctor = await User.findById(req.params.id).populate({
       path: 'appointments',
       populate: { path: 'patient' },
@@ -131,7 +132,7 @@ router.get('/patients/:id', authenticate,async (req, res) => {
     if (!patient || patient.role !== 'patient') {
       return res.status(404).json({ error: 'Patient not found or invalid role' });
     }
-  console.log("patient nhi chl rha hai")
+  
     // Return patient details
     res.json({
       patient: {
