@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import loader from "../assets/loader.gif"
 
 const AppointmentsPage = () => {
   const { userId } = useParams(); // Get the userId from the URL params
@@ -34,7 +35,11 @@ const AppointmentsPage = () => {
   }, [userId]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center w-full h-screen">
+        <img src={loader} alt="Loading..." />
+      </div>
+    );
   }
 
   return (

@@ -1,11 +1,14 @@
 // Notifications.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import loader from "../../src/assets/loader.gif"
 import { useParams } from 'react-router-dom';
+
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -19,14 +22,25 @@ const Notifications = () => {
           },
         });
         setNotifications(response.data.notifications);
+        setLoading(false)
       } catch (error) {
         console.error('Error fetching notifications:', error);
+        setLoading(false)
       }
     };
 
     fetchNotifications();
   }, [userId]);
 
+
+  if (loading) {
+      return (
+        <div className="flex items-center justify-center w-full h-screen">
+          <img src={loader} alt="Loading..." />
+        </div>
+      );
+    }
+  
   return (
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Notifications:</h3>
