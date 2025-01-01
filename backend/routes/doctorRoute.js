@@ -115,10 +115,11 @@ router.put('/appointment/:id/status', authenticate, async (req, res) => {
 
 
 // Fetch notifications for a specific patient using userId in query parameters
-router.get('/notifications', authenticate, async (req, res) => {
+router.get('/notifications', async (req, res) => {
   try {
     const { userId } = req.query;  // Get userId from query string
     const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });
+    
     res.status(200).json({ notifications });
   } catch (error) {
     console.error('Error fetching notifications:', error);
