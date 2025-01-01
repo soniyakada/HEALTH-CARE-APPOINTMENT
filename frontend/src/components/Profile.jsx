@@ -4,13 +4,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorProfile from "./DoctorProfile";
 import PatientProfile from "./PatientProfile";
-import logo from "../assets/logo.webp"
-import { Link } from "react-router-dom";
+import loader from "../assets/loader.gif"
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
   const [userDetails, setUserDetails] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+
 
    useEffect(() => {
     const fetchUserDetails = async () => {
@@ -24,17 +25,29 @@ const Profile = () => {
             Authorization: `Bearer ${token}`, // Attach token in the header
           }});
         setUserDetails(response.data.user);
+        setLoading(false);
       } catch (error) {
         setErrorMessage("Error fetching user details");
         console.error("Error fetching user details:", error);
+        setLoading(false);
       }
     };
     fetchUserDetails();
   }, [id]);
   
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center w-full h-screen bg-indigo-100">
+        <img src={loader} alt="Loading..." />
+      </div>
+    );}
+
 if (errorMessage) {
     return <p className="text-xs text-red-500">{errorMessage}</p>;
   }
+
+  
 
   return (
     <>
@@ -52,7 +65,7 @@ if (errorMessage) {
           </div>
          </div>
       ) : (
-        <p>Loading...</p>
+        <p>{loader}</p>
       )}
    
     </>
