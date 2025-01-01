@@ -138,4 +138,27 @@ router.get("/token/:userId", async (req, res) => {
   }
 });
 
+// Logout API
+router.post('/logout/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Clear the token
+    user.token = null;
+    await user.save();
+
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (error) {
+    console.error('Error during logout:', error);
+    res.status(500).json({ message: 'Error logging out', error });
+  }
+});
+
 module.exports = router;

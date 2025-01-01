@@ -95,45 +95,55 @@ const AppointmentForm = () => {
 
   return (
     <>
-    <div className="appointment-form w-full h-screen bg-violet-100">
-      <div className='text-xl italic flex justify-center '><h2 className='mt-3'>Book Appointment</h2></div>
-      {error && <p className="error-message">{error}</p>}
-      {message && <p className="success-message">{message}</p>}
+  <div className="bg-slate-300">
+      <div className="text-xl italic flex justify-center mt-3">
+        <h2>Book Appointment</h2>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className='flex justify-center'>
-          <div className=''>
-          <Calendar
-            value={date}
-            onChange={setDate}
-            
-          />
-          </div>
+      {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+      {message && <p className="text-green-500 text-center mt-2">{message}</p>}
+
+      <form onSubmit={handleSubmit} className="mt-6 max-w-3xl mx-auto px-4">
+        <div className="flex justify-between gap-8">
           <div>
-          <label>Select Time Slot</label>
-          <select onChange={(e) => setTimeSlot(e.target.value)} value={timeSlot}>
-            <option value="">--Select Time Slot--</option>
-            <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-            <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-            <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-            <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
-          </select>
+            <label className="block text-sm font-medium mb-2">Select Date</label>
+            <Calendar value={date} onChange={setDate} className="rounded-lg shadow-md" />
+          </div>
 
+          <div className="flex flex-col">
+            <label className="block text-sm font-medium mb-2">Select Time Slot</label>
+            <select
+              onChange={(e) => setTimeSlot(e.target.value)}
+              value={timeSlot}
+              className="px-4 py-2 border rounded-lg shadow-md"
+            >
+              <option value="">--Select Time Slot--</option>
+              <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
+              <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+              <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
+              <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
+            </select>
+          </div>
         </div>
+
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold mb-4">Doctor Details</h3>
+          <div className="p-4 bg-white rounded-lg shadow-md">
+            <p><strong>Name:</strong> Dr. {doctor.name}</p>
+            <p><strong>Specialization:</strong> {doctor.specialization}</p>
+            <p><strong>Fees:</strong> ₹{doctor.fees}</p>
+            <p><strong>Availability:</strong> {doctor.availability}</p>
+          </div>
         </div>
 
-      
-
-        <div>
-        <h1>{doctor.name}</h1>
-        <h1>{doctor.fees}</h1>
-        <h1>{doctor.availability}</h1>
-        <h1>{doctor.specialization}</h1>
-
-
-
+        <div className="mt-6 text-center">
+          <button
+            type="submit"
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 shadow-md"
+          >
+            Book Appointment
+          </button>
         </div>
-       <button type="submit">Book Appointment</button>
       </form>
     </div>
     </>

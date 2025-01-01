@@ -55,6 +55,14 @@ const Profile = () => {
     }
   };
 
+  const onHandleLogout = async()=>{
+    try {
+       await axios.post(`http://localhost:3000/logout/${id}`);
+    } catch (error) {
+      console.log("Error");
+    }
+
+  }
 
   const onHandleappointment=(doctor)=>{
     console.log("doctorname",doctor.name)
@@ -71,14 +79,28 @@ const Profile = () => {
         <div className="w-full h-auto  bg-violet-100">
            {/* Doctor Filter Section */}
           <div className="w-full h-screen bg-violet-100 rounded-lg">
-            <div className="flex justify-center items-center">
-          <h2 className="text-4xl italic font-bold mb-4 mt-4 font-sans">Welcome {userDetails.name}</h2>
-          </div>
+            
           <div>
           {userDetails.role === "doctor" && <DoctorProfile userId={id}/>}
           </div>
           {(userDetails.role === "admin" || userDetails.role === "patient") && (
             <div className="">
+              <nav className=" text-black p-4">
+      <div className="container mx-auto flex justify-between items-center">
+          <div><img src={logo} className='h-12'></img></div>
+          <div className="flex gap-4">
+          <Link to={`/appointments/${id}`} className="hover:underline">
+            Appointments
+          </Link>
+          <Link to={`/notifications/${id}`} className="hover:underline">
+            Notifications
+          </Link>
+          <Link to="/signin" onClick={onHandleLogout} className="hover:underline">
+            Logout
+          </Link>
+        </div>
+      </div>
+    </nav>
               <div className="flex justify-center items-center">
               <h3 className="font-bold mb-4 text-xl">Find your Doctor</h3>
               </div>
@@ -115,7 +137,7 @@ const Profile = () => {
             <strong>Experience:</strong> {doctor.experience} years
           </p>
           <p className="text-sm text-gray-600 mb-1">
-            <strong>Fees:</strong> ${doctor.fees}
+            <strong>Fees:</strong> ₹{doctor.fees}
           </p>
           <p className="text-sm text-gray-600 mb-1">
             <strong>Availability:</strong> {doctor.availability}
