@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const DoctorProfile = ({ userId }) => {
+  const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
-  const [patientHistory, setPatientHistory] = useState([]);
-
- 
+ console.log("Doctor =---",userId)
 
 useEffect(() => {
   const getToken = async () => {
@@ -26,25 +26,6 @@ useEffect(() => {
  
 });
 
-
-
-
-
-  const fetchPatientHistory = async () => {
-    try {
-      const res = await axios.get(`http://localhost:3000/token/${userId}`);
-  
-      // Extract the token from the response
-      const token = res.data.token;
-      const response = await axios.get(`http://localhost:3000/doctor/${userId}/patient-history`,{
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach token in the header
-        }});
-      setPatientHistory(response.data.patientHistory);
-    } catch (error) {
-      console.error('Error fetching patient history:', error);
-    }
-  };
 
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -163,16 +144,15 @@ useEffect(() => {
         </div>
       )}
       
-    <h1><button onClick={()=>{fetchPatientHistory(userId)}}>Patient histoy</button></h1>
-    <ul>
-      {patientHistory.map((history, index) => (
-        <li key={index}>
-          <p>Patient: {history.patientName}</p>
-          <p>Date: {new Date(history.date).toLocaleDateString()}</p>
-          <p>Status: {history.status}</p>
-        </li>
-      ))}
-    </ul>
+      <div>
+      {/* Other UI Elements */}
+      <button
+        onClick={() => navigate(`/doctor/${userId}/patient-history`)}
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+      >
+        View Patient History
+      </button>
+    </div>
     </div>
   );
 };
