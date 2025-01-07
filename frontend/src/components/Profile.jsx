@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import DoctorProfile from "./DoctorProfile";
 import PatientProfile from "./PatientProfile";
 import loader from "../assets/loader.gif"
+import "./Profile.css"
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
@@ -38,7 +39,7 @@ const Profile = () => {
   
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-full h-screen bg-indigo-100">
+      <div className="flex items-center justify-center w-full h-screen">
         <img src={loader} alt="Loading..." />
       </div>
     );}
@@ -52,9 +53,9 @@ if (errorMessage) {
   return (
     <>
      {userDetails ? (
-        <div className="w-full h-auto  bg-violet-100">
+        <div className="">
            {/* Doctor Filter Section */}
-          <div className="w-full h-screen bg-violet-100 rounded-lg">
+          <div className=" doctor-background w-full h-screen rounded-lg">
             
           <div>
           {userDetails.role === "doctor" && <DoctorProfile userId={id}/>}

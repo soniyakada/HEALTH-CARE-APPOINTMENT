@@ -50,22 +50,26 @@ const onHandleLogout = async()=>{
   return (
     <>
       <div className="">
-                  <nav className=" text-black p-4">
-          <div className="container mx-auto flex justify-between items-center">
-              <div><img src={logo} className='h-12'></img></div>
-              <div className="flex gap-4">
-              <Link to={`/appointments/${userId}`} className="hover:underline">
-                Appointments
-              </Link>
-              <Link to={`/notifications/${userId}`} className="hover:underline">
-                Notifications
-              </Link>
-              <Link to="/signin" onClick={onHandleLogout} className="hover:underline">
-                Logout
-              </Link>
-            </div>
-          </div>
-        </nav>
+      <nav className="text-black p-4">
+  <div className="flex justify-between items-center gap-96">
+    {/* Logo at the start */}
+    <div>
+      <img src={logo} alt="Logo" className="h-12" />
+    </div>
+    {/* Links at the end */}
+    <div className="flex gap-10 p-4">
+      <Link to={`/appointments/${userId}`} className="hover:underline">
+        Appointments
+      </Link>
+      <Link to={`/notifications/${userId}`} className="hover:underline">
+        Notifications
+      </Link>
+      <Link to="/signin" onClick={onHandleLogout} className="hover:underline">
+        Logout
+      </Link>
+    </div>
+  </div>
+</nav>
                   <div className="flex justify-center items-center">
                   <h3 className="font-bold mb-4 text-xl">Find your Doctor</h3>
                   </div>
@@ -86,7 +90,7 @@ const onHandleLogout = async()=>{
                   </div>
                   <div className="mt-4">
                {filteredDoctors.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                {filteredDoctors.map((doctor) => (
                <div
                key={doctor.id}

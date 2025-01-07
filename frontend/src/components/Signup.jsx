@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./Signup.css";
 import Navbar from "./Navbar";
+import Swal from "sweetalert2";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -39,7 +40,12 @@ const Signup = () => {
     try {
       setLoading(true); // Set loading to true before API call
       const response = await axios.post("http://localhost:3000/register", formData); // Make sure the endpoint is correct
-      alert("Signup successful!");
+      Swal.fire({
+        icon: "success",
+        title: "Signup Successful",
+        text: "User has been registered!",
+        confirmButtonText: "OK",
+      });
       setName("");
       setEmail("");
       setPassword("");
@@ -62,9 +68,9 @@ const Signup = () => {
 
   return (
     <>
-      <div className="main">
+      <div className="">
        <Navbar/>
-        <div className="inner">
+        <div className="container">
           <form onSubmit={handleSubmit} className="signup-form">
             <h2>Signup</h2>
 

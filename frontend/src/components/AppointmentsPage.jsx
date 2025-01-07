@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import loader from "../assets/loader.gif"
+import "./Appointment.css"
 
 const AppointmentsPage = () => {
   const { userId } = useParams(); // Get the userId from the URL params
@@ -36,26 +37,26 @@ const AppointmentsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-full h-screen">
+      <div className=" loader-page flex items-center justify-center w-full h-screen">
         <img src={loader} alt="Loading..." />
       </div>
     );
   }
 
   return (
-    <div className="bg-violet-100">
-      <div className="w-full h-screen">
-        <div className="mt-8">
+    <div className="patient-appointment-page">
+      <div className="">
+        <div>
           {/* Heading */}
-          <div className="text-2xl italic flex justify-center items-center mb-6">
-            <h2>Appointments</h2>
+          <div className=" flex justify-center items-center mb-6">
+            <h2 className='mt-5 text-5xl italic'>Appointments</h2>
           </div>
 
           {/* Upcoming Appointments */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4">Upcoming Appointments</h3>
+            <h3 className="text-lg font-semibold mb-4 p-5 italic">Upcoming Appointments</h3>
             {upcomingAppointments.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 p-5">
                 {upcomingAppointments.map((appointment) => (
                   <div
                     key={appointment._id}
@@ -88,9 +89,9 @@ const AppointmentsPage = () => {
 
           {/* Past Appointments */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Past Appointments</h3>
+            <h3 className="text-lg font-semibold mb-4 p-5 italic">Past Appointments</h3>
             {pastAppointments.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 p-5">
                 {pastAppointments.map((appointment) => (
                   <div
                     key={appointment._id}

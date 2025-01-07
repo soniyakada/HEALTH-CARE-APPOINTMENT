@@ -1,0 +1,11 @@
+.patient-History-dashboard{
+    background-color: #a8c8a0;
+    height: 100%;
+    width: 100%;
+}
+/* CSS */
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #a8c8a0; /* Replace with your desired background color */
+  }

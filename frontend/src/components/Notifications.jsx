@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import loader from "../../src/assets/loader.gif"
 import { useParams } from 'react-router-dom';
-
+import "./Notification.css"
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params
@@ -42,10 +42,11 @@ const Notifications = () => {
     }
   
   return (
-    <div className="mt-8">
-      <h3 className="text-lg font-semibold mb-4">Notifications:</h3>
+    <div className="patient-notification">
+
+      <div className='flex justify-center items-center text-4xl'><span className='mt-5 italic'>Notifications</span></div>
       {notifications.length > 0 ? (
-        <div className="space-y-4">
+        <div className="space-y-4 mt-5 p-5">
           {notifications.map((notification) => (
             <div
               key={notification._id}

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import Swal from 'sweetalert2';
+import "./Form.css"
 
 
 const AppointmentForm = () => {
@@ -86,8 +88,17 @@ const AppointmentForm = () => {
           Authorization: `Bearer ${token}`, // Attach token in the header
         }});
      console.log(response)
-      setMessage('Appointment booked successfully!');
-      setError('');
+         // Trigger SweetAlert for success
+    Swal.fire({
+      icon: 'success',
+      title: 'Appointment Booked!',
+      text: 'Your appointment has been successfully booked.',
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    setMessage('');
+    setError('');
     } catch (err) {
       setError('Failed to book appointment');
     }
@@ -95,9 +106,9 @@ const AppointmentForm = () => {
 
   return (
     <>
-  <div className="bg-slate-300">
-      <div className="text-xl italic flex justify-center mt-3">
-        <h2>Book Appointment</h2>
+  <div className="book-appointment">
+      <div className="text-xl italic flex justify-center">
+      <span className='text-3xl mt-5'>Book Appointment</span>
       </div>
 
       {error && <p className="text-red-500 text-center mt-2">{error}</p>}
