@@ -5,7 +5,7 @@
     border-radius: 0.8rem; /* Slightly smaller radius */
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 400px;
+    
 }
 
 .signup-form h2 {
@@ -48,4 +48,14 @@
 
 .signup-form button:hover {
     background-color: rgb(60, 60, 180);
+}
+.container{
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  padding: 1rem;
+  border-radius: 7rem;
+  background-color: #a8c8a0; /* Subtle greenish background */
 }

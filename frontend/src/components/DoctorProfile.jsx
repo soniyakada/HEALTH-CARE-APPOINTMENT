@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import "./DoctorProfile.css"
 
 const DoctorProfile = ({ userId }) => {
   const navigate = useNavigate();
@@ -83,14 +84,16 @@ useEffect(() => {
   };
 
   return (
+    <>
     <div>
+    <div className='doctor-profile'>
       {doctor && (
         <div>
-          <div className='flex justify-center items-center text-2xl'>
-          <h3>Appointments:</h3>
+          <div className='flex justify-center items-center text-5xl '>
+          <h3 className='mt-4 italic'>Appointments:</h3>
           </div>
           <ul>
-          <div className="mt-4">
+          <div className="mt-10 p-5">
         {doctor.appointments.length > 0 ? (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {doctor.appointments
@@ -144,16 +147,18 @@ useEffect(() => {
         </div>
       )}
       
-      <div>
+      <div className='p-5'>
       {/* Other UI Elements */}
       <button
         onClick={() => navigate(`/doctor/${userId}/patient-history`)}
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition mt-5"
       >
         View Patient History
       </button>
     </div>
     </div>
+    </div>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import "./PatientHistory.css"
 
 const PatientHistory = () => {
     const params = useParams();
@@ -27,10 +28,12 @@ const PatientHistory = () => {
   }, [userId]);
 
   return (
+    <>
     <div>
-      <h1 className="text-2xl font-semibold text-center my-4">Patient History</h1>
+    <div className="patient-History-dashboard">
+      <h1 className="text-2xl font-semibold text-center"><span className="mt-5">Patient History</span></h1>
       {patientHistory.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5 p-5">
           {patientHistory.map((history, index) => (
             <div
               key={index}
@@ -56,6 +59,8 @@ const PatientHistory = () => {
         <p className="text-red-500 text-center">No patient history available.</p>
       )}
     </div>
+    </div>
+    </>
   );
 };
 

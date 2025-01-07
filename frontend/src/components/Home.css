@@ -7,6 +7,7 @@
     flex-direction: column;
     align-items: center;
     padding: 0%;
+    background-color: #D1E6D1;
 
 }
 
@@ -22,6 +23,7 @@
     align-items: center;
     padding: 2rem;
     color: rgb(26, 25, 25);
+    background-color: #A8C8A0;
     z-index: 1000; /* Ensures it stays above other elements */
     border-radius: 3rem;
     margin-top: 10px;
@@ -36,7 +38,7 @@
 .inner {
     height: 80vh;
     width: 200vh;
-    background-color: rgb(235, 222, 244);
+    background-color: #A8C8A0;
     border-radius: 7rem;
     margin-top: 2rem; /* Add margin to avoid overlap with the fixed header */
     display: flex;
