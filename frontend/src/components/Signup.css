@@ -12,7 +12,7 @@
     text-align: center;
     margin-bottom: 1rem; /* Less spacing */
     font-size: 1.2rem; /* Slightly larger for better visibility */
-    color: rgb(80, 80, 200);
+    color: black;
 }
 
 .signup-form div {
@@ -38,7 +38,7 @@
 .signup-form button {
     width: 100%;
     padding: 0.6rem; /* Compact button size */
-    background-color: rgb(80, 80, 200);
+    
     color: white;
     border: none;
     border-radius: 0.4rem;
