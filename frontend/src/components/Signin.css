@@ -49,3 +49,7 @@
 .signin{
     background-color: #E8F4E8;
 }
+
+.signinbutton:hover {
+    background-color: rgb(60, 60, 180);
+}

@@ -10,12 +10,22 @@ const Signin = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [userDetails, setUserDetails] = useState(null);
-  
+  const [emailerror, setEmailError] = useState("");
+  const [passError, setPassError] = useState("")
 
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+
+
+    if(!email.trim()){
+      setEmailError("Enter email address.");
+      return;
+    }else if(!password.trim()){
+      setPassword("Enter valid password.")
+      return;
+    }
 
     try {
       const response = await axios.post("http://localhost:3000/signin", {
@@ -42,7 +52,7 @@ const Signin = () => {
 
       <div className='inner flex  '>
       <div className=" h-96 w-96 p-6 bg-zinc-50 rounded-md shadow-md">
-      <h2 className="text-xl font-bold mb-4 ">Sign In</h2>
+      <h2 className="text-xl mb-4 ml-32 text">Sign In</h2>
       <form onSubmit={handleSignIn}>
         {/* Email Input */}
         <div className="mb-4">
@@ -56,8 +66,12 @@ const Signin = () => {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
+            onFocus={()=>{
+              setEmailError("");
+            }} 
+           
           />
+          {emailerror && <span className="text-xs text-red-600">{emailerror}</span>}
         </div>
 
         {/* Password Input */}
@@ -72,21 +86,24 @@ const Signin = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            onFocus={()=>{
+              setPassError("");
+            }} 
           />
+          {passError && <span className="text-xs text-red-600">{passError}</span>}
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="signinbutton w-full bg-blue-700 text-white py-2 rounded "
         >
           Sign In
         </button>
       </form>
 
       {/* Display Message */}
-      {message && <p className="mt-4 text-center">{message}</p>}
+      {message && <p className="mt-4 text-center text-xs text-red-500">{message}</p>}
 
       {/* Display User Details */}
       {userDetails && (
