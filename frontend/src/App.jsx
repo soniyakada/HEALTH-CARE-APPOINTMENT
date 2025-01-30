@@ -9,6 +9,7 @@ import Home from "./components/Home"
 import PatientHistory from "./components/PatientHistory"
 import Notifications from "./components/Notifications"
 import AppointmentsPage from "./components/AppointmentsPage"
+import NotFound from "./components/NotFound"
 
 function App() {
 
@@ -26,6 +27,8 @@ function App() {
    <Route path="/doctor/:userId/patient-history" element={<PatientHistory />}/>
    <Route path="/notifications/:userId" element={<Notifications />} />
    <Route path="/appointments/:userId" element={<AppointmentsPage />} />
+   {/* Catch-All Route for Invalid URLs */}
+   <Route path="*" element={<NotFound />} />
    </Routes>
     </div>
    </Router>
