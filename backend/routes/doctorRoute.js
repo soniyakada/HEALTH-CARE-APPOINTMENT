@@ -4,13 +4,24 @@ const Appointment = require('../models/Appointment'); //Ensure you have the Appo
 const Notification = require('../models/notification.js')
 const router = express.Router();
 const authenticate = require("../middleware/authenticate.js")
+const redisClient = require("../utils/redis.js")
 
 
 router.get('/doctors/specialization/:specialization', authenticate, async (req, res) => {
 
   const { specialization } = req.params;
+  const redisKey = `specialization:${specialization.toLowerCase()}:doctors`;
 
   try {
+
+     // Check Redis cache first
+     const cachedDoctors = await redisClient.get(redisKey);
+
+     if (cachedDoctors) {
+       console.log(`Cache hit: ${redisKey}`);
+       return res.status(200).json({ doctors: JSON.parse(cachedDoctors) });
+     }
+
     // Find doctors who match the specialization
     const doctors = await User.find({
       role: 'doctor',
@@ -21,6 +32,10 @@ router.get('/doctors/specialization/:specialization', authenticate, async (req, 
       return res.status(404).json({ message: 'No doctors found for the specified specialization.' });
     }
 
+    // Save result to Redis (set expiration to 1 hour)
+    await redisClient.setEx(redisKey, 3600, JSON.stringify(doctors));
+    console.log(`Cache set: ${redisKey}`);
+
     res.status(200).json({ doctors });
   } catch (error) {
     console.error('Error fetching doctors:', error);
@@ -30,8 +45,22 @@ router.get('/doctors/specialization/:specialization', authenticate, async (req, 
 
 
 router.get('/doctor/:id', authenticate, async (req, res) => {
+
+  const doctorId = req.params.id;
+  const redisKey = `doctor:${doctorId}:profile`;
+
   try {
-    const doctor = await User.findById(req.params.id)
+
+    // Try Redis cache first
+    const cachedDoctor = await redisClient.get(redisKey);
+
+    if (cachedDoctor) {
+      console.log(` Cache hit: ${redisKey}`);
+      return res.status(200).json({ doctor: JSON.parse(cachedDoctor) });
+    }
+
+    // If not in cache, fetch from MongoDB
+    const doctor = await User.findById(doctorId)
       .populate({
         path: 'appointments',
         populate: {
@@ -44,6 +73,10 @@ router.get('/doctor/:id', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Doctor not found or invalid role' });
     }
 
+     // Store in Redis with 1-hour expiration
+     await redisClient.setEx(redisKey, 3600, JSON.stringify(doctor));
+     console.log(`Cache set: ${redisKey}`);
+
     // Return the doctor's profile along with populated appointments
     res.status(200).json({ doctor });
   } catch (err) {
@@ -55,8 +88,18 @@ router.get('/doctor/:id', authenticate, async (req, res) => {
 
 
 router.get('/patients/:id/appointments', authenticate, async (req, res) => {
+
+  const patientId = req.params.id;
   try {
-    const patient = await User.findById(req.params.id);
+
+    // 1. Try fetching from Redis
+    const cachedData = await redisClient.get(`patient:${patientId}:appointments`);
+    if (cachedData) {
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+
+      // 2. Fetch from MongoDB
+    const patient = await User.findById(patientId);
 
     if (!patient || patient.role !== 'patient') {
       return res.status(404).json({ error: 'Patient not found or invalid role' });
@@ -73,10 +116,15 @@ router.get('/patients/:id/appointments', authenticate, async (req, res) => {
     const upcomingAppointments = appointments.filter(appointment => new Date(appointment.date) > currentDate);
     const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
 
-    res.status(200).json({
+    const responseData = {
       upcomingAppointments,
       pastAppointments,
-    });
+    };
+
+    // 3. Store in Redis with optional expiration
+    await redisClient.set(`patient:${patientId}:appointments`, JSON.stringify(responseData), 'EX', 60 * 5); // expires in 5 mins
+
+    res.status(200).json(responseData);
   } catch (err) {
     console.error('Error fetching patient appointments:', err);
     res.status(500).json({ error: 'Failed to fetch patient appointments' });
@@ -97,6 +145,21 @@ router.put('/appointment/:id/status', authenticate, async (req, res) => {
     appointment.status = status;
     await appointment.save();
 
+    
+    // Invalidate doctor's cached profile (as appointments have changed)
+    await redisClient.del(`doctor:${appointment.doctor._id}:profile`);
+    // After appointment.save()
+    await redisClient.del(`patient:${appointment.patient._id}:appointments`);
+
+
+    // Invalidate the patient's notifications cache (if you're caching the notifications for the patient)
+    try {
+      await redisClient.del(`notifications:${appointment.patient._id}`);
+    } catch (error) {
+      console.error(`Error invalidating cache for notifications of patient ${appointment.patient._id}:`, error);
+    }
+
+
     // Create a notification for the patient
     const notification = new Notification({
       patient: appointment.patient._id,
@@ -116,9 +179,25 @@ router.put('/appointment/:id/status', authenticate, async (req, res) => {
 
 // Fetch notifications for a specific patient using userId in query parameters
 router.get('/notifications', async (req, res) => {
+
+  const { userId } = req.query;  // Get userId from query string
+
   try {
-    const { userId } = req.query;  // Get userId from query string
+
+     // Check if notifications are already in Redis cache
+     const redisCacheKey = `notifications:${userId}`;
+     const cachedNotifications = await redisClient.get(redisCacheKey);
+ 
+     if (cachedNotifications) {
+       console.log('Fetching notifications from Redis cache');
+       return res.status(200).json({ notifications: JSON.parse(cachedNotifications) });
+     }
+
+
     const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });
+    // Cache the result in Redis
+    await redisClient.set(redisCacheKey, JSON.stringify(notifications), 'EX', 3600); // Set cache for 1 hour
+
     
     res.status(200).json({ notifications });
   } catch (error) {
@@ -126,7 +205,5 @@ router.get('/notifications', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch notifications' });
   }
 });
-
-
 
 module.exports = router;
