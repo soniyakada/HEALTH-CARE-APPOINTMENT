@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const redisClient = require('../utils/redis.js')
 
 const router = express.Router();
 
@@ -57,6 +58,13 @@ router.post('/register', async (req, res) => {
     // Save the user to the database
     const user = new User(userData);
     await user.save();
+
+    if (role === 'doctor' && specialization) {
+      const redisKey = `specialization:${specialization.toLowerCase()}:doctors`;
+      await redisClient.del(redisKey);
+      console.log(`🧹 Redis cache invalidated: ${redisKey}`);
+    }
+
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
