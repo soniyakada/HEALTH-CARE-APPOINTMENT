@@ -4,6 +4,7 @@ import axios from 'axios';
 import loader from "../../src/assets/loader.gif"
 import { useParams } from 'react-router-dom';
 import "./Notification.css"
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params

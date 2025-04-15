@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import './signin.css';
 import Navbar from "./Navbar";
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 const Signin = () => {
@@ -28,22 +29,21 @@ const Signin = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/signin", {
+        const response = await axios.post(`${API_URL}/signin`, {
         email,
         password,
       });
-      console.log (response.data)
-      const { user } = response.data;
+       const { user } = response.data;
        console.log(user.id)
-     navigate(`/profile/${user.id}`); 
-     
-    } catch (error) {
-      // Handle errors
-      setMessage(error.response?.data?.message || "Login failed");
+       navigate(`/profile/${user.id}`); 
+       } 
+      catch (error) {
+     setMessage(error.response?.data?.message || "Login failed");
       setUserDetails(null);
       console.error("Error during sign-in:", error);
+
     }
-  };
+   };
 
   return (
     <>  

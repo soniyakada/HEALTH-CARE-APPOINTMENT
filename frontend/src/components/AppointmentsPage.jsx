@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import loader from "../assets/loader.gif"
 import "./Appointment.css"
+const API_URL = import.meta.env.VITE_API_URL;
 
 const AppointmentsPage = () => {
   const { userId } = useParams(); // Get the userId from the URL params
@@ -13,10 +14,10 @@ const AppointmentsPage = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/token/${userId}`);
+        const res = await axios.get(`${API_URL}/token/${userId}`);
         const token = res.data.token;
         const response = await axios.get(
-          `http://localhost:3000/patients/${userId}/appointments`,
+          `${API_URL}/patients/${userId}/appointments`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

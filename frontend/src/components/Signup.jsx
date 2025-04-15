@@ -3,6 +3,7 @@ import axios from "axios";
 import "./Signup.css";
 import Navbar from "./Navbar";
 import Swal from "sweetalert2";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -96,7 +97,7 @@ const Signup = () => {
 
     try {
       setLoading(true); // Set loading to true before API call
-      const response = await axios.post("http://localhost:3000/register", formData); // Make sure the endpoint is correct
+      const response = await axios.post(`${API_URL}/register`, formData); // Make sure the endpoint is correct
       Swal.fire({
         icon: "success",
         title: "Signup Successful",

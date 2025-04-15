@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import "./DoctorProfile.css"
+const API_URL = import.meta.env.VITE_API_URL;
 
 const DoctorProfile = ({ userId }) => {
   const navigate = useNavigate();
