@@ -6,6 +6,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Swal from 'sweetalert2';
 import "./Form.css"
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 const AppointmentForm = () => {

@@ -6,6 +6,7 @@ import DoctorProfile from "./DoctorProfile";
 import PatientProfile from "./PatientProfile";
 import loader from "../assets/loader.gif"
 import "./Profile.css"
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Profile = () => {
   const { id } = useParams(); // Get user ID from the URL
@@ -17,11 +18,11 @@ const Profile = () => {
    useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/token/${id}`);
+        const res = await axios.get(`${API_URL}/token/${id}`);
   
       // Extract the token from the response
         const token = res.data.token;
-        const response = await axios.get(`http://localhost:3000/profile/${id}`,{
+        const response = await axios.get(`${API_URL}/profile/${id}`,{
           headers: {
             Authorization: `Bearer ${token}`, // Attach token in the header
           }});
