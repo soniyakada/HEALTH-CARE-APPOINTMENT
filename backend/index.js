@@ -5,6 +5,8 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoute");
 const userRoute = require("./routes/userRoute");
 const doctorRoute = require("./routes/doctorRoute");
+require('dotenv').config(); // This should be at the very top
+const PORT = process.env.PORT; 
 
 app.use(express.json()); // Handles JSON data.
 app.use(express.urlencoded({ extended: true })); //Use express.urlencoded() to parse data submitted via HTML forms.
@@ -29,4 +31,4 @@ app.use((req, res, next) => {
 });
 
 
-app.listen(3000);
+app.listen(PORT);
