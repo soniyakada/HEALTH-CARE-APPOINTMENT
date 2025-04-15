@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotenv').config(); // This should be at the very topq
+require('dotenv').config(); // This should be at the very top
 
 const MONGO_URI = process.env.MONGO_URI; // Access the MongoDB URI from .env
 

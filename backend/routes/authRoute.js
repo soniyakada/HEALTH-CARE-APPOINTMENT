@@ -3,9 +3,9 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const redisClient = require('../utils/redis.js');
-require('dotenv').config(); // This should be at the very topq
+require('dotenv').config(); 
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY; // Access the MongoDB URI from .env
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY; 
 
 
 const router = express.Router();
