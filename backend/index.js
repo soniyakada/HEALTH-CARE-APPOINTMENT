@@ -5,6 +5,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoute");
 const userRoute = require("./routes/userRoute");
 const doctorRoute = require("./routes/doctorRoute");
+const { initializeSocket } = require("./socket/socket");
 require('dotenv').config(); // This should be at the very top
 const PORT = process.env.PORT; 
 
