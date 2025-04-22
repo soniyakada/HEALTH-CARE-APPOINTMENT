@@ -63,14 +63,13 @@ router.post('/register', async (req, res) => {
     const user = new User(userData);
     await user.save();
 
-    if (role === 'doctor' && specialization) {
-      const redisKey = `specialization:${specialization.toLowerCase()}:doctors`;
-      await redisClient.del(redisKey);
-      console.log(`🧹 Redis cache invalidated: ${redisKey}`);
+     // Invalidate Redis cache for specialization-based search
+     if (role === 'doctor' && specialization) {
+      const cacheKey = `specialization:${specialization.toLowerCase()}`;
+      await redisClient.del(cacheKey);  // Invalidate cache for this specialization
     }
 
-
-    res.status(201).json({ message: 'User registered successfully' });
+   res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error("Error during registration:", error);
     res.status(500).json({ message: 'Error registering user', error: error.message });
@@ -84,27 +83,30 @@ const generateToken = (userPayload) => {
 // Sign-In API
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body;
-   
+     console.log(".............One 1");
     try {
       // Check if the user exists
       const user = await User.findOne({ email });
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      
+      console.log(".............One 2");
       // Compare the password
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid email or password' });
       }
-     
+      console.log(".............One 3");
      // Generate JWT token
      const token = generateToken({ id: user._id, role: user.role });
+     console.log(".............One 4");
 
      // Store the token in the database
      user.token = token;
+     console.log("/////",user)
      await user.save();
-  
+
+     console.log(".............One 5");
       // Respond with the token and user details
       res.status(200).json({
         message: 'Login successful',
@@ -117,6 +119,7 @@ router.post('/signin', async (req, res) => {
         },
       });
     } catch (error) {
+      console.log(".............One 6");
       res.status(500).json({ message: 'Error logging in', error });
     }
   });

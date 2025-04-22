@@ -14,16 +14,7 @@ router.get("/profile/:id", authenticate ,async (req, res) => {
   }
 
   try {
-    const redisKey = `user:${userId}`;
-
-    //  Check Redis cache
-    const cachedUser = await redisClient.get(redisKey);
-    if (cachedUser) {
-      console.log('📦 Served from Redis cache');
-      return res.status(200).json({ user: JSON.parse(cachedUser) });
-    }
-
-     //If not cached, query DB
+    //If not cached, query DB
     const user = await User.findById(userId).lean();
 
     if (!user) {
@@ -46,8 +37,7 @@ router.get("/profile/:id", authenticate ,async (req, res) => {
       fees: user.fees || "N/A",
     };
 
-    // Cache the result
-    await redisClient.setEx(redisKey, 300, JSON.stringify(userDetails)); // TTL: 5 min
+  
 
     // Respond with user details
     res.status(200).json({ user: userDetails });
@@ -96,78 +86,69 @@ router.post('/appointment', authenticate, async (req, res) => {
     doctorExists.appointments.push(newAppointment._id);
     await doctorExists.save();
 
+    // Invalidate doctor's profile cache(Doctor dashboard)
+    const doctorCacheKey = `doctor:${doctor}`;
+    await redisClient.del(doctorCacheKey);
+
     // Clear Redis cache for the doctor's patient history
     const redisKey = `doctor:${doctor}:patient-history`;
     await redisClient.del(redisKey);
     
-    // Invalidate Redis cache for patient's appointment list
-    await redisClient.del(`patient:${patient}:appointments`);
-
-
-    // Send a success response
+ // Send a success response
     res.status(201).json({ message: 'Appointment booked successfully!', appointment: newAppointment });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to book appointment' });
-  }
-});
-
-router.get('/doctor/:id/patient-history', async (req, res) => {
- 
-    const doctorId = req.params.id;
-    const redisKey = `doctor:${doctorId}:patient-history`;
-
-    try {
-
-     //Check Redis cache first
-     const cachedHistory = await redisClient.get(redisKey);
-     if (cachedHistory) {
-       console.log('📦 Served from Redis cache');
-       return res.status(200).json({ patientHistory: JSON.parse(cachedHistory) });
-     }
-
-     // If not cached, fetch from the database
-    const doctor = await User.findById(doctorId).populate({
-      path: 'appointments',
-      populate: { path: 'patient' },
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to book appointment' });
+    }
     });
 
-    if (!doctor) {
-      return res.status(404).json({ error: 'Doctor not found' });
-    }
 
-    const patientHistory = doctor.appointments.map((appointment) => ({
+//get Patient history [Doctor] 
+router.get('/doctor/:id/patient-history', async (req, res) => {
+      const doctorId = req.params.id;
+      const cacheKey = `doctor:${doctorId}:patient-history`;
+
+      try {
+       // Check cache first Patient history
+       const cachedData = await redisClient.get(cacheKey);
+       if (cachedData) {
+        console.log("patient-history tab redis ")
+         return res.status(200).json({ patientHistory: JSON.parse(cachedData), source: 'cache' });
+       }
+
+      // If not cached, fetch from the database
+      const doctor = await User.findById(doctorId).populate({
+        path: 'appointments',
+        populate: { path: 'patient' },
+      });
+  
+      if (!doctor) {
+        return res.status(404).json({ error: 'Doctor not found' });
+      }
+
+      const patientHistory = doctor.appointments.map((appointment) => ({
       patientName: appointment.patient.name,
       date: appointment.date,
       timeSlot: appointment.timeSlot,
       status: appointment.status,
-    }));
+      }));
 
-    //Cache the data in Redis with an expiration time (e.g., 300 seconds)      
-    await redisClient.setEx(redisKey, 300, JSON.stringify(patientHistory));
+      // Cache the result 
+      await redisClient.set(cacheKey, JSON.stringify(patientHistory), { EX: 3600 }); // 1 hour
+      res.status(200).json({ patientHistory });
 
-    res.status(200).json({ patientHistory });
-  } catch (error) {
-    console.error('Error fetching patient history:', error);
-    res.status(500).json({ error: 'Failed to fetch patient history' });
-  }
+      } catch (error) {
+        console.error('Error fetching patient history:', error);
+        res.status(500).json({ error: 'Failed to fetch patient history' });
+      }
 });
 
-
+// No use in frontend 
 router.get('/patients/:id', authenticate,async (req, res) => {
 
   const patientId = req.params.id;
-  const redisKey = `patient:${patientId}:details`;
 
   try {
-
-     // Step 1: Check Redis cache
-     const cachedData = await redisClient.get(redisKey);
-     if (cachedData) {
-       console.log('📦 Served from Redis cache');
-       return res.status(200).json({ patient: JSON.parse(cachedData) });
-     }
-
     // Fetch the user by ID and populate appointments
       const patient = await User.findById(patientId)
       .populate({
@@ -189,10 +170,7 @@ router.get('/patients/:id', authenticate,async (req, res) => {
       address: patient.address,
       appointments: patient.appointments,
     };
- 
-     // Step 3: Save to Redis for 5 minutes
-     await redisClient.setEx(redisKey, 300, JSON.stringify(patientData));
-  
+
     // Return patient details
     res.json({ patient: patientData });
   } catch (err) {
@@ -203,20 +181,10 @@ router.get('/patients/:id', authenticate,async (req, res) => {
 
 
 router.get('/patients/:id/appointments', authenticate, async (req, res) => {
-
-  const patientId = req.params.id;
-  const redisKey = `patient:${patientId}:appointments`;
-
+ const patientId = req.params.id;
   try {
-      // 1. Check Redis cache
-      const cachedData = await redisClient.get(redisKey);
-      if (cachedData) {
-        console.log('📦 Served from Redis cache');
-        return res.status(200).json(JSON.parse(cachedData));
-      }
-
+    
     const patient = await User.findById(patientId);
-
     if (!patient || patient.role !== 'patient') {
       return res.status(404).json({ error: 'Patient not found or invalid role' });
     }
@@ -233,11 +201,8 @@ router.get('/patients/:id/appointments', authenticate, async (req, res) => {
     const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
 
     const result = { upcomingAppointments, pastAppointments };
-
-    // 5. Store in Redis for 5 mins
-    await redisClient.setEx(redisKey, 300, JSON.stringify(result));
-
     res.status(200).json(result);
+
   } catch (err) {
     console.error('Error fetching patient appointments:', err);
     res.status(500).json({ error: 'Failed to fetch patient appointments' });
