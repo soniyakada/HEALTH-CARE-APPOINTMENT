@@ -4,6 +4,7 @@ const User = require("../models/User"); // Adjust the path as needed
 const Appointment = require("../models/appointment");
 const authenticate = require("../middleware/authenticate.js")
 const redisClient = require('../utils/redis.js');
+const appointment = require("../models/appointment");
 
 router.get("/profile/:id", authenticate ,async (req, res) => {
   const userId = req.params.id;
@@ -12,8 +13,16 @@ router.get("/profile/:id", authenticate ,async (req, res) => {
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(400).json({ message: "Invalid user ID format" });
   }
+  const cacheKey = `user:profile:${userId}`;
 
   try {
+
+     // 1. Check Redis cache
+     const cachedData = await redisClient.get(cacheKey);
+     if (cachedData) {
+       return res.status(200).json({ user: JSON.parse(cachedData), source: 'cache' });
+     }
+ 
     //If not cached, query DB
     const user = await User.findById(userId).lean();
 
@@ -37,8 +46,9 @@ router.get("/profile/:id", authenticate ,async (req, res) => {
       fees: user.fees || "N/A",
     };
 
+    // 4. Store in Redis with optional expiry (e.g., 3600 seconds = 1 hour)
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(userDetails));
   
-
     // Respond with user details
     res.status(200).json({ user: userDetails });
   } catch (error) {
@@ -48,7 +58,7 @@ router.get("/profile/:id", authenticate ,async (req, res) => {
 });
 
 
-// POST route to book an appointment
+// POST route to book an appointment 
 router.post('/appointment', authenticate, async (req, res) => {
   try {
     const { patient, doctor, date, timeSlot } = req.body;
@@ -103,7 +113,7 @@ router.post('/appointment', authenticate, async (req, res) => {
     });
 
 
-//get Patient history [Doctor] 
+//get Patient history [Doctor] [invalidate kra diya]
 router.get('/doctor/:id/patient-history', async (req, res) => {
       const doctorId = req.params.id;
       const cacheKey = `doctor:${doctorId}:patient-history`;
@@ -179,11 +189,21 @@ router.get('/patients/:id', authenticate,async (req, res) => {
   }
 });
 
-
+//upcoming or past appointments for patient. [Patient] [invalidate kra diya]
 router.get('/patients/:id/appointments', authenticate, async (req, res) => {
  const patientId = req.params.id;
+ const cacheKey = `patient:${patientId}:appointments`;
   try {
     
+     // Check if cached in Redis
+     const cachedAppointments = await redisClient.get(cacheKey);
+     if (cachedAppointments) {
+      console.log("........chalu hai  ")
+       return res.status(200).json(JSON.parse(cachedAppointments));
+     }
+
+
+
     const patient = await User.findById(patientId);
     if (!patient || patient.role !== 'patient') {
       return res.status(404).json({ error: 'Patient not found or invalid role' });
@@ -194,13 +214,20 @@ router.get('/patients/:id/appointments', authenticate, async (req, res) => {
       .populate('doctor', 'name') // Populate doctor details
       .sort({ date: 1 }); // Sort by date (ascending)
 
+    console.log(".....before...",appointments)
+      const approveAppointments = appointments.filter(appointment => appointment.status === "approved");
+      console.log("appointments saari",approveAppointments);
     const currentDate = new Date();
 
     // Separate appointments into upcoming and past
-    const upcomingAppointments = appointments.filter(appointment => new Date(appointment.date) > currentDate);
-    const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
+    const upcomingAppointments = approveAppointments.filter(appointment => new Date(appointment.date) > currentDate);
+    const pastAppointments = approveAppointments.filter(appointment => new Date(appointment.date) <= currentDate);
 
     const result = { upcomingAppointments, pastAppointments };
+
+     // Cache the result in Redis with TTL (e.g., 5 mins = 300 seconds)
+     await redisClient.set(cacheKey, JSON.stringify(result), 'EX', 300);
+
     res.status(200).json(result);
 
   } catch (err) {

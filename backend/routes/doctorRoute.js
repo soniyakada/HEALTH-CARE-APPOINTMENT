@@ -6,7 +6,7 @@ const router = express.Router();
 const authenticate = require("../middleware/authenticate.js")
 const redisClient = require("../utils/redis.js")
 
-    // Search bar doctor {Patient use} 
+    // Search bar doctor {Patient use} [invalidate] 
     router.get('/doctors/specialization/:specialization', authenticate, async (req, res) => {
       const specialization = req.params.specialization;
       const cacheKey = `specialization:${specialization.toLowerCase()}`; // Case-insensitive caching
@@ -81,46 +81,7 @@ const redisClient = require("../utils/redis.js")
   }
   });
 
-
-
-  router.get('/patients/:id/appointments', authenticate, async (req, res) => {
-  const patientId = req.params.id;
-    
-  try {
-    // Fetch from MongoDB
-    const patient = await User.findById(patientId);
-
-    if (!patient || patient.role !== 'patient') {
-      return res.status(404).json({ error: 'Patient not found or invalid role' });
-    }
-
-    // Fetch all appointments for the patient
-    const appointments = await Appointment.find({ patient: req.params.id })
-      .populate('doctor', 'name') // Populate doctor details
-      .sort({ date: 1 }); // Sort by date (ascending)
-
-    const currentDate = new Date();
-
-    // Separate appointments into upcoming and past
-    const upcomingAppointments = appointments.filter(appointment => new Date(appointment.date) > currentDate);
-    const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
-
-    const responseData = {
-      upcomingAppointments,
-      pastAppointments,
-    };
-
-    // 3. Store in Redis with optional expiration
-   
-    res.status(200).json(responseData);
-  } catch (err) {
-    console.error('Error fetching patient appointments:', err);
-    res.status(500).json({ error: 'Failed to fetch patient appointments' });
-  }
-   });
-
-
-   router.put('/appointment/:id/status', authenticate, async (req, res) => {
+  router.put('/appointment/:id/status', authenticate, async (req, res) => {
    try {
     const { status } = req.body;  // "approved" or "rejected"
     const appointment = await Appointment.findById(req.params.id).populate('patient doctor');
@@ -135,12 +96,18 @@ const redisClient = require("../utils/redis.js")
 
       //Invalidate Redis cache for the doctor(doctor dashboard card ke liye)
       const doctorId = appointment.doctor._id.toString(); // ensure string type
-      const cacheKey = `doctor:${doctorId}`;
-      await redisClient.del(cacheKey);
+      const patientId = appointment.patient._id.toString();
 
-      // Invalidate Redis cache for the doctor's patient history (optional)
-      const patientHistoryCacheKey = `doctor:${doctorId}:patient-history`;
-      await redisClient.del(patientHistoryCacheKey);
+       // Invalidate Redis cache
+       const doctorDashboardCacheKey = `doctor:${doctorId}`;
+       const patientHistoryCacheKey = `doctor:${doctorId}:patient-history`;
+       const patientAppointmentsCacheKey = `patient:${patientId}:appointments`;
+       const patientNotificationsCacheKey = `notifications:${patientId}`;
+    
+       await redisClient.del(doctorDashboardCacheKey);
+       await redisClient.del(patientHistoryCacheKey);
+       await redisClient.del(patientAppointmentsCacheKey);
+       await redisClient.del(patientNotificationsCacheKey);  //NEW: Invalidate notifications cache
   
 
         // Create a notification for the patient
@@ -160,19 +127,25 @@ const redisClient = require("../utils/redis.js")
    });
 
 
-// Fetch notifications for a specific patient using userId in query parameters
+   // Fetch notifications for a specific patient using userId in query parameters
    router.get('/notifications', async (req, res) => {
 
   const { userId } = req.query;  // Get userId from query string
+  const cacheKey = `notifications:${userId}`;
 
   try {
 
-  
-
-
+    // 1. Try to fetch from Redis cache
+    const cachedNotifications = await redisClient.get(cacheKey);
+    if (cachedNotifications) {
+      return res.status(200).json({ notifications: JSON.parse(cachedNotifications), source: 'cache' });
+    }
+    // 2. Fetch from MongoDB if not in cache
     const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });
-    // Cache the result in Redis
-
+   
+   
+    // 3. Cache the result with expiry (e.g., 10 minutes = 600s)
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(notifications));
 
     
     res.status(200).json({ notifications });
