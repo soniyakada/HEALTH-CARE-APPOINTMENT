@@ -6,58 +6,55 @@ const router = express.Router();
 const authenticate = require("../middleware/authenticate.js")
 const redisClient = require("../utils/redis.js")
 
-
-router.get('/doctors/specialization/:specialization', authenticate, async (req, res) => {
-
-  const { specialization } = req.params;
-  const redisKey = `specialization:${specialization.toLowerCase()}:doctors`;
-
-  try {
-
-     // Check Redis cache first
-     const cachedDoctors = await redisClient.get(redisKey);
-
-     if (cachedDoctors) {
-       console.log(`Cache hit: ${redisKey}`);
-       return res.status(200).json({ doctors: JSON.parse(cachedDoctors) });
-     }
-
-    // Find doctors who match the specialization
-    const doctors = await User.find({
-      role: 'doctor',
-      specialization: { $regex: specialization, $options: 'i' }, // Case-insensitive search
+    // Search bar doctor {Patient use} [invalidate] 
+    router.get('/doctors/specialization/:specialization', authenticate, async (req, res) => {
+      const specialization = req.params.specialization;
+      const cacheKey = `specialization:${specialization.toLowerCase()}`; // Case-insensitive caching
+    
+      try {
+        // 🧳 Check if the result is cached
+        const cachedDoctors = await redisClient.get(cacheKey);
+        if (cachedDoctors) {
+          return res.status(200).json({ doctors: JSON.parse(cachedDoctors), source: 'cache' });
+        }
+    
+        // If not cached, fetch from DB
+        const doctors = await User.find({
+          role: 'doctor',
+          specialization: { $regex: specialization, $options: 'i' }, // Case-insensitive search
+        });
+    
+        if (doctors.length === 0) {
+          return res.status(404).json({ message: 'No doctors found for the specified specialization.' });
+        }
+    
+        // 🔄 Cache the result
+        await redisClient.set(cacheKey, JSON.stringify(doctors), { EX: 3600 }); // Cache for 1 hour
+    
+        res.status(200).json({ doctors});
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+        res.status(500).json({ message: 'Server error. Could not fetch doctors.' });
+      }
     });
+    
 
-    if (doctors.length === 0) {
-      return res.status(404).json({ message: 'No doctors found for the specified specialization.' });
-    }
-
-    // Save result to Redis (set expiration to 1 hour)
-    await redisClient.setEx(redisKey, 3600, JSON.stringify(doctors));
-    console.log(`Cache set: ${redisKey}`);
-
-    res.status(200).json({ doctors });
-  } catch (error) {
-    console.error('Error fetching doctors:', error);
-    res.status(500).json({ message: 'Server error. Could not fetch doctors.' });
-  }
-});
-
-
-router.get('/doctor/:id', authenticate, async (req, res) => {
+  // saare cards jo doctor ke dashboard par show hote hai jab user particular doctor ke liye appointment book krta hai toh
+  router.get('/doctor/:id', authenticate, async (req, res) => {
 
   const doctorId = req.params.id;
-  const redisKey = `doctor:${doctorId}:profile`;
 
   try {
 
-    // Try Redis cache first
-    const cachedDoctor = await redisClient.get(redisKey);
-
-    if (cachedDoctor) {
-      console.log(` Cache hit: ${redisKey}`);
-      return res.status(200).json({ doctor: JSON.parse(cachedDoctor) });
-    }
+      // Check Redis cache
+      const cacheKey = `doctor:${doctorId}`;
+      const cachedDoctor = await redisClient.get(cacheKey);
+  
+      if (cachedDoctor) {
+        // Parse and return cached data
+          console.log("---Doctor Dasboard------Redis cache")
+        return res.status(200).json({ doctor: JSON.parse(cachedDoctor), cached: true });
+      }
 
     // If not in cache, fetch from MongoDB
     const doctor = await User.findById(doctorId)
@@ -73,67 +70,19 @@ router.get('/doctor/:id', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Doctor not found or invalid role' });
     }
 
-     // Store in Redis with 1-hour expiration
-     await redisClient.setEx(redisKey, 3600, JSON.stringify(doctor));
-     console.log(`Cache set: ${redisKey}`);
-
+      // Cache the result for 10 minutes (600 seconds)
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(doctor));
+   
     // Return the doctor's profile along with populated appointments
     res.status(200).json({ doctor });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch doctor profile' });
   }
-});
+  });
 
-
-
-router.get('/patients/:id/appointments', authenticate, async (req, res) => {
-
-  const patientId = req.params.id;
-  try {
-
-    // 1. Try fetching from Redis
-    const cachedData = await redisClient.get(`patient:${patientId}:appointments`);
-    if (cachedData) {
-      return res.status(200).json(JSON.parse(cachedData));
-    }
-
-      // 2. Fetch from MongoDB
-    const patient = await User.findById(patientId);
-
-    if (!patient || patient.role !== 'patient') {
-      return res.status(404).json({ error: 'Patient not found or invalid role' });
-    }
-
-    // Fetch all appointments for the patient
-    const appointments = await Appointment.find({ patient: req.params.id })
-      .populate('doctor', 'name') // Populate doctor details
-      .sort({ date: 1 }); // Sort by date (ascending)
-
-    const currentDate = new Date();
-
-    // Separate appointments into upcoming and past
-    const upcomingAppointments = appointments.filter(appointment => new Date(appointment.date) > currentDate);
-    const pastAppointments = appointments.filter(appointment => new Date(appointment.date) <= currentDate);
-
-    const responseData = {
-      upcomingAppointments,
-      pastAppointments,
-    };
-
-    // 3. Store in Redis with optional expiration
-    await redisClient.set(`patient:${patientId}:appointments`, JSON.stringify(responseData), 'EX', 60 * 5); // expires in 5 mins
-
-    res.status(200).json(responseData);
-  } catch (err) {
-    console.error('Error fetching patient appointments:', err);
-    res.status(500).json({ error: 'Failed to fetch patient appointments' });
-  }
-});
-
-
-router.put('/appointment/:id/status', authenticate, async (req, res) => {
-  try {
+  router.put('/appointment/:id/status', authenticate, async (req, res) => {
+   try {
     const { status } = req.body;  // "approved" or "rejected"
     const appointment = await Appointment.findById(req.params.id).populate('patient doctor');
 
@@ -145,26 +94,27 @@ router.put('/appointment/:id/status', authenticate, async (req, res) => {
     appointment.status = status;
     await appointment.save();
 
+      //Invalidate Redis cache for the doctor(doctor dashboard card ke liye)
+      const doctorId = appointment.doctor._id.toString(); // ensure string type
+      const patientId = appointment.patient._id.toString();
+
+       // Invalidate Redis cache
+       const doctorDashboardCacheKey = `doctor:${doctorId}`;
+       const patientHistoryCacheKey = `doctor:${doctorId}:patient-history`;
+       const patientAppointmentsCacheKey = `patient:${patientId}:appointments`;
+       const patientNotificationsCacheKey = `notifications:${patientId}`;
     
-    // Invalidate doctor's cached profile (as appointments have changed)
-    await redisClient.del(`doctor:${appointment.doctor._id}:profile`);
-    // After appointment.save()
-    await redisClient.del(`patient:${appointment.patient._id}:appointments`);
+       await redisClient.del(doctorDashboardCacheKey);
+       await redisClient.del(patientHistoryCacheKey);
+       await redisClient.del(patientAppointmentsCacheKey);
+       await redisClient.del(patientNotificationsCacheKey);  //NEW: Invalidate notifications cache
+  
 
-
-    // Invalidate the patient's notifications cache (if you're caching the notifications for the patient)
-    try {
-      await redisClient.del(`notifications:${appointment.patient._id}`);
-    } catch (error) {
-      console.error(`Error invalidating cache for notifications of patient ${appointment.patient._id}:`, error);
-    }
-
-
-    // Create a notification for the patient
-    const notification = new Notification({
-      patient: appointment.patient._id,
-      message: `Your appointment with Dr. ${appointment.doctor.name} has been ${status}.`,
-      date: new Date(),
+        // Create a notification for the patient
+        const notification = new Notification({
+        patient: appointment.patient._id,
+        message: `Your appointment with Dr. ${appointment.doctor.name} has been ${status}.`,
+        date: new Date(),
     });
 
     await notification.save();
@@ -174,29 +124,28 @@ router.put('/appointment/:id/status', authenticate, async (req, res) => {
     console.error('Error updating appointment status:', error);
     res.status(500).json({ error: 'Failed to update appointment status' });
   }
-});
+   });
 
 
-// Fetch notifications for a specific patient using userId in query parameters
-router.get('/notifications', async (req, res) => {
+   // Fetch notifications for a specific patient using userId in query parameters
+   router.get('/notifications', async (req, res) => {
 
   const { userId } = req.query;  // Get userId from query string
+  const cacheKey = `notifications:${userId}`;
 
   try {
 
-     // Check if notifications are already in Redis cache
-     const redisCacheKey = `notifications:${userId}`;
-     const cachedNotifications = await redisClient.get(redisCacheKey);
- 
-     if (cachedNotifications) {
-       console.log('Fetching notifications from Redis cache');
-       return res.status(200).json({ notifications: JSON.parse(cachedNotifications) });
-     }
-
-
+    // 1. Try to fetch from Redis cache
+    const cachedNotifications = await redisClient.get(cacheKey);
+    if (cachedNotifications) {
+      return res.status(200).json({ notifications: JSON.parse(cachedNotifications), source: 'cache' });
+    }
+    // 2. Fetch from MongoDB if not in cache
     const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });
-    // Cache the result in Redis
-    await redisClient.set(redisCacheKey, JSON.stringify(notifications), 'EX', 3600); // Set cache for 1 hour
+   
+   
+    // 3. Cache the result with expiry (e.g., 10 minutes = 600s)
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(notifications));
 
     
     res.status(200).json({ notifications });
@@ -204,6 +153,6 @@ router.get('/notifications', async (req, res) => {
     console.error('Error fetching notifications:', error);
     res.status(500).json({ error: 'Failed to fetch notifications' });
   }
-});
+   });
 
 module.exports = router;

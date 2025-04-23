@@ -3,13 +3,40 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import loader from "../assets/loader.gif"
 import "./Appointment.css"
+import { ToastContainer, toast } from 'react-toastify';
 const API_URL = import.meta.env.VITE_API_URL;
+import io from 'socket.io-client';
+// connect to your backend socket server
+const socket = io("http://localhost:3000"); // or wherever your backend is hosted
 
 const AppointmentsPage = () => {
   const { userId } = useParams(); // Get the userId from the URL params
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  
+useEffect(() => {
+  if (userId) {
+    socket.emit("join", userId);
+  }
+
+  socket.on("receive_notification", ({ message }) => {
+    toast.info(message); // or push a toast/notification
+  });
+
+  return () => {
+    socket.off("receive_notification");
+  };
+}, [userId]);
+const onHandleLogout = async()=>{
+    try {
+       await axios.post(`${API_URL}/logout/${userId}`);
+    } catch (error) {
+      console.log("Error");
+    }
+  }
+
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -122,6 +149,7 @@ const AppointmentsPage = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

@@ -5,7 +5,11 @@ import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Swal from 'sweetalert2';
+import { ToastContainer, toast } from 'react-toastify';
 import "./Form.css"
+import io from 'socket.io-client';
+// connect to your backend socket server
+const socket = io("http://localhost:3000"); // or wherever your backend is hosted
 const API_URL = import.meta.env.VITE_API_URL;
 
 
@@ -41,6 +45,30 @@ const AppointmentForm = () => {
   //   };
   //   fetchDoctors();
   // }, []);
+
+  
+  useEffect(() => {
+    if (id) {
+      socket.emit("join", id);
+    }
+  
+    socket.on("receive_notification", ({ message }) => {
+      toast.info(message); // or push a toast/notification
+    });
+  
+    return () => {
+      socket.off("receive_notification");
+    };
+  }, [id]);
+  
+  const onHandleLogout = async()=>{
+      try {
+         await axios.post(`${API_URL}/logout/${userId}`);
+      } catch (error) {
+        console.log("Error");
+      }
+    }
+  
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -158,6 +186,7 @@ const AppointmentForm = () => {
         </div>
       </form>
     </div>
+     <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 };
