@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import loader from "../assets/loader.gif"
 import "./Appointment.css"
+import { ToastContainer, toast } from 'react-toastify';
 const API_URL = import.meta.env.VITE_API_URL;
 import io from 'socket.io-client';
 // connect to your backend socket server
@@ -21,7 +22,7 @@ useEffect(() => {
   }
 
   socket.on("receive_notification", ({ message }) => {
-    alert(message); // or push a toast/notification
+    toast.info(message); // or push a toast/notification
   });
 
   return () => {
@@ -148,6 +149,7 @@ const onHandleLogout = async()=>{
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

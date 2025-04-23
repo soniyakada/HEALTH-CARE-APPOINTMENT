@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import logo from "../assets/logo.webp"
 import io from 'socket.io-client';
 // connect to your backend socket server
@@ -23,7 +24,7 @@ useEffect(() => {
   }
 
   socket.on("receive_notification", ({ message }) => {
-    alert(message); // or push a toast/notification
+    toast.info(message);  // or push a toast/notification
   });
 
   return () => {
@@ -146,6 +147,7 @@ const onHandleLogout = async()=>{
           )}
         </div>
         </div>
+        <ToastContainer position="top-right" autoClose={3000} />
         </>
 
         

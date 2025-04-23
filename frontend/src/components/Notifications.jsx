@@ -5,6 +5,7 @@ import loader from "../../src/assets/loader.gif"
 import { useParams } from 'react-router-dom';
 import "./Notification.css"
 import io from 'socket.io-client';
+import { ToastContainer, toast } from 'react-toastify';
 // connect to your backend socket server
 const socket = io("http://localhost:3000"); // or wherever your backend is hosted
 const API_URL = import.meta.env.VITE_API_URL;
@@ -20,7 +21,7 @@ const Notifications = () => {
     }
   
     socket.on("receive_notification", ({ message }) => {
-      alert(message); // or push a toast/notification
+      toast.info(message); // or push a toast/notification
     });
   
     return () => {
@@ -86,7 +87,9 @@ const Notifications = () => {
       ) : (
         <p className="text-gray-500">No notifications.</p>
       )}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
+
   );
 };
 

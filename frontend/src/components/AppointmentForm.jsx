@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Swal from 'sweetalert2';
+import { ToastContainer, toast } from 'react-toastify';
 import "./Form.css"
 import io from 'socket.io-client';
 // connect to your backend socket server
@@ -52,7 +53,7 @@ const AppointmentForm = () => {
     }
   
     socket.on("receive_notification", ({ message }) => {
-      alert(message); // or push a toast/notification
+      toast.info(message); // or push a toast/notification
     });
   
     return () => {
@@ -185,6 +186,7 @@ const AppointmentForm = () => {
         </div>
       </form>
     </div>
+     <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 };
