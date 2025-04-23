@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import "./DoctorProfile.css"
+import io from 'socket.io-client';
+// connect to your backend socket server
+const socket = io("http://localhost:3000"); // or wherever your backend is hosted
 const API_URL = import.meta.env.VITE_API_URL;
 
 const DoctorProfile = ({ userId }) => {
@@ -56,11 +59,22 @@ useEffect(() => {
       // Extract the token from the response
        const token = res.data.token;
 
-      await axios.put(`http://localhost:3000/appointment/${id}/status`, { status },{
+   const resData = await axios.put(`http://localhost:3000/appointment/${id}/status`, { status },{
         headers: {
           Authorization: `Bearer ${token}`, // Attach token in the header
         }});
-     
+  
+          // ✅ Emit real-time notification after success
+       const appointment = resData.data.appointment;
+       console.log("......appointments",appointment)
+       const patientId = appointment.patient._id;
+       const doctorName = appointment.doctor.name;
+       const message = `Your appointment with Dr. ${doctorName} has been ${status}.`;
+
+       socket.emit("send_notification", {
+        to: patientId,
+        message,
+      });
 
        // Re-fetch doctor data to update appointments list
      const response = await axios.get(`http://localhost:3000/doctor/${userId}`,{

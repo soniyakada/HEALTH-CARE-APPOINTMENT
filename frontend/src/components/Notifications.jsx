@@ -4,12 +4,29 @@ import axios from 'axios';
 import loader from "../../src/assets/loader.gif"
 import { useParams } from 'react-router-dom';
 import "./Notification.css"
+import io from 'socket.io-client';
+// connect to your backend socket server
+const socket = io("http://localhost:3000"); // or wherever your backend is hosted
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (userId) {
+      socket.emit("join", userId);
+    }
+  
+    socket.on("receive_notification", ({ message }) => {
+      alert(message); // or push a toast/notification
+    });
+  
+    return () => {
+      socket.off("receive_notification");
+    };
+  }, [userId]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
