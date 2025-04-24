@@ -62,6 +62,7 @@ router.post('/register', async (req, res) => {
     // Save the user to the database
     const user = new User(userData);
     await user.save();
+    console.log(".....final final final....",user);
 
      // Invalidate Redis cache for specialization-based search
      if (role === 'doctor' && specialization) {
@@ -69,6 +70,7 @@ router.post('/register', async (req, res) => {
       await redisClient.del(cacheKey);  // Invalidate cache for this specialization
     }
 
+    
    res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error("Error during registration:", error);

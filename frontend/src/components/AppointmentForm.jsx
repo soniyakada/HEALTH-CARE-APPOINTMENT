@@ -73,11 +73,11 @@ const AppointmentForm = () => {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/token/${id}`);
+        const res = await axios.get(`${API_URL}/token/${id}`);
   
         // Extract the token from the response
         const token = res.data.token;
-        const response = await axios.get(`http://localhost:3000/patients/${id}`,{
+        const response = await axios.get(`${API_URL}/patients/${id}`,{
           headers: {
             Authorization: `Bearer ${token}`, // Attach token in the header
           }});
@@ -103,11 +103,11 @@ const AppointmentForm = () => {
     try {
       console.log("patient id----",id);
       console.log("Doctor id----",doctor._id);
-      const res = await axios.get(`http://localhost:3000/token/${id}`);
+      const res = await axios.get(`${API_URL}/token/${id}`);
   
       // Extract the token from the response
       const token = res.data.token;
-      const response = await axios.post(`http://localhost:3000/appointment`, {
+      const response = await axios.post(`${API_URL}/appointment`, {
         patient: id, // Replace with the actual logged-in user ID
         doctor:doctor._id,
         date,

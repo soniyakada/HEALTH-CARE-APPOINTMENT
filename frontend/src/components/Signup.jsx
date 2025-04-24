@@ -17,67 +17,46 @@ const Signup = () => {
   const [specialization, setSpecialization] = useState("");
   const [availability, setAvailability] = useState("");
   const [fees, setFees] = useState("");
-  const [loading, setLoading] = useState(false); // New state for loading
+  const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState('');
   const [emailerror , setEmailerror] = useState('');
   const [contactError, setContactError] = useState('');
-  const [passError, setPassError] = useState("")
+  const [passError, setPassError] = useState("");
   const [addError, setAddError] = useState("");
   const [feeError, setFeeError] = useState("");
   const [specialError, setSpecialError] = useState("");
   const [availableError , setAvailabilityError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-   if(!name.trim()){
-    setError("Please enter your name.");
-    return;
-   }
-   if (!email.trim()) {
-    setEmailerror("Please enter your email.");
-    return;
-  }
-  if (!emailRegex.test(email.trim())) {
-    setEmailerror("Please enter a valid email address.");
-    return;
-  }
- 
-  const indianContactRegex = /^[6-9]\d{9}$/;
+    // Clear all errors before new validation
+    setError("");
+    setEmailerror("");
+    setContactError("");
+    setPassError("");
+    setAddError("");
+    setSpecialError("");
+    setAvailabilityError("");
+    setFeeError("");
 
-    // Check if the contact number field is empty or invalid
-  if (!contactNumber.trim()) {
-    setContactError("Please enter your contact number.");
-      return;
-  }
-  if (!indianContactRegex.test(contactNumber.trim())) {
-      setContactError("Please enter a valid mobile number.");
-      return;
-  }
-  if (!password.trim()) {
-    setPassError("Password cannot be empty.");
-    return;
-  }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const indianContactRegex = /^[6-9]\d{9}$/;
 
-  if(!address.trim()){
-    setAddError("please enter address.");
-    return;
-  }
+    if (!name.trim()) return setError("Please enter your name.");
+    if (!email.trim()) return setEmailerror("Please enter your email.");
+    if (!emailRegex.test(email.trim())) return setEmailerror("Please enter a valid email address.");
+    if (!contactNumber.trim()) return setContactError("Please enter your contact number.");
+    if (!indianContactRegex.test(contactNumber.trim())) return setContactError("Please enter a valid mobile number.");
+    if (!password.trim()) return setPassError("Password cannot be empty.");
+    if (!address.trim()) return setAddError("Please enter address.");
 
-  if (!specialization.trim()) {
-    setSpecialError("Specialization is required.");
-    return;
-  }
-  if (!availability.trim()) {
-    setAvailabilityError("Availability is required.");
-    return;
-  }
-  if (!fees) {
-    setFeeError("Fees is required.");
-    return;
-  }
-
+    if (role === "doctor") {
+      if (!specialization.trim()) return setSpecialError("Specialization is required.");
+      if (!availability.trim()) return setAvailabilityError("Availability is required.");
+      if (!fees) return setFeeError("Fees is required.");
+    }
 
     const formData = {
       name,
@@ -93,111 +72,60 @@ const Signup = () => {
       fees: role === "doctor" ? fees : undefined,
     };
 
-    console.log("Form Data Submitted:", formData);
-
     try {
-      setLoading(true); // Set loading to true before API call
-      const response = await axios.post(`${API_URL}/register`, formData); // Make sure the endpoint is correct
+      setLoading(true);
+      const response = await axios.post(`${API_URL}/register`, formData);
       Swal.fire({
         icon: "success",
         title: "Signup Successful",
         text: "User has been registered!",
         confirmButtonText: "OK",
       });
-      setName("");
-      setEmail("");
-      setPassword("");
-      setRole("patient");
-      setContactNumber("");
-      setGender("");
-      setDateOfBirth("");
-      setAddress("");
-      setSpecialization("");
-      setAvailability("");
-      setFees("");
-      setAddError("");
-      setAvailabilityError("");
-      setContactError("");
-      setEmailerror("");
-      setError("");
-      setFeeError("");
-      setSpecialError("");
-       
-      setLoading(false); // Set loading to false after response
+
+      // Reset form
+      setName(""); setEmail(""); setPassword(""); setRole("patient");
+      setContactNumber(""); setGender(""); setDateOfBirth("");
+      setAddress(""); setSpecialization(""); setAvailability(""); setFees("");
     } catch (error) {
-      setLoading(false); // Set loading to false if there's an error
       console.error("Error submitting form:", error.response?.data || error.message);
       alert("Failed to sign up. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <div className="">
-       <Navbar/>
+      <div>
+        <Navbar/>
         <div className="container">
           <form onSubmit={handleSubmit} className="signup-form">
             <h2>Sign up</h2>
 
-            {/* Name */}
             <div>
               <label>Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)} 
-                onFocus={()=>{
-                  setError("");
-                }}         
-              />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setError("")} />
               {error && <span className="text-xs text-red-600">{error}</span>}
             </div>
 
-            {/* Email */}
             <div>
               <label>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={()=>{
-                  setEmailerror("");
-                }}    
-              />
-                  {emailerror && <span className="text-xs text-red-600">{emailerror}</span>}
-              </div>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setEmailerror("")} />
+              {emailerror && <span className="text-xs text-red-600">{emailerror}</span>}
+            </div>
 
+            <div>
+              <label>Contact Number</label>
+              <input type="number" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} onFocus={() => setContactError("")} />
+              {contactError && <span className="text-xs text-red-600">{contactError}</span>}
+            </div>
 
-          <div>
-          <label>Contact Number</label>
-          <input
-          type="number"
-          maxLength={10}
-          onFocus={()=>{
-            setContactError("");
-          }}  
-          value={contactNumber}
-          onChange={(e) => setContactNumber(e.target.value)}/>
-          
-          {contactError && <span className="text-xs text-red-600">{contactError}</span>}
-          </div>
+            <div>
+              <label>Password</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPassError("")} />
+              {passError && <span className="text-xs text-red-600">{passError}</span>}
+            </div>
 
-          
-            {/* Password */}
-          <div>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onFocus={()=>{
-              setPassError("");
-            }}  
-            onChange={(e) => setPassword(e.target.value)}/>
-            {passError && <span className="text-xs text-red-600">{passError}</span>}
-          </div>
-          
-
-            {/* Role */}
             <div>
               <label>Role</label>
               <select value={role} onChange={(e) => setRole(e.target.value)}>
@@ -207,15 +135,11 @@ const Signup = () => {
               </select>
             </div>
 
-            {/* Conditional Fields */}
             {role === "patient" && (
               <>
                 <div>
                   <label>Gender</label>
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                  >
+                  <select value={gender} onChange={(e) => setGender(e.target.value)}>
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -224,11 +148,7 @@ const Signup = () => {
                 </div>
                 <div>
                   <label>Date of Birth</label>
-                  <input
-                    type="date"
-                    value={dateOfBirth}
-                    onChange={(e) => setDateOfBirth(e.target.value)}
-                  />
+                  <input type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
                 </div>
               </>
             )}
@@ -237,58 +157,30 @@ const Signup = () => {
               <>
                 <div>
                   <label>Specialization</label>
-                  <input
-                    type="text"
-                    value={specialization}
-                    onFocus={()=>{
-                      setSpecialError("");
-                    }}
-                    onChange={(e) => setSpecialization(e.target.value)}
-                  />
+                  <input type="text" value={specialization} onChange={(e) => setSpecialization(e.target.value)} onFocus={() => setSpecialError("")} />
                   {specialError && <span className="text-xs text-red-600">{specialError}</span>}
                 </div>
+
                 <div>
                   <label>Availability</label>
-                  <input
-                    type="text"
-                    value={availability}
-                    onFocus={()=>{
-                      setAvailabilityError("");
-                    }}
-                    onChange={(e) => setAvailability(e.target.value)}/>
-                  </div>
+                  <input type="text" value={availability} onChange={(e) => setAvailability(e.target.value)} onFocus={() => setAvailabilityError("")} />
                   {availableError && <span className="text-xs text-red-600">{availableError}</span>}
+                </div>
+
                 <div>
                   <label>Fees</label>
-                  <input
-                    type="number"
-                    onFocus={()=>{
-                      setFeeError("");
-                    }}
-                    value={fees}
-                    onChange={(e) => setFees(e.target.value)}
-                  />
+                  <input type="number" value={fees} onChange={(e) => setFees(e.target.value)} onFocus={() => setFeeError("")} />
                   {feeError && <span className="text-xs text-red-600">{feeError}</span>}
                 </div>
               </>
             )}
 
-            {/* Address */}
             <div>
               <label>Address</label>
-              <input
-                type="text"
-                value={address}
-                onFocus={()=>{
-                  setAddError("");
-                }} 
-                onChange={(e) => setAddress(e.target.value)}
-                
-              />
-                {addError && <span className="text-xs text-red-600">{addError}</span>}
+              <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} onFocus={() => setAddError("")} />
+              {addError && <span className="text-xs text-red-600">{addError}</span>}
             </div>
 
-            {/* Submit Button */}
             <button type="submit" disabled={loading} className="bg-blue-600">
               {loading ? "Signing Up..." : "Signup"}
             </button>
