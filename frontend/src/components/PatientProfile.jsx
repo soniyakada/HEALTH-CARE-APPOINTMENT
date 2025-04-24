@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import logo from "../assets/logo.webp"
+const API_URL = import.meta.env.VITE_API_URL;
 import io from 'socket.io-client';
 // connect to your backend socket server
-const socket = io("http://localhost:3000"); // or wherever your backend is hosted
-const API_URL = import.meta.env.VITE_API_URL;
+const socket = io(`${API_URL}`); // or wherever your backend is hosted
+
 
 const PatientProfile = ({ userId }) => {
 

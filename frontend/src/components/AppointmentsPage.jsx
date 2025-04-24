@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 const API_URL = import.meta.env.VITE_API_URL;
 import io from 'socket.io-client';
 // connect to your backend socket server
-const socket = io("http://localhost:3000"); // or wherever your backend is hosted
+const socket = io(`${API_URL}`); // or wherever your backend is hosted
 
 const AppointmentsPage = () => {
   const { userId } = useParams(); // Get the userId from the URL params

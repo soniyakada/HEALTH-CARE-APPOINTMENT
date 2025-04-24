@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import "./DoctorProfile.css"
+const API_URL = import.meta.env.VITE_API_URL;
 import io from 'socket.io-client';
 // connect to your backend socket server
-const socket = io("http://localhost:3000"); // or wherever your backend is hosted
-const API_URL = import.meta.env.VITE_API_URL;
+const socket = io(`${API_URL}`); // or wherever your backend is hosted
+
 
 const DoctorProfile = ({ userId }) => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ useEffect(() => {
   const getToken = async () => {
     try {
       // Make a GET request to fetch the token
-      const response = await axios.get(`http://localhost:3000/token/${userId}`);
+      const response = await axios.get(`${API_URL}/token/${userId}`);
   
       // Extract the token from the response
       const token = response.data.token;
@@ -35,11 +36,11 @@ useEffect(() => {
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
-      const res = await axios.get(`http://localhost:3000/token/${userId}`);
+      const res = await axios.get(`${API_URL}/token/${userId}`);
   
       // Extract the token from the response
        const token = res.data.token;
-       const response = await axios.get(`http://localhost:3000/doctor/${userId}`,{
+       const response = await axios.get(`${API_URL}/doctor/${userId}`,{
           headers: {
             Authorization: `Bearer ${token}`, // Attach token in the header
           }});
@@ -54,12 +55,12 @@ useEffect(() => {
   const updateAppointmentStatus = async (id, status) => {
     try {
 
-      const res = await axios.get(`http://localhost:3000/token/${userId}`);
+      const res = await axios.get(`${API_URL}/token/${userId}`);
   
       // Extract the token from the response
        const token = res.data.token;
 
-   const resData = await axios.put(`http://localhost:3000/appointment/${id}/status`, { status },{
+   const resData = await axios.put(`${API_URL}/appointment/${id}/status`, { status },{
         headers: {
           Authorization: `Bearer ${token}`, // Attach token in the header
         }});
@@ -77,7 +78,7 @@ useEffect(() => {
       });
 
        // Re-fetch doctor data to update appointments list
-     const response = await axios.get(`http://localhost:3000/doctor/${userId}`,{
+     const response = await axios.get(`${API_URL}/doctor/${userId}`,{
       headers: {
         Authorization: `Bearer ${token}`, // Attach token in the header
       }});
