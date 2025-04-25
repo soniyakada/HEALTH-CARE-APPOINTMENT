@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import logo from "../assets/logo.webp"
 const API_URL = import.meta.env.VITE_API_URL;
 import io from 'socket.io-client';
+import PatientNavbar from './PatientNavbar';
 // connect to your backend socket server
 const socket = io(`${API_URL}`); // or wherever your backend is hosted
 
@@ -64,31 +65,83 @@ const onHandleLogout = async()=>{
     }
   };
 
+  const features = [
+    {
+      title: "Appointments",
+      desc: "Schedule or view your upcoming appointments",
+      icon: "📅", // You can replace this with an image or emoji
+    },
+    {
+      title: "Medical Records",
+      desc: "Access your complete health history",
+      icon: "📋",
+    },
+    {
+      title: "Medications",
+      desc: "Track your prescriptions and refills",
+      icon: "💊",
+    },
+    {
+      title: "Find Doctor",
+      desc: "Search for specialists near you",
+      icon: "🧑‍⚕️",
+    },
+  ];
 
-  return (
+ return (
     <>
       
       <div className="">
-      <nav className="text-black p-4">
-      <div className="flex justify-between items-center gap-96">
-      {/* Logo at the start */}
-      <div>
-      <img src={logo} alt="Logo" className="h-12" />
-      </div>
-      {/* Links at the end */}
-      <div className="flex gap-10 p-4">
-      <Link to={`/appointments/${userId}`} className="hover:underline">
-        Appointments
-      </Link>
-      <Link to={`/notifications/${userId}`} className="hover:underline">
-        Notifications
-      </Link>
-      <Link to="/signin" onClick={onHandleLogout} className="hover:underline">
-        Logout
-      </Link>
-      </div>
+       <PatientNavbar userId={userId}/>
+       <div className='h-72 bg-blue-400 '>
+        <div className='flex flex-col gap-5 p-20'>
+          <h1 className='text-3xl font-semibold text-white'>Your health is our priority</h1>
+        < h1 className='text-md text-white'>Schedule appointments, track your health metrics, and communicate with<br></br>
+           doctors - all in one place.</h1>
+           <div className='mt-2'>
+           <span className='bg-white p-3 rounded-md'> Book Appointments</span>
+           </div>
+           
+           
+        </div>
+       
+        <div className=''></div>
+
        </div>
-       </nav>
+       <div className="flex flex-wrap justify-center gap-6 p-6 bg-gray-50">
+      {features.map((feature, index) => (
+        <div
+          key={index}
+          className="w-full sm:w-64 bg-white rounded-2xl shadow-md p-6 text-center transition hover:shadow-lg"
+        >
+          <div className="flex justify-center mb-4">
+            <div className="bg-blue-100 p-2 rounded-xl text-4xl">{feature.icon}</div>
+          </div>
+          <h3 className="text-lg font-bold text-gray-900">{feature.title}</h3>
+          <p className="text-sm text-gray-600 mt-1">{feature.desc}</p>
+        </div>
+      ))}
+    </div>
+    <footer className="bg-gray-50 border-t border-gray-200 mt-10">
+      <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="text-center md:text-left mb-4 md:mb-0">
+            <h2 className="text-xl font-semibold text-gray-800">HealthCare+</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Your trusted partner in managing health.
+            </p>
+          </div>
+          <div className="flex space-x-6 text-gray-600 text-sm">
+            <a href="#" className="hover:text-blue-600 transition">Privacy Policy</a>
+            <a href="#" className="hover:text-blue-600 transition">Terms of Service</a>
+            <a href="#" className="hover:text-blue-600 transition">Contact Us</a>
+          </div>
+        </div>
+        <div className="mt-6 text-center text-xs text-gray-400">
+          &copy; {new Date().getFullYear()} HealthCare+. All rights reserved.
+        </div>
+      </div>
+    </footer>
 
                   
           <div className="flex justify-center items-center">
@@ -148,6 +201,7 @@ const onHandleLogout = async()=>{
           )}
         </div>
         </div>
+        
         <ToastContainer position="top-right" autoClose={3000} />
         </>
 
