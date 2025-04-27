@@ -33,13 +33,6 @@ useEffect(() => {
     socket.off("receive_notification");
   };
 }, [userId]);
-const onHandleLogout = async()=>{
-    try {
-       await axios.post(`${API_URL}/logout/${userId}`);
-    } catch (error) {
-      console.log("Error");
-    }
-  }
 
   const onHandleappointment=(doctor)=>{
     console.log("doctorname",doctor.name)
@@ -70,29 +63,48 @@ const onHandleLogout = async()=>{
       title: "Appointments",
       desc: "Schedule or view your upcoming appointments",
       icon: "📅", // You can replace this with an image or emoji
+      route: "/appointments", // <-- Add route
     },
     {
       title: "Medical Records",
       desc: "Access your complete health history",
       icon: "📋",
+      route: "/medical-records",
     },
     {
       title: "Medications",
       desc: "Track your prescriptions and refills",
       icon: "💊",
+      route: "/medications",
     },
     {
       title: "Find Doctor",
       desc: "Search for specialists near you",
       icon: "🧑‍⚕️",
+      route: "/finddoctor", // <-- Add this route
     },
   ];
+
+  const handleFeatureClick = (feature) => {
+    if (feature.route) {
+      if (feature.title === "Appointments") {
+        navigate(`/appointments/${userId}`);
+      }else if(feature.title === "Find Doctor") {
+        navigate(`/findDoctor/${userId}`);
+      }else if(feature.title === "Medical Records") {
+        navigate(`/medical-records/${userId}`);
+      }
+      else {
+        navigate(feature.route);
+      }
+    }
+  };
 
  return (
     <>
       
       <div className="">
-       <PatientNavbar userId={userId}/>
+       <PatientNavbar userId={userId} isShow={false}/>
        <div className='h-72 bg-blue-400 '>
         <div className='flex flex-col gap-5 p-20'>
           <h1 className='text-3xl font-semibold text-white'>Your health is our priority</h1>
@@ -112,7 +124,8 @@ const onHandleLogout = async()=>{
       {features.map((feature, index) => (
         <div
           key={index}
-          className="w-full sm:w-64 bg-white rounded-2xl shadow-md p-6 text-center transition hover:shadow-lg"
+          onClick={() => handleFeatureClick(feature)}
+          className="w-full sm:w-64 cursor-pointer bg-white rounded-2xl shadow-md p-6 text-center transition hover:shadow-lg"
         >
           <div className="flex justify-center mb-4">
             <div className="bg-blue-100 p-2 rounded-xl text-4xl">{feature.icon}</div>
@@ -122,7 +135,7 @@ const onHandleLogout = async()=>{
         </div>
       ))}
     </div>
-    <footer className="bg-gray-50 border-t border-gray-200 mt-10">
+    <footer className="bg-gray-50 border-t border-gray-200 mt-1">
       <div className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-center md:text-left mb-4 md:mb-0">
@@ -142,67 +155,10 @@ const onHandleLogout = async()=>{
         </div>
       </div>
     </footer>
-
-                  
-          <div className="flex justify-center items-center">
-           <h3 className="font-bold mb-4 text-xl">Find your Doctor</h3>
-           </div>
-           <div className="flex justify-center items-center gap-2">
-           <input
-             type="text"
-             placeholder="Enter specialization (e.g., Cardiology)"
-             value={specialization}
-             onChange={(e) => setSpecialization(e.target.value)}
-             className=" px-3 py-2 border rounded mb-4 w-96"
-           />
-           <button
-             onClick={handleDoctorFilter}
-             className="p-3 bg-blue-600 mb-4 text-white py-2 rounded hover:bg-blue-700"
-           >
-             Search
-           </button>
-           </div>
-           <div className="mt-4">
-          {filteredDoctors.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-           {filteredDoctors.map((doctor) => (
-           <div
-           key={doctor.id}
-           className="border border-gray-300 shadow-md rounded-lg p-4 bg-white"
-           >
-           <h2 className="text-lg font-semibold text-gray-800 mb-2">Dr. 
-            {doctor.name}
-           </h2>
-           <p className="text-sm text-gray-600 mb-1">
-            <strong>Specialization:</strong> {doctor.specialization}
-           </p>
-           <p className="text-sm text-gray-600 mb-1">
-            <strong>Experience:</strong> {doctor.experience} years
-           </p>
-           <p className="text-sm text-gray-600 mb-1">
-            <strong>Fees:</strong> ₹{doctor.fees}
-           </p>
-           <p className="text-sm text-gray-600 mb-1">
-            <strong>Availability:</strong> {doctor.availability}
-          </p>
-          <button
-            onClick={() => onHandleappointment(doctor)}
-            className="mt-3 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition"
-          >
-            Take Appointment
-          </button>
-         </div>
-           ))}
-          </div>
-          ) : (
-         <div className="flex justify-center"><p className="text-md text-red-500">
-          No doctors found for the specified specialization.
-         </p></div>
-          )}
-        </div>
-        </div>
+    <ToastContainer position="top-right" autoClose={3000} />
+    </div>
         
-        <ToastContainer position="top-right" autoClose={3000} />
+      
         </>
 
         

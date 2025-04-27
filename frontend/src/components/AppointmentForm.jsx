@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
+import PatientNavbar from './PatientNavbar';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
@@ -136,6 +137,7 @@ const AppointmentForm = () => {
   return (
     <>
   <div className="book-appointment">
+      <PatientNavbar userId={id} isShow={true}/>
       <div className="text-xl italic flex justify-center">
       <span className='text-3xl mt-5'>Book Appointment</span>
       </div>

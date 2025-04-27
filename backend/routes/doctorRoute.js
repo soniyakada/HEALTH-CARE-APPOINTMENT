@@ -134,25 +134,53 @@ const redisClient = require("../utils/redis.js")
   const cacheKey = `notifications:${userId}`;
 
   try {
+     // 1. Try to fetch from Redis cache
+     const cachedNotifications = await redisClient.get(cacheKey);
+     if (cachedNotifications) {
+       return res.status(200).json({ notifications: JSON.parse(cachedNotifications), source: 'cache' });
+     }
 
-    // 1. Try to fetch from Redis cache
-    const cachedNotifications = await redisClient.get(cacheKey);
-    if (cachedNotifications) {
-      return res.status(200).json({ notifications: JSON.parse(cachedNotifications), source: 'cache' });
-    }
-    // 2. Fetch from MongoDB if not in cache
+   // 2. Fetch from MongoDB if not in cache
     const notifications = await Notification.find({ patient: userId }).sort({ date: -1 });
-   
-   
+    const unreadnotifcaitons = await Notification.find({ patient: userId ,status:"read" });
+    console.log("..............unread",unreadnotifcaitons.length)
+    const countOfNotification = unreadnotifcaitons.length;
     // 3. Cache the result with expiry (e.g., 10 minutes = 600s)
-    await redisClient.setEx(cacheKey, 600, JSON.stringify(notifications));
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(notifications,countOfNotification));
+    console.log("---------------all notifications",notifications);
 
-    
-    res.status(200).json({ notifications });
+    res.status(200).json({ notifications ,countOfNotification});
   } catch (error) {
     console.error('Error fetching notifications:', error);
     res.status(500).json({ error: 'Failed to fetch notifications' });
   }
    });
+
+
+   router.put('/notifications/mark-all-read', async (req, res) => {
+    const { userId } = req.body;  // userId body se lena (PUT request body hoti hai)
+    const cacheKey = `notifications:${userId}`; // same key jo tum GET notifications me use karte ho
+  
+    try {
+      // Update all notifications where patient is userId and status is "unread"
+      const result = await Notification.updateMany(
+        { patient: userId, status: "unread" },
+        { $set: { status: "read" } }
+      );
+  
+      console.log("Notifications updated:", result.modifiedCount);
+      // 2. Invalidate the cache
+      await redisClient.del(cacheKey);
+  
+      res.status(200).json({ message: "All notifications marked as read", updatedCount: result.modifiedCount });
+    } catch (error) {
+      console.error('Error marking notifications as read:', error);
+      res.status(500).json({ error: 'Failed to mark notifications as read' });
+    }
+  });
+  
+
+
+
 
 module.exports = router;
