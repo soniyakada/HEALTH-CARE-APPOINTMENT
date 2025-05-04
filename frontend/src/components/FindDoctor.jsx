@@ -97,7 +97,7 @@ function FindDoctor(){
           No doctors found for the specified specialization.
          </p></div>
           )}
-            </div>
+         </div>
            
     </>
   )
