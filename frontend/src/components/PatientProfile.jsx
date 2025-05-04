@@ -94,7 +94,7 @@ const navigate = useNavigate();
         < h1 className='text-md text-white'>Schedule appointments, track your health metrics, and communicate with<br></br>
            doctors - all in one place.</h1>
            <div className='mt-2'>
-           <span className='bg-white p-3 rounded-md'> Book Appointments</span>
+           <span className='bg-white p-3 rounded-md cursor-pointer' onClick={()=>{navigate(`/book/${userId}`)}}> Book Appointments</span>
            </div>
            
            

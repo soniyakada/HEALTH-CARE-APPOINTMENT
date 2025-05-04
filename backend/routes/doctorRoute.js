@@ -179,6 +179,18 @@ const redisClient = require("../utils/redis.js")
       res.status(500).json({ error: 'Failed to mark notifications as read' });
     }
   });
+
+
+  router.get('/allDoctor', authenticate ,async(req,res)=>{
+    try {
+      const doctors = await User.find({ role: 'doctor'});
+      res.json(doctors);
+      
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+      res.status(500).json({ message: 'Server error. Could not fetch doctors.' });
+    }
+  })
   
 
 

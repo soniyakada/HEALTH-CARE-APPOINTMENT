@@ -73,11 +73,10 @@ function PatientNavbar({userId , isShow}){
         <>
         <div className="flex justify-center items-center bg-white" style={{gap:isShow ? '350px' :"65rem"}}>
         <div><img src={logo} className='h-16'></img></div>
-        {isShow && <div className="flex justify-center items-center gap-5">
+        {isShow && <div className="flex justify-center items-center gap-10">
             <Link to={`/profile/${userId}`}><h3>Home</h3></Link>
             <Link to={`/appointments/${userId}`}><h3>appointments</h3></Link>
             <Link to={`/notifications/${userId}`}><h3>Notifcation</h3></Link>
-            <Link to="/signup"><h3>Doctor</h3></Link>
         </div> }
         
         <div className="flex justify-center items-center gap-5">

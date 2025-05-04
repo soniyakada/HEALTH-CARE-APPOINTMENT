@@ -12,6 +12,7 @@ import AppointmentsPage from "./components/AppointmentsPage"
 import NotFound from "./components/NotFound"
 import FindDoctor from "./components/FindDoctor"
 import MedicalRecords from "./components/MedicalRecords"
+import Book from "./components/Book"
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
    <Route path="/appointments/:userId" element={<AppointmentsPage />} />
    <Route path="/medical-records/:userId" element={<MedicalRecords />} />
    <Route path = "/findDoctor/:userId" element={<FindDoctor/>}/>
+   <Route path = "/book/:userId" element={<Book/>}/>
    {/* Catch-All Route for Invalid URLs */}
    <Route path="*" element={<NotFound />} />
    </Routes>
