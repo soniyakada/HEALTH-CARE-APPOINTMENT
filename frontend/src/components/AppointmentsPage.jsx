@@ -16,21 +16,6 @@ const AppointmentsPage = () => {
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
-useEffect(() => {
-  if (userId) {
-    socket.emit("join", userId);
-  }
-
-  socket.on("receive_notification", ({ message }) => {
-    toast.info(message); // or push a toast/notification
-  });
-
-  return () => {
-    socket.off("receive_notification");
-  };
-}, [userId]);
-
  useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -110,7 +95,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

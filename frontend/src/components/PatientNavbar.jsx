@@ -3,7 +3,11 @@ import logo from '../assets/logo.webp'
 import {Link} from 'react-router-dom'
 import axios from 'axios';
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { ToastContainer, toast } from 'react-toastify';
 const API_URL = import.meta.env.VITE_API_URL;
+import io from 'socket.io-client';
+// connect to your backend socket server
+const socket = io(`${API_URL}`); // or wherever your backend is hosted
 
 
 function PatientNavbar({userId , isShow}){
@@ -27,16 +31,31 @@ function PatientNavbar({userId , isShow}){
                  Authorization: `Bearer ${token}`, // Attach token in the header
                },
              });
-             console.log(response.data);
-             setCount(response.data.countOfNotification);
+             console.log("::::::",response.data)
+             setCount(response.data.notifications.countOfNotification);
              } catch (error) {
              console.error('Error fetching notifications:', error);
             }
           };
-     
+
           useEffect(()=>{
-           getCount();
+            getCount();
           },[userId])
+     
+
+          useEffect(() => {
+            if (userId) {
+              socket.emit("join", userId);
+            }
+            socket.on("receive_notification", ({ message }) => {
+              toast.info(message); // or push a toast/notification
+             
+            });
+          
+            return () => {
+              socket.off("receive_notification");
+            };
+          }, [userId]);
 
           // 👉 Bell icon click handler
         const handleBellClick = async () => {
@@ -75,6 +94,7 @@ function PatientNavbar({userId , isShow}){
         <Link to="/signin" onClick={onHandleLogout}><h3>Logout</h3></Link>
         </div>
         </div>
+              <ToastContainer position="top-right" autoClose={3000} />
         </>
     )
 }

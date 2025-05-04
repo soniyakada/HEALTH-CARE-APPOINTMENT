@@ -4,31 +4,15 @@ import axios from 'axios';
 import loader from "../../src/assets/loader.gif"
 import { useParams } from 'react-router-dom';
 import "./Notification.css"
+import PatientNavbar from './PatientNavbar';
 const API_URL = import.meta.env.VITE_API_URL;
-import io from 'socket.io-client';
-import { ToastContainer, toast } from 'react-toastify';
-// connect to your backend socket server
-const socket = io(`${API_URL}`); // or wherever your backend is hosted
+
 
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (userId) {
-      socket.emit("join", userId);
-    }
-  
-    socket.on("receive_notification", ({ message }) => {
-      toast.info(message); // or push a toast/notification
-    });
-  
-    return () => {
-      socket.off("receive_notification");
-    };
-  }, [userId]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -41,7 +25,8 @@ const Notifications = () => {
             Authorization: `Bearer ${token}`, // Attach token in the header
           },
         });
-        setNotifications(response.data.notifications);
+        setNotifications(response.data.notifications.notifications);
+        console.log("/////",response.data.notifications.notifications)
         setLoading(false)
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -51,6 +36,7 @@ const Notifications = () => {
 
     fetchNotifications();
   }, [userId]);
+
 
 
   if (loading) {
@@ -63,9 +49,9 @@ const Notifications = () => {
   
   return (
     <div className="patient-notification">
-
+        <PatientNavbar userId={userId} isShow={true}/>
       <div className='flex justify-center items-center text-4xl'><span className='mt-5 italic'>Notifications</span></div>
-      {notifications.length > 0 ? (
+      {notifications?.length > 0 ? (
         <div className="space-y-4 mt-5 p-5">
           {notifications.map((notification) => (
             <div
@@ -88,7 +74,7 @@ const Notifications = () => {
       ) : (
         <p className="text-gray-500">No notifications.</p>
       )}
-      <ToastContainer position="top-right" autoClose={3000} />
+
     </div>
 
   );

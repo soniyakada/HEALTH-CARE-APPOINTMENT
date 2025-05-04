@@ -4,31 +4,14 @@ import PatientNavbar from './PatientNavbar';
 import { useParams } from 'react-router-dom';
 import loader from "../assets/loader.gif"
 import "./Appointment.css"
-import { ToastContainer, toast } from 'react-toastify';
 const API_URL = import.meta.env.VITE_API_URL;
-import io from 'socket.io-client';
-// connect to your backend socket server
-const socket = io(`${API_URL}`); // or wherever your backend is hosted
+
 
 
 function MedicalRecords(){
    const { userId } = useParams(); // Get the userId from the URL params
    const [pastAppointments, setPastAppointments] = useState([]);
    const [loading, setLoading] = useState(true);
-
-   useEffect(() => {
-     if (userId) {
-       socket.emit("join", userId);
-     }
-   
-     socket.on("receive_notification", ({ message }) => {
-       toast.info(message); // or push a toast/notification
-     });
-   
-     return () => {
-       socket.off("receive_notification");
-     };
-   }, [userId]);
 
     useEffect(() => {
        const fetchAppointments = async () => {

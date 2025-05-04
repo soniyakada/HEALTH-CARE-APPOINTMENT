@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
 import logo from "../assets/logo.webp"
 const API_URL = import.meta.env.VITE_API_URL;
-import io from 'socket.io-client';
 import PatientNavbar from './PatientNavbar';
-// connect to your backend socket server
-const socket = io(`${API_URL}`); // or wherever your backend is hosted
+
 
 
 const PatientProfile = ({ userId }) => {
@@ -19,20 +16,6 @@ const [filteredDoctors, setFilteredDoctors] = useState([]);
 const navigate = useNavigate();
 
 
-
-useEffect(() => {
-  if (userId) {
-    socket.emit("join", userId);
-  }
-
-  socket.on("receive_notification", ({ message }) => {
-    toast.info(message);  // or push a toast/notification
-  });
-
-  return () => {
-    socket.off("receive_notification");
-  };
-}, [userId]);
 
   const onHandleappointment=(doctor)=>{
     console.log("doctorname",doctor.name)
@@ -155,7 +138,7 @@ useEffect(() => {
         </div>
       </div>
     </footer>
-    <ToastContainer position="top-right" autoClose={3000} />
+ 
     </div>
         
       
