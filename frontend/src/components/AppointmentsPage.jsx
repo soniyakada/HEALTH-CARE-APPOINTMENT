@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PatientNavbar from './PatientNavbar';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import loader from "../assets/loader.gif"
@@ -15,30 +16,7 @@ const AppointmentsPage = () => {
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
-useEffect(() => {
-  if (userId) {
-    socket.emit("join", userId);
-  }
-
-  socket.on("receive_notification", ({ message }) => {
-    toast.info(message); // or push a toast/notification
-  });
-
-  return () => {
-    socket.off("receive_notification");
-  };
-}, [userId]);
-const onHandleLogout = async()=>{
-    try {
-       await axios.post(`${API_URL}/logout/${userId}`);
-    } catch (error) {
-      console.log("Error");
-    }
-  }
-
-
-  useEffect(() => {
+ useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const res = await axios.get(`${API_URL}/token/${userId}`);
@@ -73,6 +51,7 @@ const onHandleLogout = async()=>{
 
   return (
     <div className="patient-appointment-page">
+       <PatientNavbar userId={userId} isShow={true}/>
       <div className="">
         <div>
           {/* Heading */}
@@ -114,42 +93,8 @@ const onHandleLogout = async()=>{
               <p className="text-gray-500">No upcoming appointments.</p>
             )}
           </div>
-
-          {/* Past Appointments */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 p-5 italic">Past Appointments</h3>
-            {pastAppointments.length > 0 ? (
-              <div className="space-y-4 p-5">
-                {pastAppointments.map((appointment) => (
-                  <div
-                    key={appointment._id}
-                    className="flex items-center justify-between bg-gray-100 p-4 rounded-lg shadow-md border border-gray-300"
-                  >
-                    <div>
-                      <p className="text-sm text-gray-700">
-                        <strong>Doctor:</strong> {appointment.doctor?.name}
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        <strong>Date:</strong>{' '}
-                        {new Date(appointment.date).toLocaleDateString()}
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        <strong>Time Slot:</strong> {appointment.timeSlot}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-gray-700 font-medium">Past</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No past appointments.</p>
-            )}
-          </div>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
