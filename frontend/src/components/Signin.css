@@ -1,7 +1,7 @@
 .main{
     height: 100vh;
     width: 230vh;
-    background-color: rgb(245, 242, 247);
+    /* background-color: rgb(245, 242, 247); */
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -13,7 +13,7 @@
 
 .header{
     /* position: fixed; */
-    background-color: rgb(235, 222, 244);
+    /* background-color: rgb(235, 222, 244); */
     /* top: 0;
     left: 0; */
     width: 100%;
@@ -38,16 +38,13 @@
 .inner {
     height: 80vh;
     width: 200vh;
-    background-color: rgb(235, 222, 244);
+    /* background-color: rgb(235, 222, 244); */
     border-radius: 3rem;
     margin-top: 2rem; /* Add margin to avoid overlap with the fixed header */
     display: flex;
    
    
 
-}
-.signin{
-    background-color: #E8F4E8;
 }
 
 .signinbutton:hover {
