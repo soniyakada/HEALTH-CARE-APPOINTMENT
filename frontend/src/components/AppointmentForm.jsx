@@ -1,194 +1,197 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
-import PatientNavbar from './PatientNavbar';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import Swal from 'sweetalert2';
-import { ToastContainer, toast } from 'react-toastify';
-import "./Form.css"
-import io from 'socket.io-client';
-// connect to your backend socket server
-const socket = io("http://localhost:3000"); // or wherever your backend is hosted
+import { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import PatientNavbar from "./PatientNavbar";
+import axios from "axios";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import Swal from "sweetalert2";
+import "./Form.css";
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 const AppointmentForm = () => {
-  const { id } = useParams(); 
-  const [date, setDate] = useState(new Date());
+  const { id } = useParams();
   const location = useLocation();
-  const [doctor, setDoctor] = useState(location.state?.doctor|| '');
-  const [timeSlot, setTimeSlot] = useState('');
-  const [patient, setPatient] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  
-  
+  const [date, setDate] = useState(new Date());
+  const [doctor, setDoctor] = useState(location.state?.doctor || "");
+  const [timeSlot, setTimeSlot] = useState("");
+  const [patient, setPatient] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
   useEffect(() => {
     if (doctor) {
-       setDoctor(doctor)
+      setDoctor(doctor);
     }
   }, [doctor]);
-
-  console.log("patient id----",id);
-      console.log("Doctor id----",doctor._id);
-  // console.log("-----",doctorName);
-  // useEffect(() => {
-  //   // Fetch the list of doctors from the backend
-  //   const fetchDoctors = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:3000/api/doctors');
-  //       setDoctors(response.data.doctors);
-  //     } catch (err) {
-  //       setError('Failed to fetch doctors');
-  //     }
-  //   };
-  //   fetchDoctors();
-  // }, []);
-
-  
-  useEffect(() => {
-    if (id) {
-      socket.emit("join", id);
-    }
-  
-    socket.on("receive_notification", ({ message }) => {
-      toast.info(message); // or push a toast/notification
-    });
-  
-    return () => {
-      socket.off("receive_notification");
-    };
-  }, [id]);
-  
-  const onHandleLogout = async()=>{
-      try {
-         await axios.post(`${API_URL}/logout/${userId}`);
-      } catch (error) {
-        console.log("Error");
-      }
-    }
-  
 
   useEffect(() => {
     const fetchPatient = async () => {
       try {
         const res = await axios.get(`${API_URL}/token/${id}`);
-  
-        // Extract the token from the response
         const token = res.data.token;
-        const response = await axios.get(`${API_URL}/patients/${id}`,{
+
+        const response = await axios.get(`${API_URL}/patients/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Attach token in the header
-          }});
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         setPatient(response.data.patient);
       } catch (err) {
-        setError('Failed to fetch patient details');
+        setError("Failed to fetch patient details", err.message);
       }
     };
 
     fetchPatient();
   }, [id]);
 
-  console.log(patient)
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!date || !timeSlot || !doctor) {
-      setError('Please fill in all fields');
+      setError("all fields needs to be filled");
       return;
     }
 
     try {
-      console.log("patient id----",id);
-      console.log("Doctor id----",doctor._id);
       const res = await axios.get(`${API_URL}/token/${id}`);
-  
-      // Extract the token from the response
       const token = res.data.token;
-      const response = await axios.post(`${API_URL}/appointment`, {
-        patient: id, // Replace with the actual logged-in user ID
-        doctor:doctor._id,
-        date,
-        timeSlot,
-      },{
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach token in the header
-        }});
-     console.log(response)
-         // Trigger SweetAlert for success
-    Swal.fire({
-      icon: 'success',
-      title: 'Appointment Booked!',
-      text: 'Your appointment has been successfully booked.',
-      timer: 2000,
-      showConfirmButton: false,
-    });
 
-    setMessage('');
-    setError('');
+      await axios.post(
+        `${API_URL}/appointment`,
+        {
+          patient: id,
+          doctor: doctor._id,
+          date,
+          timeSlot,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Appointment Booked!",
+        text: "Your appointment has been successfully booked.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setMessage("");
+      setError("");
     } catch (err) {
-      setError('Failed to book appointment');
+      setError("Failed to book appointment", err.message);
     }
   };
 
   return (
     <>
-  <div className="book-appointment">
-      <PatientNavbar userId={id} isShow={true}/>
-      <div className="text-xl italic flex justify-center">
-      <span className='text-3xl mt-5'>Book Appointment</span>
-      </div>
+      <div className="book-appointment min-h-screen bg-blue-400">
+        <PatientNavbar userId={id} isShow={true} />
 
-      {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-      {message && <p className="text-green-500 text-center mt-2">{message}</p>}
+        <div className="text-center mt-10 ">
+          <h2 className="text-3xl font-bold text-white">Book Appointment</h2>
+          <p className="text-sm text-white mt-2">
+            Schedule your visit with the selected doctor
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="mt-6 max-w-3xl mx-auto px-4">
-        <div className="flex justify-between gap-8">
-          <div>
-            <label className="block text-sm font-medium mb-2">Select Date</label>
-            <Calendar value={date} onChange={setDate} className="rounded-lg shadow-md" />
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        {message && (
+          <p className="text-green-500 text-center mt-4">{message}</p>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-10 bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Date
+              </label>
+              <Calendar
+                value={date}
+                onChange={setDate}
+                className="rounded-lg shadow-md border border-gray-300"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Time Slot
+              </label>
+              <select
+                onChange={(e) => setTimeSlot(e.target.value)}
+                value={timeSlot}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              >
+                <option value="">--Select Time Slot--</option>
+                <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
+                <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
+                <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
+              </select>
+            </div>
           </div>
 
-          <div className="flex flex-col">
-            <label className="block text-sm font-medium mb-2">Select Time Slot</label>
-            <select
-              onChange={(e) => setTimeSlot(e.target.value)}
-              value={timeSlot}
-              className="px-4 py-2 border rounded-lg shadow-md"
+          <div className="mt-8 flex flex-col md:flex-row gap-6 justify-between">
+            {/* Doctor Details */}
+            <div className="md:w-1/2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Doctor Details
+              </h3>
+              <div className="bg-gray-100 p-5 rounded-lg shadow-sm">
+                <p className="mb-1">
+                  <strong>Name:</strong> Dr. {doctor.name}
+                </p>
+                <p className="mb-1">
+                  <strong>Specialization:</strong> {doctor.specialization}
+                </p>
+                <p className="mb-1">
+                  <strong>Fees:</strong> ₹{doctor.fees}
+                </p>
+                <p className="mb-1">
+                  <strong>Availability:</strong> {doctor.availability}
+                </p>
+              </div>
+            </div>
+
+            {/* Patient Details */}
+            <div className="md:w-1/2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Patient Details
+              </h3>
+              <div className="bg-gray-100 p-5 rounded-lg shadow-sm">
+                <p className="mb-1">
+                  <strong>Name:</strong> {patient.name}
+                </p>
+                <p className="mb-1">
+                  <strong>Email:</strong> {patient.email}
+                </p>
+                <p className="mb-1">
+                  <strong>Age:</strong> {patient.age}
+                </p>
+                <p className="mb-1">
+                  <strong>Gender:</strong> {patient.gender}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10">
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
             >
-              <option value="">--Select Time Slot--</option>
-              <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-              <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-              <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-              <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
-            </select>
+              Book Appointment
+            </button>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold mb-4">Doctor Details</h3>
-          <div className="p-4 bg-white rounded-lg shadow-md">
-            <p><strong>Name:</strong> Dr. {doctor.name}</p>
-            <p><strong>Specialization:</strong> {doctor.specialization}</p>
-            <p><strong>Fees:</strong> ₹{doctor.fees}</p>
-            <p><strong>Availability:</strong> {doctor.availability}</p>
-          </div>
-        </div>
-
-        <div className="mt-6 text-center">
-          <button
-            type="submit"
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 shadow-md"
-          >
-            Book Appointment
-          </button>
-        </div>
-      </form>
-    </div>
-     <ToastContainer position="top-right" autoClose={3000} />
+        </form>
+      </div>
     </>
   );
 };
