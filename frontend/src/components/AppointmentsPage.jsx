@@ -1,26 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import PatientNavbar from './PatientNavbar';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import loader from "../assets/loader.gif"
-import "./Appointment.css"
-import { ToastContainer, toast } from 'react-toastify';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import PatientNavbar from "./PatientNavbar";
+import { ToastContainer } from "react-toastify";
+
+// Import MUI components
+import {
+  Box,
+  Typography,
+  Container,
+  Paper,
+  CircularProgress,
+  Grid,
+} from "@mui/material";
+import {
+  CalendarToday as CalendarIcon,
+  AccessTime as AccessTimeIcon,
+  EventAvailable as EventAvailableIcon,
+  LocalHospital as LocalHospitalIcon,
+} from "@mui/icons-material";
+
 const API_URL = import.meta.env.VITE_API_URL;
-import io from 'socket.io-client';
-// connect to your backend socket server
-const socket = io(`${API_URL}`); // or wherever your backend is hosted
 
 const AppointmentsPage = () => {
-  const { userId } = useParams(); // Get the userId from the URL params
+  const { userId } = useParams();
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
-  const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
+  useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const res = await axios.get(`${API_URL}/token/${userId}`);
         const token = res.data.token;
+
         const response = await axios.get(
           `${API_URL}/patients/${userId}/appointments`,
           {
@@ -29,11 +41,11 @@ const AppointmentsPage = () => {
             },
           }
         );
+
         setUpcomingAppointments(response.data.upcomingAppointments);
-        setPastAppointments(response.data.pastAppointments);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching appointments:', error);
+        console.error("Error fetching appointments:", error);
         setLoading(false);
       }
     };
@@ -41,61 +53,196 @@ const AppointmentsPage = () => {
     fetchAppointments();
   }, [userId]);
 
+  // Format date for better display
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   if (loading) {
     return (
-      <div className=" loader-page flex items-center justify-center w-full h-screen">
-        <img src={loader} alt="Loading..." />
+      <div className="flex items-center justify-center w-full h-screen">
+        <CircularProgress />
       </div>
     );
   }
 
   return (
-    <div className="patient-appointment-page">
-       <PatientNavbar userId={userId} isShow={true}/>
-      <div className="">
-        <div>
-          {/* Heading */}
-          <div className=" flex justify-center items-center mb-6">
-            <h2 className='mt-5 text-5xl italic'>Appointments</h2>
-          </div>
+    <>
+      <PatientNavbar userId={userId} isShow={true} />
+      <ToastContainer />
 
-          {/* Upcoming Appointments */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4 p-5 italic">Upcoming Appointments</h3>
-            {upcomingAppointments.length > 0 ? (
-              <div className="space-y-4 p-5">
-                {upcomingAppointments.map((appointment) => (
-                  <div
-                    key={appointment._id}
-                    className="flex items-center justify-between bg-blue-100 p-4 rounded-lg shadow-md border border-blue-300"
-                  >
-                    <div>
-                      <p className="text-sm text-gray-700">
-                        <strong>Doctor:</strong> {appointment.doctor?.name}
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        <strong>Date:</strong>{' '}
-                        {new Date(appointment.date).toLocaleDateString()}
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        <strong>Time Slot:</strong> {appointment.timeSlot}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-sm text-blue-700 font-medium">
-                        Upcoming
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">No upcoming appointments.</p>
-            )}
+      {/* Hero Section - simplified version */}
+      <Box
+        sx={{
+          backgroundColor: "rgb(96, 165, 250)",
+          color: "white",
+          py: 4,
+          mb: 4,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Typography
+            variant="h3"
+            fontWeight="bold"
+            gutterBottom
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <CalendarIcon fontSize="large" />
+            Appointments
+          </Typography>
+        </Container>
+      </Box>
+
+      {/* Appointments List Section */}
+      <Container maxWidth="lg" sx={{ mb: 6 }}>
+        <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
+          <EventAvailableIcon sx={{ mr: 1 }} color="primary" />
+          <Typography variant="h5" fontWeight="500">
+            Upcoming Appointments ({upcomingAppointments.length})
+          </Typography>
+        </Box>
+
+        {upcomingAppointments.length > 0 ? (
+          <div className="space-y-4">
+            {upcomingAppointments.map((appointment) => (
+              <Paper
+                key={appointment._id}
+                elevation={2}
+                sx={{
+                  p: 3,
+                  borderRadius: 2,
+                  border: "1px solid rgba(0,0,0,0.05)",
+                }}
+              >
+                <Grid container spacing={85}>
+                  {/* Doctor Info */}
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="h6" color="primary">
+                      Dr. {appointment.doctor?.name || "Doctor"}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      {appointment.doctor?.specialization || "Specialist"}
+                    </Typography>
+
+                    {appointment.symptoms && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mt: 2,
+                        }}
+                      >
+                        <LocalHospitalIcon color="primary" fontSize="small" />
+                        <Typography variant="body1">
+                          <strong>Symptoms:</strong> {appointment.symptoms}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Grid>
+
+                  {/* Appointment Date/Time/Status */}
+                  <Grid item xs={12} md={6}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%",
+                        justifyContent: "center",
+                        borderLeft: {
+                          xs: "none",
+                          md: "1px solid rgba(0,0,0,0.1)",
+                        },
+                        pl: { xs: 0, md: 3 },
+                        pt: { xs: 2, md: 0 },
+                        mt: { xs: 2, md: 0 },
+                        borderTop: {
+                          xs: "1px solid rgba(0,0,0,0.1)",
+                          md: "none",
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mb: 1,
+                        }}
+                      >
+                        <CalendarIcon color="primary" fontSize="small" />
+                        <Typography variant="body1">
+                          <strong>Date:</strong> {formatDate(appointment.date)}
+                        </Typography>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mb: 2,
+                        }}
+                      >
+                        <AccessTimeIcon color="primary" fontSize="small" />
+                        <Typography variant="body1">
+                          <strong>Time:</strong> {appointment.timeSlot}
+                        </Typography>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          p: 1,
+                          bgcolor: "rgba(96, 165, 250, 0.1)",
+                          borderRadius: 1,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <EventAvailableIcon color="primary" fontSize="small" />
+                        <Typography
+                          variant="body2"
+                          fontWeight="medium"
+                          color="primary"
+                        >
+                          Appointment Confirmed
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Paper>
+            ))}
           </div>
-        </div>
-      </div>
-    </div>
+        ) : (
+          <Paper
+            elevation={1}
+            sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: 2,
+            }}
+          >
+            <CalendarIcon
+              sx={{ fontSize: 50, opacity: 0.7, color: "primary.main", mb: 2 }}
+            />
+            <Typography variant="h6" gutterBottom>
+              No Upcoming Appointments
+            </Typography>
+            <Typography color="text.secondary">
+              You dont have any appointments scheduled.
+            </Typography>
+          </Paper>
+        )}
+      </Container>
+    </>
   );
 };
 
