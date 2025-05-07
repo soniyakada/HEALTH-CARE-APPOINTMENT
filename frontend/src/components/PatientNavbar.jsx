@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.webp";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { IoIosNotificationsOutline } from "react-icons/io";
+import { IoIosNotifications } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 const API_URL = import.meta.env.VITE_API_URL;
 import io from "socket.io-client";
 import PropTypes from "prop-types";
-// connect to your backend socket server
 const socket = io(`${API_URL}`); // or wherever your backend is hosted
 
 function PatientNavbar({ userId, isShow }) {
+  const navigate = useNavigate();
   const [count, setCount] = useState("");
+  const [profileName, setProfileName] = useState("");
   const onHandleLogout = async () => {
     try {
       await axios.post(`${API_URL}/logout/${userId}`);
@@ -19,6 +20,19 @@ function PatientNavbar({ userId, isShow }) {
       console.log("Error", error.message);
     }
   };
+
+  const getFullName = async () => {
+    try {
+      const { data } = await axios.get(`${API_URL}/profile/${userId}`);
+      setProfileName(data.user.name);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getFullName();
+  }, []);
 
   const getCount = async () => {
     try {
@@ -40,6 +54,14 @@ function PatientNavbar({ userId, isShow }) {
   useEffect(() => {
     getCount();
   }, [userId]);
+
+  const getInitials = (name) => {
+    if (!name) return "";
+    const parts = name.trim().split(" ");
+    const first = parts[0]?.charAt(0).toUpperCase() || "";
+    const last = parts[1]?.charAt(0).toUpperCase() || "";
+    return first + last;
+  };
 
   useEffect(() => {
     if (userId) {
@@ -70,13 +92,13 @@ function PatientNavbar({ userId, isShow }) {
     <>
       <div
         className="flex justify-center items-center bg-white"
-        style={{ gap: isShow ? "350px" : "65rem" }}
+        style={{ gap: isShow ? "350px" : "62rem" }}
       >
         <div>
           <img src={logo} className="h-16"></img>
         </div>
         {isShow && (
-          <div className="flex justify-center items-center gap-10">
+          <div className="flex justify-center items-center gap-10 font-bold text-gray-700">
             <Link to={`/profile/${userId}`}>
               <h3>Home</h3>
             </Link>
@@ -92,7 +114,10 @@ function PatientNavbar({ userId, isShow }) {
         <div className="flex justify-center items-center gap-5">
           <Link to={`/notifications/${userId}`}>
             <div className="relative cursor-pointer" onClick={handleBellClick}>
-              <IoIosNotificationsOutline className="h-7 w-7 text-blue-600" />
+              <IoIosNotifications
+                className="h-7 w-7"
+                style={{ color: "#DAA520" }}
+              />
               {count > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
                   {count}
@@ -100,9 +125,19 @@ function PatientNavbar({ userId, isShow }) {
               )}
             </div>
           </Link>
+
           <Link to="/signin" onClick={onHandleLogout}>
-            <h3>Logout</h3>
+            <h3 className="font-bold text-gray-700">Logout</h3>
           </Link>
+
+          <div
+            className="h-10 w-10 rounded-full bg-gray-300 text-black flex items-center justify-center text-md font-bold cursor-pointer"
+            onClick={() => {
+              navigate(`/profilepage/${userId}`);
+            }}
+          >
+            {getInitials(profileName)}
+          </div>
         </div>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
