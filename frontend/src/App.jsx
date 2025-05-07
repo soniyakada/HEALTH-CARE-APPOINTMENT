@@ -12,6 +12,7 @@ import NotFound from "./components/NotFound";
 import FindDoctor from "./components/FindDoctor";
 import MedicalRecords from "./components/MedicalRecords";
 import Book from "./components/Book";
+import ProfilePage from "./components/ProfilePage";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             />
             <Route path="/findDoctor/:userId" element={<FindDoctor />} />
             <Route path="/book/:userId" element={<Book />} />
+            <Route path="/profilepage/:userId" element={<ProfilePage />} />
             {/* Catch-All Route for Invalid URLs */}
             <Route path="*" element={<NotFound />} />
           </Routes>

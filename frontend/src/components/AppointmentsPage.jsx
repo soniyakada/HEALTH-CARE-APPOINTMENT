@@ -53,6 +53,8 @@ const AppointmentsPage = () => {
     fetchAppointments();
   }, [userId]);
 
+  console.log("90990990",upcomingAppointments);
+
   // Format date for better display
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -74,6 +76,7 @@ const AppointmentsPage = () => {
 
       {/* Hero Section - simplified version */}
       <Box
+        className="ring-4"
         sx={{
           backgroundColor: "rgb(96, 165, 250)",
           color: "white",
@@ -83,7 +86,7 @@ const AppointmentsPage = () => {
       >
         <Container maxWidth="lg">
           <Typography
-            variant="h3"
+            variant="h4"
             fontWeight="bold"
             gutterBottom
             sx={{
@@ -92,7 +95,7 @@ const AppointmentsPage = () => {
               gap: 1,
             }}
           >
-            <CalendarIcon fontSize="large" />
+            <CalendarIcon fontSize="Medium" />
             Appointments
           </Typography>
         </Container>

@@ -1,11 +1,13 @@
 // Notifications.jsx
 import  { useState, useEffect } from 'react';
 import axios from 'axios';
-import loader from "../../src/assets/loader.gif";
 import { useParams } from 'react-router-dom';
 import { Bell } from "lucide-react"; // Import Bell icon from lucide-react
 import PatientNavbar from './PatientNavbar';
 const API_URL = import.meta.env.VITE_API_URL;
+import {
+  CircularProgress,
+ } from "@mui/material";
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params
@@ -40,7 +42,7 @@ const Notifications = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
-        <img src={loader} alt="Loading..." />
+       <CircularProgress/>
       </div>
     );
   }
@@ -50,14 +52,10 @@ const Notifications = () => {
       <PatientNavbar userId={userId} isShow={true}/>
       
       {/* Notification Header with Bell Icon */}
-      <div className='flex justify-between items-center text-4xl bg-blue-400 px-7 py-5'>
-        <span className='font-bold text-white'> <div className="relative">
-          <Bell size={28} className="text-white" />
-          
-        </div>Notifications</span>
-       
-      </div>
-      
+      <div className="flex items-center gap-3 text-4xl bg-blue-400 p-9 ring-4  ">
+  <Bell size={30} className="text-white" />
+  <span className="font-bold text-white">Notification</span>
+</div>
       {notifications?.length > 0 ? (
         <div className="space-y-4 mt-5 p-5">
           {notifications.map((notification) => (
