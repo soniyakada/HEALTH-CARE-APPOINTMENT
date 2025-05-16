@@ -1,14 +1,16 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const redisClient = require('../utils/redis.js');
-require('dotenv').config(); 
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
+import redisClient from '../utils/redis.js';
+import dotenv from 'dotenv';
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY; 
+dotenv.config();
 
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const router = express.Router();
+
 
 // Sign-Up API
 router.post('/register', async (req, res) => {
@@ -178,4 +180,4 @@ router.post('/logout/:userId', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

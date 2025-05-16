@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the schema for notifications
 const notificationSchema = new mongoose.Schema({
@@ -9,4 +9,4 @@ const notificationSchema = new mongoose.Schema({
 });
 
 // Create and export the Notification model
-module.exports = mongoose.model('Notification', notificationSchema);
+export default mongoose.model('Notification', notificationSchema);

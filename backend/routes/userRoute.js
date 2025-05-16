@@ -1,10 +1,11 @@
-const express = require("express");
+import express from "express";
+import User from "../models/User.js"; // Adjust the path as needed
+import Appointment from "../models/appointment.js";
+import authenticate from "../middleware/authenticate.js";
+import redisClient from "../utils/redis.js";
+import Review from "../models/review.js";
+
 const router = express.Router();
-const User = require("../models/User"); // Adjust the path as needed
-const Appointment = require("../models/appointment");
-const authenticate = require("../middleware/authenticate.js");
-const redisClient = require("../utils/redis.js");
-const appointment = require("../models/appointment");
 
 router.get("/profile/:id", async (req, res) => {
   const userId = req.params.id;
@@ -253,4 +254,57 @@ router.get("/patients/:id/appointments", authenticate, async (req, res) => {
   }
 });
 
-module.exports = router;
+//naya route reedis ke liye
+router.post('/reviews',authenticate,async(req,res)=>{
+  try {
+    
+    const { userId, rating, review, doctorId } = req.body;
+     // Create and save review
+    const newReview = new Review({
+      reviewer: userId,
+      doctor: doctorId,
+      rating,
+      comment: review,
+      createdAt: new Date()
+    });
+     await newReview.save();
+       // Push review id to doctor's reviewsReceived
+    await User.findByIdAndUpdate(doctorId, {
+      $push: { reviewsReceived: newReview._id }
+    });
+   
+    // Push review id to user's reviewsGiven
+    await User.findByIdAndUpdate(userId, {
+      $push: { reviewsGiven: newReview._id }
+    });
+     
+    res.status(201).json({ message: 'Review saved successfully', review: newReview });
+  }  catch (error) {
+    console.error('Error saving review:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.get('/reviews/:doctorId', async (req, res) => {
+  const doctorId = req.params.doctorId;
+
+  try {
+    const totalReview = await Review.find({ doctor: doctorId })
+      .populate('reviewer', 'name email'); // optional, if you want to show who reviewed
+
+    res.status(200).json({
+      success: true,
+      reviews: totalReview
+    });
+    
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch reviews'
+    });
+  }
+});
+
+
+export default router;

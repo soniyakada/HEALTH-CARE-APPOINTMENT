@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Define the schema
 const appointmentSchema = new mongoose.Schema({
@@ -10,4 +10,4 @@ const appointmentSchema = new mongoose.Schema({
 });
 
 // Check if the model is already compiled
-module.exports = mongoose.models.Appointment || mongoose.model('Appointment', appointmentSchema);
+export default  mongoose.models.Appointment || mongoose.model('Appointment', appointmentSchema);
