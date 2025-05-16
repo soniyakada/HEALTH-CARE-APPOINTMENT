@@ -1,10 +1,12 @@
-const express = require('express');
-const User = require('../models/User'); //Assuming your schema is in models/User.js
-const Appointment = require('../models/appointment.js'); //Ensure you have the Appointment model imported
-const Notification = require('../models/notification.js')
+import express from 'express';
+import User from '../models/User.js'; // Assuming your schema is in models/User.js
+import Appointment from '../models/appointment.js'; // Ensure you have the Appointment model imported
+import Notification from '../models/notification.js';
+import authenticate from "../middleware/authenticate.js";
+import redisClient from "../utils/redis.js";
+
 const router = express.Router();
-const authenticate = require("../middleware/authenticate.js")
-const redisClient = require("../utils/redis.js")
+
 
     // Search bar doctor {Patient use} [invalidate] 
     router.get('/doctors/specialization/:specialization', authenticate, async (req, res) => {
@@ -196,4 +198,4 @@ const redisClient = require("../utils/redis.js")
 
 
 
-module.exports = router;
+export default  router;

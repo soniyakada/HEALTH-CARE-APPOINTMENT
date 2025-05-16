@@ -1,13 +1,16 @@
-const express = require("express");
+import dotenv from 'dotenv';
+dotenv.config(); // This should be at the very top
+
+import express from 'express';
+import http from 'http';
+import connectDB from './config.js/db.js';
+import cors from 'cors';
+import authRoutes from './routes/authRoute.js';
+import userRoute from './routes/userRoute.js';
+import doctorRoute from './routes/doctorRoute.js';
+import { Server } from 'socket.io';
+
 const app = express();
-const http = require("http");
-const connectDB = require("./config.js/db");
-const cors = require("cors");
-const authRoutes = require("./routes/authRoute");
-const userRoute = require("./routes/userRoute");
-const doctorRoute = require("./routes/doctorRoute");
-const { Server } = require("socket.io");
-require('dotenv').config(); // This should be at the very top
 const PORT = process.env.PORT; 
 
 const server = http.createServer(app);

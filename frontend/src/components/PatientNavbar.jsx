@@ -34,14 +34,15 @@ function PatientNavbar({ userId, isShow }) {
     getFullName();
   }, []);
 
+useEffect(() => {
   const getCount = async () => {
     try {
       const res = await axios.get(`${API_URL}/token/${userId}`);
       const token = res.data.token;
       const response = await axios.get(`${API_URL}/notifications`, {
-        params: { userId }, // Pass userId as a query parameter
+        params: { userId },
         headers: {
-          Authorization: `Bearer ${token}`, // Attach token in the header
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log("::::::", response.data);
@@ -51,9 +52,16 @@ function PatientNavbar({ userId, isShow }) {
     }
   };
 
-  useEffect(() => {
-    getCount();
-  }, [userId]);
+  // Initial fetch
+  getCount();
+
+  // Run every 40 seconds
+  const interval = setInterval(getCount, 4000); // 40000 ms = 40 sec
+
+  // Cleanup on unmount or userId change
+  return () => clearInterval(interval);
+}, [userId]);
+
 
   const getInitials = (name) => {
     if (!name) return "";

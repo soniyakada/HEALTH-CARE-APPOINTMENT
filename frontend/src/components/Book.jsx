@@ -16,6 +16,12 @@ import {
   Chip,
   Divider,
   Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Rating,
   Stack,
   CircularProgress,
   Alert,
@@ -38,12 +44,70 @@ function Book() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [openReview, setOpenReview] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState(null); 
+  const [getreviews, setGetReviews] = useState([]);
+  const [reviewsMap, setReviewsMap] = useState({});
+
+
+
+// handleOpenReview ko doctor parameter leke update kijiye:
+const handleOpenReview = (doctor) => {
+  setSelectedDoctor(doctor);
+  setOpenReview(true);
+};
+ const handleCloseReview = () => {
+  setOpenReview(false);
+  setRating(0);
+  setReview("");
+  setSelectedDoctor(null);
+};
+console.log("selected doctore",selectedDoctor);
+const doctorId = selectedDoctor ? selectedDoctor._id : null;
+console.log("Yashhhhhhhhhhhhhhh",doctorId)
+  const handleSubmitReview = async() => {
+     const res = await axios.get(`${API_URL}/token/${userId}`);
+     // Extract the token from the response
+      const token = res.data.token;
+     const dataLao = await axios.post(
+  `${API_URL}/reviews`,
+  { userId,
+    rating,
+    review,
+    doctorId
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+      );
+      console.log("[][][][[[][[",dataLao);
+       alert("Review submitted successfully");
+    handleCloseReview();
+  };
   const navigate = useNavigate();
 
   const onHandleappointment = (doctor) => {
     console.log("doctorname", doctor.name);
     navigate(`/appointment/${userId}`, { state: { doctor } });
   };
+
+
+const fetchReviews = async (doctorId) => {
+  try {
+    const response = await axios.get(`${API_URL}/reviews/${doctorId}`);
+    setReviewsMap((prev) => ({
+      ...prev,
+      [doctorId]: response.data.reviews,
+    }));
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
 
   const handleDoctor = async () => {
     try {
@@ -72,6 +136,12 @@ function Book() {
     handleDoctor();
   }, [userId]);
 
+  useEffect(() => {
+  doctors.forEach((doc) => fetchReviews(doc._id));
+}, [doctors]);
+
+
+
   // Function to get avatar background color based on doctor name
   const getAvatarColor = (name) => {
     const colors = [
@@ -89,12 +159,19 @@ function Book() {
     return colors[charCode % colors.length];
   };
 
-  // Get random rating for demonstration
-  const getRandomRating = () => {
-    return (Math.floor(Math.random() * 10) + 35) / 10; // Random rating between 3.5 and 5.0
-  };
+ const calculateAverageRating = (reviews) => {
+  if (!reviews || reviews.length === 0) return 0;
+
+  const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+  // console.log("......total 111",total);
+  const average = total / reviews.length;
+
+ console.log("0000000000-0090909808098979",average)
+  return average.toFixed(1); // Round to 1 decimal place, e.g., 4.3
+};
 
   return (
+    
     <>
       <PatientNavbar userId={userId} isShow={true} />
 
@@ -237,127 +314,86 @@ function Book() {
             </Alert>
           ) : doctors.length > 0 ? (
             <Grid container spacing={3}>
-              {doctors.map((doctor) => (
-                <Grid item xs={12} sm={6} md={4} key={doctor.id}>
-                  <Card
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      transition: "all 0.3s",
-                      "&:hover": {
-                        transform: "translateY(-8px)",
-                        boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-                      },
-                      borderRadius: 2,
-                      overflow: "hidden",
-                    }}
-                  >
-                    <CardHeader
-                      avatar={
-                        <Avatar
-                          sx={{
-                            bgcolor: getAvatarColor(doctor.name),
-                            width: 56,
-                            height: 56,
-                          }}
-                          alt={`Dr. ${doctor.name}`}
-                        >
-                          {doctor.name.charAt(0)}
-                        </Avatar>
-                      }
-                      title={
-                        <Typography variant="h6">Dr. {doctor.name}</Typography>
-                      }
-                      subheader={
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            flexWrap: "wrap",
-                            gap: 1,
-                            mt: 0.5,
-                          }}
-                        >
-                          <Chip
-                            label={doctor.specialization}
-                            color="primary"
-                            size="small"
-                            variant="outlined"
-                          />
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              ml: "auto",
-                            }}
-                          >
-                            <StarIcon sx={{ color: "#FFB400", fontSize: 18 }} />
-                            <Typography variant="body2" sx={{ ml: 0.5 }}>
-                              {getRandomRating().toFixed(1)}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      }
-                    />
+              {doctors.map((doctor) => {
+  const doctorReviews = reviewsMap[doctor._id] || [];
+  const avgRating = calculateAverageRating(doctorReviews); 
 
-                    <CardContent sx={{ pt: 0, pb: 1, flexGrow: 1 }}>
-                      <Divider sx={{ my: 2 }} />
-                      <Stack spacing={1.5}>
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <AccessTimeIcon color="primary" fontSize="small" />
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>Experience:</strong> {doctor.experience}{" "}
-                            years
-                          </Typography>
-                        </Box>
+  return (
+    <Grid item xs={12} sm={6} md={4} key={doctor._id}>
+      <Card
+        sx={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          transition: "all 0.3s",
+          "&:hover": {
+            transform: "translateY(-8px)",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+          },
+          borderRadius: 2,
+          overflow: "hidden",
+        }}
+      >
+        <CardHeader
+          avatar={
+            <Avatar
+              sx={{
+                bgcolor: getAvatarColor(doctor.name),
+                width: 56,
+                height: 56,
+              }}
+              alt={`Dr. ${doctor.name}`}
+            >
+              {doctor.name.charAt(0)}
+            </Avatar>
+          }
+          title={
+            <Typography variant="h6">Dr. {doctor.name}</Typography>
+          }
+          subheader={
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 1,
+                mt: 0.5,
+              }}
+            >
+              <Chip
+                label={doctor.specialization}
+                color="primary"
+                size="small"
+                variant="outlined"
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  ml: "auto",
+                }}
+              
+              >
+                <StarIcon  sx={{ color: "#FFB400", fontSize: 18 }}/>
+                {avgRating}
+              </Box>
+            </Box>
+          }
+        />
 
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <MonetizationOnIcon
-                            color="primary"
-                            fontSize="small"
-                          />
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>Consultation Fee:</strong> ₹{doctor.fees}
-                          </Typography>
-                        </Box>
+        <CardContent sx={{ pt: 0 }}>
+          {/* Additional info about doctor (optional) */}
+        </CardContent>
 
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <EventAvailableIcon
-                            color="primary"
-                            fontSize="small"
-                          />
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>Availability:</strong> {doctor.availability}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                    </CardContent>
+        <CardActions>
+          <Button onClick={() => onHandleappointment(doctor)}>Book Appointment</Button>
+            <Button onClick={() => handleOpenReview(doctor)}>Give Review</Button>
+        </CardActions>
+      </Card>
+    </Grid>
+  );
+})}
 
-                    <CardActions sx={{ p: 2, pt: 0 }}>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => onHandleappointment(doctor)}
-                        startIcon={<EventAvailableIcon />}
-                        sx={{
-                          borderRadius: "8px",
-                          py: 1,
-                        }}
-                      >
-                        Book Appointment
-                      </Button>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
             </Grid>
           ) : (
             <Paper
@@ -395,7 +431,42 @@ function Book() {
             </Paper>
           )}
         </Box>
-      </Container>
+        </Container>
+        <Dialog open={openReview} onClose={handleCloseReview}>
+        <DialogTitle>
+        Give Review for Dr. {selectedDoctor ? selectedDoctor.name : ""}
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 1, mb: 2 }}>
+            <Typography component="legend">Rating</Typography>
+            <Rating
+              name="doctor-rating"
+              value={rating}
+              precision={0.5}
+              onChange={(event, newValue) => setRating(newValue)}
+            />
+          </Box>
+          <TextField
+            label="Write your review"
+            multiline
+            rows={4}
+            fullWidth
+            variant="outlined"
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseReview}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmitReview}
+            disabled={rating === 0 || review.trim() === ""}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

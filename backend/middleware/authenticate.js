@@ -1,5 +1,7 @@
-const jwt = require("jsonwebtoken");
-require('dotenv').config(); 
+import dotenv from 'dotenv';
+dotenv.config();
+
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY; 
 
@@ -25,4 +27,4 @@ const authenticate= (req, res, next) => {
   });
 };
 
-module.exports = authenticate;
+export default  authenticate;
