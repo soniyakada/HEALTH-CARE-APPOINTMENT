@@ -4,6 +4,7 @@ import Appointment from "../models/appointment.js";
 import authenticate from "../middleware/authenticate.js";
 import redisClient from "../utils/redis.js";
 import Review from "../models/review.js";
+import mongoose from 'mongoose';
 
 const router = express.Router();
 
@@ -88,13 +89,15 @@ router.post("/appointment", authenticate, async (req, res) => {
         .json({ error: "The selected doctor is not valid" });
     }
 
-    // Create a new appointment
+
+       // Create a new appointment
     const newAppointment = new Appointment({
       patient,
       doctor,
       date,
       timeSlot,
     });
+
 
     // Save the appointment to the database
     await newAppointment.save();
@@ -123,6 +126,41 @@ router.post("/appointment", authenticate, async (req, res) => {
     res.status(500).json({ error: "Failed to book appointment" });
   }
 });
+
+
+// Get booked time slots for a specific doctor and date
+
+// Get booked time slots for a specific doctor and date
+router.get('/doctor/:doctorId/booked-slots', async (req, res) => {
+  const { doctorId } = req.params;
+  const { date } = req.query;
+
+  try {
+    if (!date) return res.status(400).json({ message: "Date is required" });
+
+    // Use UTC to avoid timezone mismatch
+    const startOfDay = new Date(date);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const bookedAppointments = await Appointment.find({
+      doctor: new mongoose.Types.ObjectId(doctorId),
+      date: { $gte: startOfDay, $lte: endOfDay },
+      status: 'approved',
+    });
+
+    const bookedSlots = bookedAppointments.map(app => app.timeSlot);
+    console.log("...bo",bookedSlots);
+    res.status(200).json({ bookedSlots });
+  } catch (error) {
+    console.error('Error fetching booked slots:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 
 //get Patient history [Doctor] [invalidate kra diya]
 router.get("/doctor/:id/patient-history", async (req, res) => {
