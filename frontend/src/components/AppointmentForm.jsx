@@ -14,15 +14,47 @@ const AppointmentForm = () => {
   const [date, setDate] = useState(new Date());
   const [doctor, setDoctor] = useState(location.state?.doctor || "");
   const [timeSlot, setTimeSlot] = useState("");
+  const [bookedSlots, setBookedSlots] = useState([]);
+
   const [patient, setPatient] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const availableTimeSlots = [
+    "9:00 AM - 10:00 AM",
+    "10:00 AM - 11:00 AM",
+    "2:00 PM - 3:00 PM",
+    "3:00 PM - 4:00 PM",
+  ];
+
+  console.log("........date selected....",date)
   useEffect(() => {
     if (doctor) {
       setDoctor(doctor);
     }
   }, [doctor]);
+
+  // Fetch booked slots whenever selectedDate or doctorId changes
+  useEffect(() => {
+    console.log("........ONE..............")
+    const fetchBookedSlots = async () => {
+      try {
+          console.log("........Two..............")
+        const formattedDate = date.toISOString().split("T")[0];
+        const response = await axios.get(
+          `${API_URL}/doctor/${doctor._id}/booked-slots?date=${formattedDate}`
+        );
+          console.log("........thhree..............")
+        setBookedSlots(response.data.bookedSlots);
+          console.log("........four..............")
+      } catch (error) {
+          console.log("........five..............")
+        console.error("Error fetching booked slots:", error);
+      }
+    };
+
+    fetchBookedSlots();
+  }, [date, doctor._id]);
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -130,10 +162,15 @@ const AppointmentForm = () => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
               >
                 <option value="">--Select Time Slot--</option>
-                <option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-                <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                <option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-                <option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
+                {availableTimeSlots.map((slot) => (
+                  <option
+                    key={slot}
+                    value={slot}
+                    disabled={bookedSlots.includes(slot)}
+                  >
+                    {slot} {bookedSlots.includes(slot) ? "(Booked)" : ""}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
