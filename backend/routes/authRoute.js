@@ -25,7 +25,6 @@ router.post('/register', async (req, res) => {
     address,
     specialization,
     experience,
-    availability,
     fees,
   } = req.body;
   
@@ -57,7 +56,6 @@ router.post('/register', async (req, res) => {
     } else if (role === 'doctor') {
       userData.specialization = specialization;
       userData.experience = experience;
-      userData.availability = availability;
       userData.fees = fees;
     }
 

@@ -51,7 +51,7 @@ const Signup = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [address, setAddress] = useState("");
   const [specialization, setSpecialization] = useState("");
-  const [availability, setAvailability] = useState("");
+  const [experience, setExperience] = useState("");
   const [fees, setFees] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -134,8 +134,8 @@ const Signup = () => {
         hasError = true;
       }
       
-      if (!availability.trim()) {
-        setAvailabilityError("Availability is required");
+      if (!experience.trim()) {
+        setAvailabilityError("Experience is required");
         hasError = true;
       }
       
@@ -161,7 +161,7 @@ const Signup = () => {
       dateOfBirth: role === "patient" ? dateOfBirth : undefined,
       address,
       specialization: role === "doctor" ? specialization : undefined,
-      availability: role === "doctor" ? availability : undefined,
+      experience: role === "doctor" ? experience : undefined,
       fees: role === "doctor" ? fees : undefined,
     };
 
@@ -179,7 +179,7 @@ const Signup = () => {
       setDateOfBirth("");
       setAddress("");
       setSpecialization("");
-      setAvailability("");
+      setExperience("");
       setFees("");
       
       // Redirect to signin after 2 seconds
@@ -522,9 +522,9 @@ const Signup = () => {
                           id="availability"
                           label="Availability"
                           name="availability"
-                          placeholder="e.g., Mon-Fri, 9AM-5PM"
-                          value={availability}
-                          onChange={(e) => setAvailability(e.target.value)}
+                          placeholder="e.g. 5 years"
+                          value={experience}
+                          onChange={(e) => setExperience(e.target.value)}
                           onFocus={() => setAvailabilityError("")}
                           error={!!availabilityError}
                           helperText={availabilityError}

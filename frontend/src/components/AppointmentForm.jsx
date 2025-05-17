@@ -192,7 +192,7 @@ const AppointmentForm = () => {
                   <strong>Fees:</strong> ₹{doctor.fees}
                 </p>
                 <p className="mb-1">
-                  <strong>Availability:</strong> {doctor.availability}
+                  <strong>Experience:</strong> {doctor.experience}
                 </p>
               </div>
             </div>

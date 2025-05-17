@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
     },
   },
 
-  availability: {
+  experience: {
     type: [String], // e.g., ["Monday 9-11 AM", "Tuesday 2-5 PM"]
     required: function () {
       return this.role === 'doctor';
