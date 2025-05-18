@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
+import PaymentsIcon from '@mui/icons-material/Payments';
+
 import {
   Box,
   Button,
@@ -28,7 +30,6 @@ import {
   LocalHospital as LocalHospitalIcon,
   MedicalServices as MedicalServicesIcon,
   EventAvailable as EventAvailableIcon,
-  MonetizationOn as MonetizationOnIcon,
   AccessTime as AccessTimeIcon,
 } from "@mui/icons-material";
 
@@ -313,14 +314,14 @@ function FindDoctor() {
                           <AccessTimeIcon color="primary" fontSize="small" />
                           <Typography variant="body2" color="text.secondary">
                             <strong>Experience:</strong> {doctor.experience}{" "}
-                            years
+                           
                           </Typography>
                         </Box>
 
                         <Box
                           sx={{ display: "flex", alignItems: "center", gap: 1 }}
                         >
-                          <MonetizationOnIcon
+                        <PaymentsIcon 
                             color="primary"
                             fontSize="small"
                           />
@@ -337,7 +338,7 @@ function FindDoctor() {
                             fontSize="small"
                           />
                           <Typography variant="body2" color="text.secondary">
-                            <strong>Availability:</strong> {doctor.availability}
+                            <strong>address:</strong> {doctor.address}
                           </Typography>
                         </Box>
                       </Stack>
