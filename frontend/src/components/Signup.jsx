@@ -219,13 +219,9 @@ const Signup = () => {
         email, 
         otp
       });
-       console.log("........ONE.........");
-      
-      // If OTP is verified, proceed to final registration
+     // If OTP is verified, proceed to final registration
       completeRegistration();
-      console.log("........Two.........");
     } catch (error) {
-      console.log("........three.........");
       console.error("Error verifying OTP:", error.response?.data || error.message);
       setOtpError(error.response?.data?.message || "Invalid OTP. Please try again.");
       setLoading(false);

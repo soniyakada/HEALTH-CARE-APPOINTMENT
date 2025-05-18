@@ -4,6 +4,7 @@ import Appointment from '../models/appointment.js'; // Ensure you have the Appoi
 import Notification from '../models/notification.js';
 import authenticate from "../middleware/authenticate.js";
 import redisClient from "../utils/redis.js";
+import { sendconfirmation } from './sendMails.js';
 
 const router = express.Router();
 
@@ -64,7 +65,7 @@ const router = express.Router();
         path: 'appointments',
         populate: {
           path: 'patient', // Populate patient details
-          select: 'name', // Only include the patient's name
+          select: 'name email', // Only include the patient's name
         },
       });
 
@@ -85,9 +86,9 @@ const router = express.Router();
 
   router.put('/appointment/:id/status', authenticate, async (req, res) => {
    try {
-    const { status } = req.body;  // "approved" or "rejected"
+    const { status ,email } = req.body;  // "approved" or "rejected"
     const appointment = await Appointment.findById(req.params.id).populate('patient doctor');
-
+    console.log("-----------emailssss ",email)
     if (!appointment) {
       return res.status(404).json({ error: 'Appointment not found' });
     }
@@ -111,7 +112,7 @@ const router = express.Router();
        await redisClient.del(patientAppointmentsCacheKey);
        await redisClient.del(patientNotificationsCacheKey);  //NEW: Invalidate notifications cache
   
-
+       sendconfirmation(email ,status , appointment.patient.name ,appointment.doctor.name);
         // Create a notification for the patient
         const notification = new Notification({
         patient: appointment.patient._id,
@@ -193,6 +194,9 @@ const router = express.Router();
       res.status(500).json({ message: 'Server error. Could not fetch doctors.' });
     }
   })
+
+
+  
   
 
 

@@ -38,14 +38,16 @@ const DoctorProfile = ({ userId }) => {
     fetchDoctor();
   }, [userId]);
 
-  const updateAppointmentStatus = async (id, status) => {
+
+  console.log(".docotros sfksjfkjakf",doctor)
+  const updateAppointmentStatus = async (id, status, email) => {
     try {
       const res = await axios.get(`${API_URL}/token/${userId}`);
       const token = res.data.token;
 
       const resData = await axios.put(
         `${API_URL}/appointment/${id}/status`,
-        { status },
+        { status , email },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -248,7 +250,7 @@ const DoctorProfile = ({ userId }) => {
             <h2 className="text-xl font-semibold text-gray-800 mb-6">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Appointments
             </h2>
-
+        
             {doctor && doctor.appointments ? (
               <div>
                 {filterAppointments(activeTab).length > 0 ? (
@@ -301,13 +303,13 @@ const DoctorProfile = ({ userId }) => {
                           {appointment.status === "pending" && (
                             <div className="mt-5 flex space-x-3">
                               <button
-                                onClick={() => updateAppointmentStatus(appointment._id, "approved")}
+                                onClick={() => updateAppointmentStatus(appointment._id, "approved",appointment.patient.email)}
                                 className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-600 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                               >
                                 Approve
                               </button>
                               <button
-                                onClick={() => updateAppointmentStatus(appointment._id, "rejected")}
+                                onClick={() => updateAppointmentStatus(appointment._id, "rejected" ,appointment.patient.email)}
                                 className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                               >
                                 Reject

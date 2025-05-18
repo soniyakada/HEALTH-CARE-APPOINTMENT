@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import redisClient from "../utils/redis.js";
 import dotenv from "dotenv";
 import Otp from "../models/otp.js";
-import { transporter } from "../utils/emailSetup.js";
+import { sendOTPEmail } from "./sendMails.js";
 
 dotenv.config();
 
@@ -16,25 +16,6 @@ const router = express.Router();
 // Generate 6-digit OTP
 const generateOTP = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
-
-// Send OTP Email
-const sendOTPEmail = async (email, otp) => {
-  const mailOptions = {
-    from: process.env.EMAIL_USER || "gmail",
-    to: email,
-    subject: "Your Verification Code for Healthcare App",
-    html: `
-      <div style="font-family: Arial;">
-        <h2>Email Verification</h2>
-        <p>Your OTP is:</p>
-        <h1>${otp}</h1>
-        <p>This code will expire in 10 minutes.</p>
-      </div>
-    `,
-  };
-
-  return transporter.sendMail(mailOptions);
-};
 
 // Generate OTP API
 router.post("/generate-otp", async (req, res) => {
