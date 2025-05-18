@@ -1,4 +1,4 @@
-import { transporter } from "../utils/emailSetup.js";
+import { transporter } from "../utils/nodemailer.js";
 
 export const sendconfirmation = async (email, status ,name ,doctorname) => {
   const mailOptions = {
