@@ -111,7 +111,7 @@ useEffect(() => {
               <h3>Home</h3>
             </Link>
             <Link to={`/appointments/${userId}`}>
-              <h3>appointments</h3>
+              <h3>Appointments</h3>
             </Link>
             <Link to={`/notifications/${userId}`}>
               <h3>Notifcation</h3>
