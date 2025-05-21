@@ -14,14 +14,11 @@ const authenticate= (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  console.log("On middleware",token)
-  console.log("chl rha hai ")
   // Verify the token
   jwt.verify(token,JWT_SECRET_KEY, (err, user) => {
     if (err) {
       return res.status(403).json({ message: "Invalid token" });
     }
-
     req.user = user; // Attach the decoded user info to the request
     next();
   });
