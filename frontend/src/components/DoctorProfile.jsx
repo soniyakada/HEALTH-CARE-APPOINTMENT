@@ -13,7 +13,7 @@ const DoctorProfile = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("pending");
-
+  console.log("---->",userId);
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
@@ -40,6 +40,7 @@ const DoctorProfile = ({ userId }) => {
 
 
   console.log(".docotros sfksjfkjakf",doctor)
+
   const updateAppointmentStatus = async (id, status, email) => {
     try {
       const res = await axios.get(`${API_URL}/token/${userId}`);
@@ -250,106 +251,123 @@ const DoctorProfile = ({ userId }) => {
             <h2 className="text-xl font-semibold text-gray-800 mb-6">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Appointments
             </h2>
-        
-            {doctor && doctor.appointments ? (
-              <div>
-                {filterAppointments(activeTab).length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filterAppointments(activeTab).map((appointment) => (
-                      <div
-                        key={appointment._id}
-                        className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
-                      >
-                        <div className={`px-4 py-2 ${
-                          appointment.status === "pending" ? "bg-yellow-50" : 
-                          appointment.status === "approved" ? "bg-green-50" : "bg-red-50"
-                        }`}>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            appointment.status === "pending" ? "bg-yellow-100 text-yellow-800" : 
-                            appointment.status === "approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                          }`}>
-                            {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-                          </span>
-                        </div>
-                        <div className="p-4">
-                          <div className="flex items-center mb-3">
-                            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                              {appointment.patient.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="ml-3">
-                              <h3 className="text-sm font-medium text-gray-900">{appointment.patient.name}</h3>
-                              <p className="text-xs text-gray-500">Patient ID: {appointment.patient._id.slice(-6)}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 mt-4">
-                            <div className="flex justify-between">
-                              <span className="text-xs text-gray-500">Date:</span>
-                              <span className="text-sm font-medium">
-                                {new Date(appointment.date).toLocaleDateString(undefined, {
-                                  weekday: 'short',
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric'
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-xs text-gray-500">Time:</span>
-                              <span className="text-sm font-medium">{appointment.timeSlot}</span>
-                            </div>
-                          </div>
-                          
-                          {appointment.status === "pending" && (
-                            <div className="mt-5 flex space-x-3">
-                              <button
-                                onClick={() => updateAppointmentStatus(appointment._id, "approved",appointment.patient.email)}
-                                className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-600 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => updateAppointmentStatus(appointment._id, "rejected" ,appointment.patient.email)}
-                                className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+        {doctor && doctor.appointments ? (
+  <div>
+    {filterAppointments(activeTab).length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filterAppointments(activeTab).map((appointment) => (
+          <div
+            key={appointment._id}
+            className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
+          >
+            <div className={`px-4 py-2 ${
+              appointment.status === "pending" ? "bg-yellow-50" : 
+              appointment.status === "approved" ? "bg-green-50" : "bg-red-50"
+            }`}>
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                appointment.status === "pending" ? "bg-yellow-100 text-yellow-800" : 
+                appointment.status === "approved" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+              }`}>
+                {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+              </span>
+            </div>
+            <div className="p-4">
+              <div className="flex items-center mb-3">
+                {appointment.patient && appointment.patient.name ? (
+                  <>
+                    <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                      {appointment.patient.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-gray-900">{appointment.patient.name}</h3>
+                      <p className="text-xs text-gray-500">
+                        Patient ID: {appointment.patient._id ? appointment.patient._id.slice(-6) : 'N/A'}
+                      </p>
+                    </div>
+                  </>
                 ) : (
-                  <div className="text-center py-8">
-                    <svg
-                      className="mx-auto h-12 w-12 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
-                    </svg>
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No {activeTab} appointments</h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {activeTab === "pending" 
-                        ? "You don't have any pending appointment requests to review." 
-                        : `You don't have any ${activeTab} appointments.`}
-                    </p>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-gray-900">Patient data unavailable</h3>
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No appointments found for this doctor.</p>
+                
+              <div className="space-y-2 mt-4">
+                <div className="flex justify-between">
+                  <span className="text-xs text-gray-500">Date:</span>
+                  <span className="text-sm font-medium">
+                    {appointment.date ? new Date(appointment.date).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    }) : 'N/A'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-xs text-gray-500">Time:</span>
+                  <span className="text-sm font-medium">{appointment.timeSlot || 'N/A'}</span>
+                </div>
               </div>
-            )}
+              
+              {appointment.status === "pending" && (
+                <div className="mt-5 flex space-x-3">
+                  <button
+                    onClick={() => updateAppointmentStatus(
+                      appointment._id, 
+                      "approved", 
+                      appointment.patient && appointment.patient.email ? appointment.patient.email : ''
+                    )}
+                    className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-600 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => updateAppointmentStatus(
+                      appointment._id, 
+                      "rejected",
+                      appointment.patient && appointment.patient.email ? appointment.patient.email : ''
+                    )}
+                    className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="text-center py-8">
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+          />
+        </svg>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">No {activeTab} appointments</h3>
+        <p className="mt-1 text-sm text-gray-500">
+          {activeTab === "pending" 
+            ? "You don't have any pending appointment requests to review." 
+            : `You don't have any ${activeTab} appointments.`}
+        </p>
+      </div>
+    )}
+  </div>
+) : (
+  <div className="text-center py-8">
+    <p className="text-gray-500">No appointments found for this doctor.</p>
+  </div>
+)}
           </div>
         </div>
       </div>
