@@ -210,7 +210,7 @@ const AppointmentForm = () => {
                   <strong>Email:</strong> {patient.email}
                 </p>
                 <p className="mb-1">
-                  <strong>Age:</strong> {patient.age}
+                  <strong>Address:</strong> {patient.address}
                 </p>
                 <p className="mb-1">
                   <strong>Gender:</strong> {patient.gender}
