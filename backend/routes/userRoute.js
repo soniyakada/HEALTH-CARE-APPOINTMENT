@@ -315,6 +315,9 @@ router.post('/reviews',authenticate,async(req,res)=>{
     await User.findByIdAndUpdate(userId, {
       $push: { reviewsGiven: newReview._id }
     });
+    
+    // Invalidate the Redis cache for that doctor
+    await redisClient.del(`reviews:${doctorId}`);
      
     res.status(201).json({ message: 'Review saved successfully', review: newReview });
   }  catch (error) {
@@ -325,14 +328,27 @@ router.post('/reviews',authenticate,async(req,res)=>{
 
 router.get('/reviews/:doctorId', async (req, res) => {
   const doctorId = req.params.doctorId;
+   const redisKey = `reviews:${doctorId}`;
 
   try {
+    // Check cache
+    const cachedReviews = await redisClient.get(redisKey);
+    if (cachedReviews) {
+      return res.status(200).json({
+        success: true,
+        reviews: JSON.parse(cachedReviews),
+        source: 'cache'
+      });
+    }
+    
+    // If not in cache, fetch from DB
     const totalReview = await Review.find({ doctor: doctorId })
       .populate('reviewer', 'name email'); // optional, if you want to show who reviewed
 
     res.status(200).json({
       success: true,
-      reviews: totalReview
+      reviews: totalReview,
+      source: 'database'
     });
     
   } catch (error) {

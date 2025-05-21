@@ -12,7 +12,6 @@ import { initSocket } from './utils/socket.js';
 
 const app = express();
 const PORT = process.env.PORT; 
-
 const server = http.createServer(app);
 
 app.use(express.json()); // Handles JSON data.
