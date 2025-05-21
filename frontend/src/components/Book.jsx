@@ -14,7 +14,6 @@ import {
   CardHeader,
   Avatar,
   Chip,
-  Divider,
   Paper,
   Dialog,
   DialogTitle,
@@ -22,16 +21,12 @@ import {
   DialogActions,
   TextField,
   Rating,
-  Stack,
   CircularProgress,
   Alert,
 } from "@mui/material";
 import {
   LocalHospital as LocalHospitalIcon,
   MedicalServices as MedicalServicesIcon,
-  EventAvailable as EventAvailableIcon,
-  MonetizationOn as MonetizationOnIcon,
-  AccessTime as AccessTimeIcon,
   Star as StarIcon,
   FilterList as FilterListIcon,
   Info as InfoIcon,
@@ -48,7 +43,6 @@ function Book() {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null); 
-  const [getreviews, setGetReviews] = useState([]);
   const [reviewsMap, setReviewsMap] = useState({});
 
 
@@ -64,14 +58,13 @@ const handleOpenReview = (doctor) => {
   setReview("");
   setSelectedDoctor(null);
 };
-console.log("selected doctore",selectedDoctor);
+
 const doctorId = selectedDoctor ? selectedDoctor._id : null;
-console.log("Yashhhhhhhhhhhhhhh",doctorId)
   const handleSubmitReview = async() => {
      const res = await axios.get(`${API_URL}/token/${userId}`);
      // Extract the token from the response
       const token = res.data.token;
-     const dataLao = await axios.post(
+     await axios.post(
   `${API_URL}/reviews`,
   { userId,
     rating,
@@ -84,8 +77,6 @@ console.log("Yashhhhhhhhhhhhhhh",doctorId)
     },
   }
       );
-      console.log("[][][][[[][[",dataLao);
-       alert("Review submitted successfully");
     handleCloseReview();
   };
   const navigate = useNavigate();
@@ -165,8 +156,6 @@ const fetchReviews = async (doctorId) => {
   const total = reviews.reduce((sum, review) => sum + review.rating, 0);
   // console.log("......total 111",total);
   const average = total / reviews.length;
-
- console.log("0000000000-0090909808098979",average)
   return average.toFixed(1); // Round to 1 decimal place, e.g., 4.3
 };
 

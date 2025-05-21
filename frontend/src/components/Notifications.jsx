@@ -5,9 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Bell } from "lucide-react"; // Import Bell icon from lucide-react
 import PatientNavbar from './PatientNavbar';
 const API_URL = import.meta.env.VITE_API_URL;
-import {
-  CircularProgress,
- } from "@mui/material";
+
 
 const Notifications = () => {
   const { userId } = useParams(); // Get the userId from the route params
@@ -39,14 +37,13 @@ const Notifications = () => {
     fetchNotifications();
   }, [userId]);
 
-  if (loading) {
+   if (loading) {
     return (
-      <div className="flex items-center justify-center w-full h-screen">
-       <CircularProgress/>
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
-  
   return (
     <div className="patient-notification">
       <PatientNavbar userId={userId} isShow={true}/>
