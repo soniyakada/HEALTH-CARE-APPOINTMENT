@@ -8,7 +8,6 @@ import {
   markAllNotificationsAsRead,
   getAllDoctors
 } from "../controllers/doctorController.js";
-import Medication from "../models/medication.js";
 
 const router = express.Router();
 

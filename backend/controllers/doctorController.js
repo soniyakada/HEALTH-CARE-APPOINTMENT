@@ -3,6 +3,8 @@ import Appointment from "../models/appointment.js";
 import Notification from "../models/notification.js";
 import redisClient from "../utils/redis.js";
 import { sendconfirmation } from "../routes/sendMails.js";
+import Medication from "../models/medication.js";
+
 
 // Search doctors by specialization
 export const searchDoctorsBySpecialization = async (req, res) => {
