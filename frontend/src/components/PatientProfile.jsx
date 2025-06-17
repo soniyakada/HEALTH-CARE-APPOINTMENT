@@ -1,9 +1,19 @@
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
+import { useState ,useEffect } from "react";
 
 const PatientProfile = ({ userId }) => {
+  const [error ,setError] = useState("");
+ 
   const navigate = useNavigate();
+
+   useEffect(() => {
+    if (!userId) {
+      setError("Something went wrong. User ID is missing.");
+    }
+  }, [userId]);
+
   const features = [
     {
       title: "Appointments",
@@ -47,6 +57,21 @@ const PatientProfile = ({ userId }) => {
       }
     }
   };
+
+ //Show error if userId is missing
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center">
+        <h1 className="text-2xl text-red-600 font-semibold mb-2">{error}</h1>
+        <button
+          onClick={() => navigate("/login")}
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>

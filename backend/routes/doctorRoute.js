@@ -6,7 +6,10 @@ import {
   updateAppointmentStatus,
   getNotifications,
   markAllNotificationsAsRead,
-  getAllDoctors
+  getAllDoctors,
+  addPrescription,
+  getPrescriptionsByPatient
+
 } from "../controllers/doctorController.js";
 
 const router = express.Router();
