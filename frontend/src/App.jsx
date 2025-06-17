@@ -13,6 +13,7 @@ import FindDoctor from "./components/FindDoctor";
 import MedicalRecords from "./components/MedicalRecords";
 import Book from "./components/Book";
 import ProfilePage from "./components/ProfilePage";
+import PatientPrescriptions from "./components/PatientPrescriptions.jsx";
 
 function App() {
   return (
@@ -45,6 +46,8 @@ function App() {
             <Route path="/findDoctor/:userId" element={<FindDoctor />} />
             <Route path="/book/:userId" element={<Book />} />
             <Route path="/profilepage/:userId" element={<ProfilePage />} />
+            <Route path="/patient/:patientId/prescriptions" element={<PatientPrescriptions />} />
+
             {/* Catch-All Route for Invalid URLs */}
             <Route path="*" element={<NotFound />} />
           </Routes>

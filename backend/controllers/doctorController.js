@@ -223,4 +223,29 @@ export const getAllDoctors = async (req, res) => {
     console.error("Error fetching doctors:", error);
     res.status(500).json({ message: "Server error. Could not fetch doctors." });
   }
+
+  
+};
+
+export const addPrescription = async (req, res) => {
+  try {
+    const { userId, patientId, medicines, notes } = req.body;
+    const doctorId = userId;
+    const newPrescription = new Medication({ doctorId, patientId, medicines, notes });
+    await newPrescription.save();
+    res.status(201).json({ message: 'Prescription saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+export const getPrescriptionsByPatient = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+    const prescriptions = await Medication.find({ patientId }).populate('doctorId', 'name');
+    res.status(200).json({ prescriptions });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

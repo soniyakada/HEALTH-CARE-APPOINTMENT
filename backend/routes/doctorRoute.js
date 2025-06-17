@@ -8,6 +8,7 @@ import {
   markAllNotificationsAsRead,
   getAllDoctors
 } from "../controllers/doctorController.js";
+import Medication from "../models/medication.js";
 
 const router = express.Router();
 
@@ -22,5 +23,9 @@ router.put("/appointment/:id/status", authenticate, updateAppointmentStatus);
 // Notification routes
 router.get("/notifications", getNotifications);
 router.put("/notifications/mark-all-read", markAllNotificationsAsRead);
+// Add prescription
+router.post('/postmedication', addPrescription);
 
+// Get prescriptions for a patient
+router.get('/prescription/:patientId', getPrescriptionsByPatient);
 export default router;

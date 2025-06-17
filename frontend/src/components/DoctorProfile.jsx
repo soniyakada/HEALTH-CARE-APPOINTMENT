@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
+import MedicationModal from "./MedicationModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const socket = io(`${API_URL}`);
@@ -12,7 +13,12 @@ const DoctorProfile = ({ userId }) => {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
+
   console.log("---->",userId);
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -38,6 +44,13 @@ const DoctorProfile = ({ userId }) => {
     fetchDoctor();
   }, [userId]);
 
+    const handleAddMedication = (userId, patientId) => {
+      console.log(".........userId....",userId);
+      console.log(".........patientid...",patientId);
+    setSelectedUserId(userId);
+    setSelectedPatientId(patientId);
+    setOpenModal(true);
+    };
 
   console.log(".docotros sfksjfkjakf",doctor)
 
@@ -90,6 +103,10 @@ const DoctorProfile = ({ userId }) => {
       setError("Failed to update appointment. Please try again.");
     }
   };
+
+
+
+
   const onHandleLogout = async () => {
     try {
       await axios.post(`${API_URL}/logout/${userId}`);
@@ -98,6 +115,8 @@ const DoctorProfile = ({ userId }) => {
       console.log("Error", error.message);
     }
   };
+
+
   const filterAppointments = (status) => {
     if (!doctor || !doctor.appointments) return [];
     return doctor.appointments.filter(appointment => 
@@ -283,6 +302,7 @@ const DoctorProfile = ({ userId }) => {
                       <p className="text-xs text-gray-500">
                         Patient ID: {appointment.patient._id ? appointment.patient._id.slice(-6) : 'N/A'}
                       </p>
+                      
                     </div>
                   </>
                 ) : (
@@ -334,6 +354,17 @@ const DoctorProfile = ({ userId }) => {
                   </button>
                 </div>
               )}
+
+              {/* Add Medication Button for Approved Appointments */}
+              {appointment.status === "approved" && (
+         <div className="mt-5">
+         <button
+           onClick={() => handleAddMedication(userId, appointment.patient._id)}
+           className="px-4 py-2 bg-blue-600 text-white rounded">
+           Prescribe Medicine
+         </button>
+         </div>
+              )}
             </div>
           </div>
         ))}
@@ -368,6 +399,15 @@ const DoctorProfile = ({ userId }) => {
     <p className="text-gray-500">No appointments found for this doctor.</p>
   </div>
 )}
+{/* Modal always rendered once outside the map */}
+<MedicationModal
+  open={openModal}
+  onClose={() => setOpenModal(false)}
+  userId={selectedUserId}
+  patientId={selectedPatientId}
+/>
+     
+
           </div>
         </div>
       </div>

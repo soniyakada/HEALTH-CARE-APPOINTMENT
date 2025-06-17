@@ -39,6 +39,9 @@ const PatientProfile = ({ userId }) => {
         navigate(`/findDoctor/${userId}`);
       } else if (feature.title === "Medical Records") {
         navigate(`/medical-records/${userId}`);
+        
+      }else if(feature.title === "Medications"){
+        navigate(`/patient/${userId}/prescriptions`)
       } else {
         navigate(feature.route);
       }
