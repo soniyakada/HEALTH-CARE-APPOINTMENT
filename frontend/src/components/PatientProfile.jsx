@@ -5,7 +5,6 @@ import { useState ,useEffect } from "react";
 
 const PatientProfile = ({ userId }) => {
   const [error ,setError] = useState("");
- 
   const navigate = useNavigate();
 
    useEffect(() => {
@@ -49,7 +48,6 @@ const PatientProfile = ({ userId }) => {
         navigate(`/findDoctor/${userId}`);
       } else if (feature.title === "Medical Records") {
         navigate(`/medical-records/${userId}`);
-        
       }else if(feature.title === "Medications"){
         navigate(`/patient/${userId}/prescriptions`)
       } else {
@@ -64,7 +62,7 @@ const PatientProfile = ({ userId }) => {
       <div className="flex flex-col items-center justify-center h-screen text-center">
         <h1 className="text-2xl text-red-600 font-semibold mb-2">{error}</h1>
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/signin")}
           className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Go to Login

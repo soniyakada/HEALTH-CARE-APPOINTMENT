@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
 import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 // Import MUI components
 import {
@@ -25,6 +26,14 @@ const AppointmentsPage = () => {
   const { userId } = useParams();
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error ,setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userId) {
+      setError("Something went wrong. User ID is missing.");
+    }
+  }, [userId]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -64,6 +73,21 @@ const AppointmentsPage = () => {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  //Show error if userId is missing
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center">
+        <h1 className="text-2xl text-red-600 font-semibold mb-2">{error}</h1>
+        <button
+          onClick={() => navigate("/signin")}
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Go to Login
+        </button>
       </div>
     );
   }

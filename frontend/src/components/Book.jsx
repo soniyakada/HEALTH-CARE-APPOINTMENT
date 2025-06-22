@@ -44,13 +44,20 @@ function Book() {
   const [review, setReview] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState(null); 
   const [reviewsMap, setReviewsMap] = useState({});
+  const [allreviews, setAllreviews] = useState([]);
 
 
 
 // handleOpenReview ko doctor parameter leke update kijiye:
-const handleOpenReview = (doctor) => {
+const handleOpenReview = async (doctor) => {
   setSelectedDoctor(doctor);
   setOpenReview(true);
+   try {
+    const response = await axios.get(`${API_URL}/reviews/${doctor._id}`);
+    setAllreviews(response.data.reviews);
+  } catch (error) {
+    console.error("Error fetching reviews for doctor:", error);
+  }
 };
  const handleCloseReview = () => {
   setOpenReview(false);
@@ -59,7 +66,13 @@ const handleOpenReview = (doctor) => {
   setSelectedDoctor(null);
 };
 
+
+console.log("-------------------slkfklsj",selectedDoctor)
+
 const doctorId = selectedDoctor ? selectedDoctor._id : null;
+
+
+
   const handleSubmitReview = async() => {
      const res = await axios.get(`${API_URL}/token/${userId}`);
      // Extract the token from the response
@@ -90,6 +103,7 @@ const doctorId = selectedDoctor ? selectedDoctor._id : null;
 const fetchReviews = async (doctorId) => {
   try {
     const response = await axios.get(`${API_URL}/reviews/${doctorId}`);
+    setAllreviews(response.data.reviews);
     setReviewsMap((prev) => ({
       ...prev,
       [doctorId]: response.data.reviews,
@@ -98,7 +112,7 @@ const fetchReviews = async (doctorId) => {
     setError(err.message);
   }
 };
-
+console.log("*********",allreviews)
 
   const handleDoctor = async () => {
     try {
@@ -131,7 +145,7 @@ const fetchReviews = async (doctorId) => {
   doctors.forEach((doc) => fetchReviews(doc._id));
 }, [doctors]);
 
-
+ console.log("--------------------------------->",reviewsMap)
 
   // Function to get avatar background color based on doctor name
   const getAvatarColor = (name) => {
@@ -425,26 +439,60 @@ const fetchReviews = async (doctorId) => {
         <DialogTitle>
         Give Review for Dr. {selectedDoctor ? selectedDoctor.name : ""}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 1, mb: 2 }}>
-            <Typography component="legend">Rating</Typography>
-            <Rating
-              name="doctor-rating"
-              value={rating}
-              precision={0.5}
-              onChange={(event, newValue) => setRating(newValue)}
-            />
-          </Box>
-          <TextField
-            label="Write your review"
-            multiline
-            rows={4}
-            fullWidth
-            variant="outlined"
-            value={review}
-            onChange={(e) => setReview(e.target.value)}
-          />
-        </DialogContent>
+       <DialogContent>
+  {/* Review Input Section */}
+  <Box sx={{ mt: 1, mb: 2 }}>
+    <Typography component="legend">Rating</Typography>
+    <Rating
+      name="doctor-rating"
+      value={rating}
+      precision={0.5}
+      onChange={(event, newValue) => setRating(newValue)}
+    />
+  </Box>
+  <TextField
+    label="Write your review"
+    multiline
+    rows={4}
+    fullWidth
+    variant="outlined"
+    value={review}
+    onChange={(e) => setReview(e.target.value)}
+  />
+
+  {/* Divider */}
+  <Box sx={{ mt: 3, mb: 1 }}>
+    <Typography variant="h6">Previous Reviews</Typography>
+  </Box>
+
+{allreviews.length === 0 ? (
+  <Typography variant="body2" color="text.secondary">
+    No comments yet.
+  </Typography>
+) : (
+  allreviews.map((r, index) => (
+    <Box
+      key={index}
+      sx={{
+        my: 1,
+        p: 2,
+        border: '1px solid #ddd',
+        borderRadius: 2,
+        backgroundColor: '#f9f9f9',
+      }}
+    >
+      <Typography variant="subtitle2" fontWeight="bold">
+        {r.reviewer?.name || "Anonymous"}
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+        {new Date(r.createdAt).toLocaleString()}
+      </Typography>
+      <Typography variant="body1">{r.comment}</Typography>
+    </Box>
+  ))
+)}
+</DialogContent>
+
         <DialogActions>
           <Button onClick={handleCloseReview}>Cancel</Button>
           <Button

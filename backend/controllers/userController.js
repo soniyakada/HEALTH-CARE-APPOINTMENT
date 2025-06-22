@@ -334,7 +334,7 @@ export const getDoctorReviews = async (req, res) => {
     // If not in cache, fetch from DB
     const totalReview = await Review.find({ doctor: doctorId })
       .populate('reviewer', 'name email'); // optional, if you want to show who reviewed
-
+      
     res.status(200).json({
       success: true,
       reviews: totalReview,

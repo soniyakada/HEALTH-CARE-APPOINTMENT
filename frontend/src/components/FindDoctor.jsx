@@ -236,7 +236,9 @@ function FindDoctor() {
           </Stack>
 
           {error && (
-            <Alert severity="info" sx={{ mt: 2 }}>
+            <Alert severity="info" sx={{ mt: 
+            
+            2 }}>
               {error}
             </Alert>
           )}

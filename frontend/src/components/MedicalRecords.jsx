@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams , useNavigate} from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
+
 import {
   Box,
   Typography,
@@ -16,12 +17,20 @@ import {
   Assignment as AssignmentIcon,
 } from "@mui/icons-material";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 function MedicalRecords() {
   const { userId } = useParams();
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error ,setError] = useState("");
+  const [apiError ,setApiError] = useState("");
+  const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    if (!userId) {
+      setError("Something went wrong. User ID is missing.");
+    }
+  }, [userId]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -40,11 +49,15 @@ function MedicalRecords() {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching appointments:", error);
+        setApiError(
+        error?.response?.data?.message ||
+        error?.message ||
+        "Error fetching appointments."
+      );
         setLoading(false);
       }
     };
-
-    fetchAppointments();
+   fetchAppointments();
   }, [userId]);
 
   const formatDate = (dateString) => {
@@ -56,6 +69,20 @@ function MedicalRecords() {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  //Show error if userId is missing
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen text-center">
+        <h1 className="text-2xl text-red-600 font-semibold mb-2">{error}</h1>
+        <button
+          onClick={() => navigate("/signin")}
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Go to Login
+        </button>
       </div>
     );
   }
@@ -95,6 +122,13 @@ function MedicalRecords() {
             Past Appointments ({pastAppointments.length})
           </Typography>
         </Box>
+
+         {/* Error Alert Box */}
+         {apiError && (
+           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
+             <strong className="font-semibold">Oops!</strong> {apiError}
+           </div>
+         )}
 
         {pastAppointments.length > 0 ? (
           <div className="space-y-4">
