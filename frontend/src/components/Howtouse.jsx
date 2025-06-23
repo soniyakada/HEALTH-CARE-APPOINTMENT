@@ -1,15 +1,12 @@
 import Navbar from "./Navbar";
-import { 
- 
-  Typography, 
- 
-} from "@mui/material";
+
+//. Doctors will be verified by admin.
 export default function HowToUse() {
   const steps = [
     {
       step: '1. Sign Up',
       title: 'Create Your Account',
-      description: 'Register as a patient or doctor by filling out your basic information. Doctors will be verified by admin.',
+      description: 'Register as a patient or doctor by filling out your basic information.',
       icon: '📝',
     },
     {
@@ -59,19 +56,13 @@ export default function HowToUse() {
   return (
     <>
     <Navbar/>
-    <div className="min-h-screen px-4 py-10 text-gray-800" style={{  background: "linear-gradient(to right, #e8f5fe, #ffffff)"}}>
+    <div className="min-h-screen px-10 py-10 text-gray-800" style={{  background: "linear-gradient(to right, #e8f5fe, #ffffff)"}}>
     
-      <Typography 
-         variant="h3" 
-         fontWeight="bold" 
-         color="primary" 
-         gutterBottom
-         className="text-center"
-                    >
-        How to Use Our Healthcare Platform
-         </Typography>
+      <h2 className="text-4xl font-bold text-center text-indigo-700 mb-12">
+        How to use Our Healthcare+ 
+      </h2>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {steps.map((step, idx) => (
           <div
             key={idx}

@@ -57,7 +57,7 @@ export default function Services() {
          background: "linear-gradient(to right, #e8f5fe, #ffffff)",
     }}>
       <h2 className="text-4xl font-bold text-center text-indigo-700 mb-12">
-        Our Medical Services
+        Our Healthcare+ Services
       </h2>
 
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -67,7 +67,7 @@ export default function Services() {
             className="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition duration-300"
           >
             <div className="text-5xl mb-4">{service.icon}</div>
-            <h3 className="text-xl font-semibold mb-2 text-indigo-800">
+            <h3 className="text-xl font-semibold mb-2 " style={{color:"#1976d2"}}>
               {service.title}
             </h3>
             <p className="text-gray-600">{service.description}</p>
