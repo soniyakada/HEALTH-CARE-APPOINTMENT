@@ -17,7 +17,7 @@ function PatientNavbar({ userId, isShow }) {
     try {
       await axios.post(`${API_URL}/logout/${userId}`);
     } catch (error) {
-      console.log("Error", error.message);
+      console.error("Error", error.message);
     }
   };
 
@@ -45,7 +45,6 @@ useEffect(() => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("::::::", response.data);
       setCount(response.data.notifications.countOfNotification);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -90,7 +89,6 @@ useEffect(() => {
       await axios.put(`${API_URL}/notifications/mark-all-read`, { userId });
       // Notifications marked as read successfully
       setCount(0); // Reset the count to 0
-      console.log("All notifications marked as read");
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     }

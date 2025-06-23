@@ -7,6 +7,7 @@ const appointmentSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   timeSlot: { type: String, required: true },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  createdAt: { type: Date, default: Date.now },
 });
 
 // Check if the model is already compiled

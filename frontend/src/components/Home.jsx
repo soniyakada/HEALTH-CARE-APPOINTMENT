@@ -115,7 +115,7 @@ function Home() {
         }}
       >
         <Container maxWidth="lg">
-          <Grid container alignItems="center" spacing={4}>
+          <Grid container alignItems="center" spacing={45}>
             <Grid item xs={12} md={8}>
               <Typography variant="h4" color="white" fontWeight="bold" gutterBottom>
                 Need Immediate Medical Attention?
@@ -154,7 +154,7 @@ function Home() {
                 </Typography>
                 <Divider sx={{ my: 2 }} />
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                  <Typography variant="body1">Monday - Friday</Typography>
+                  <Typography variant="body1">Mon - Fri</Typography>
                   <Typography variant="body1" fontWeight="bold">8:00 AM - 8:00 PM</Typography>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
@@ -163,7 +163,7 @@ function Home() {
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Typography variant="body1">Sunday</Typography>
-                  <Typography variant="body1" fontWeight="bold">10:00 AM - 4:00 PM</Typography>
+                  <Typography variant="body1" style={{marginLeft:"15px"}}fontWeight="bold">10:00 AM - 4:00 PM</Typography>
                 </Box>
               </Paper>
             </Grid>
@@ -179,7 +179,7 @@ function Home() {
                 <Divider sx={{ my: 2 }} />
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <strong>Emergency:</strong> (123) 456-7890
-                </Typography>
+                </Typography> 
                 <Typography variant="body1" sx={{ mb: 1 }}>
                   <strong>Appointment:</strong> (123) 456-7891
                 </Typography>

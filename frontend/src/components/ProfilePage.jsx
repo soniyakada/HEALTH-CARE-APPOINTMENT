@@ -14,7 +14,6 @@ function ProfilePage() {
       try {
         const { data } = await axios.get(`${API_URL}/profile/${userId}`);
         setUser(data.user);
-        console.log(":::::",user)
       } catch (error) {
         console.error("Error fetching profile:", error);
       }

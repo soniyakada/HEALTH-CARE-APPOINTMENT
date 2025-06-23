@@ -9,6 +9,7 @@ import userRoute from './routes/userRoute.js';
 import doctorRoute from './routes/doctorRoute.js';
 import { Server } from 'socket.io';
 import { initSocket } from './utils/socket.js';
+import helmet from 'helmet';
 
 const app = express();
 const PORT = process.env.PORT; 
@@ -17,6 +18,7 @@ const server = http.createServer(app);
 app.use(express.json()); // Handles JSON data.
 app.use(express.urlencoded({ extended: true })); //Use express.urlencoded() to parse data submitted via HTML forms.
 app.use(cors());
+app.use(helmet());
 
 const io = new Server(server, {
   cors: {
@@ -33,6 +35,10 @@ app.use(doctorRoute);
 
 //connect to mongodb
 connectDB();
+
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Debug log');
+}
 
 app.get("/", (req, res) => {
   res.send("Hello");

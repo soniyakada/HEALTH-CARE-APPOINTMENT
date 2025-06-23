@@ -66,9 +66,6 @@ const handleOpenReview = async (doctor) => {
   setSelectedDoctor(null);
 };
 
-
-console.log("-------------------slkfklsj",selectedDoctor)
-
 const doctorId = selectedDoctor ? selectedDoctor._id : null;
 
 
@@ -95,7 +92,6 @@ const doctorId = selectedDoctor ? selectedDoctor._id : null;
   const navigate = useNavigate();
 
   const onHandleappointment = (doctor) => {
-    console.log("doctorname", doctor.name);
     navigate(`/appointment/${userId}`, { state: { doctor } });
   };
 
@@ -112,7 +108,6 @@ const fetchReviews = async (doctorId) => {
     setError(err.message);
   }
 };
-console.log("*********",allreviews)
 
   const handleDoctor = async () => {
     try {
@@ -126,7 +121,6 @@ console.log("*********",allreviews)
           Authorization: `Bearer ${token}`, // Attach token in the header
         },
       });
-      console.log("..............f", response.data);
       setDoctors(response.data);
     } catch (error) {
       console.error("Error fetching doctors:", error);
@@ -145,7 +139,6 @@ console.log("*********",allreviews)
   doctors.forEach((doc) => fetchReviews(doc._id));
 }, [doctors]);
 
- console.log("--------------------------------->",reviewsMap)
 
   // Function to get avatar background color based on doctor name
   const getAvatarColor = (name) => {
@@ -168,7 +161,6 @@ console.log("*********",allreviews)
   if (!reviews || reviews.length === 0) return 0;
 
   const total = reviews.reduce((sum, review) => sum + review.rating, 0);
-  // console.log("......total 111",total);
   const average = total / reviews.length;
   return average.toFixed(1); // Round to 1 decimal place, e.g., 4.3
 };

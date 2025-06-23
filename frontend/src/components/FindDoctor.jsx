@@ -44,7 +44,6 @@ function FindDoctor() {
   const navigate = useNavigate();
 
   const onHandleappointment = (doctor) => {
-    console.log("doctorname", doctor.name);
     navigate(`/appointment/${userId}`, { state: { doctor } });
   };
 

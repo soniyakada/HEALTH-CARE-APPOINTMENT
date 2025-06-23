@@ -79,7 +79,6 @@ const Signin = () => {
         password,
       });
       const { user } = response.data;
-      console.log(user.id);
       navigate(`/profile/${user.id}`);
     } catch (error) {
       setMessage(error.response?.data?.message || "Login failed. Please check your credentials and try again.");
@@ -275,7 +274,7 @@ const Signin = () => {
               {/* Sign Up Link */}
               <Box sx={{ textAlign: "center", mt: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don't have an account?{" "}
+                  Do not have an account?{" "}
                   <Link href="/signup" variant="body2" sx={linkStyles}>
                     Sign Up
                   </Link>

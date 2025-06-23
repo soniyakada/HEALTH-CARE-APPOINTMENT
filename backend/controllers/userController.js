@@ -144,7 +144,6 @@ export const getBookedSlots = async (req, res) => {
     });
 
     const bookedSlots = bookedAppointments.map(app => app.timeSlot);
-    console.log("...bo", bookedSlots);
     res.status(200).json({ bookedSlots });
   } catch (error) {
     console.error('Error fetching booked slots:', error);
@@ -161,7 +160,6 @@ export const getPatientHistory = async (req, res) => {
     // Check cache first Patient history
     const cachedData = await redisClient.get(cacheKey);
     if (cachedData) {
-      console.log("patient-history tab redis ");
       return res
         .status(200)
         .json({ patientHistory: JSON.parse(cachedData), source: "cache" });
@@ -239,7 +237,6 @@ export const getPatientAppointments = async (req, res) => {
     // Check if cached in Redis
     const cachedAppointments = await redisClient.get(cacheKey);
     if (cachedAppointments) {
-      console.log("........chalu hai  ");
       return res.status(200).json(JSON.parse(cachedAppointments));
     }
 
@@ -253,12 +250,11 @@ export const getPatientAppointments = async (req, res) => {
     // Fetch all appointments for the patient
     const appointments = await Appointment.find({ patient: req.params.id })
       .populate("doctor", "name specialization") // Populate doctor details
-      .sort({ date: 1 }); // Sort by date (ascending)
+      .sort({ createdAt: -1 }); // Sort by date (ascending)
     
     const approveAppointments = appointments.filter(
       (appointment) => appointment.status === "approved"
     );
-    console.log("appointments saari", approveAppointments);
     const currentDate = new Date();
 
     // Separate appointments into upcoming and past

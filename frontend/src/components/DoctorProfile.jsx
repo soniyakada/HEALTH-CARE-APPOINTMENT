@@ -18,8 +18,6 @@ const DoctorProfile = ({ userId }) => {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-
-  console.log("---->",userId);
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
@@ -45,8 +43,6 @@ const DoctorProfile = ({ userId }) => {
   }, [userId]);
 
     const handleAddMedication = (userId, patientId) => {
-      console.log(".........userId....",userId);
-      console.log(".........patientid...",patientId);
     setSelectedUserId(userId);
     setSelectedPatientId(patientId);
     setOpenModal(true);
@@ -112,7 +108,7 @@ const DoctorProfile = ({ userId }) => {
       await axios.post(`${API_URL}/logout/${userId}`);
       navigate('/signin')
     } catch (error) {
-      console.log("Error", error.message);
+      console.error("Error", error.message);
     }
   };
 

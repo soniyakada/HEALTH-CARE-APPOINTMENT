@@ -61,8 +61,6 @@ const AppointmentsPage = () => {
     fetchAppointments();
   }, [userId]);
 
-  console.log("90990990",upcomingAppointments);
-
   // Format date for better display
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };

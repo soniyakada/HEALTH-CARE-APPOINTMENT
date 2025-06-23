@@ -36,7 +36,6 @@ const Notifications = () => {
         
         const notificationData = response.data.notifications.notifications;
         setNotifications(notificationData);
-        console.log("/////", notificationData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching notifications:', error);
