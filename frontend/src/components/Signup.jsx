@@ -390,7 +390,7 @@ const Signup = () => {
 
               <form onSubmit={handleSubmit}>
                 {activeStep === 0 && (
-                  <Grid container spacing={2}>
+                  <Grid container spacing={3}>
                     {/* Role Selection */}
                     <Grid item xs={12}>
                       <FormControl fullWidth>
@@ -404,7 +404,6 @@ const Signup = () => {
                         >
                           <MenuItem value="patient">Patient</MenuItem>
                           <MenuItem value="doctor">Doctor</MenuItem>
-                          <MenuItem value="admin">Admin</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
@@ -519,7 +518,7 @@ const Signup = () => {
                     </Grid>
 
                     {/* Address Field */}
-                    <Grid item xs={12}>
+                    <Grid item xs={1}>
                       <TextField
                         required
                         fullWidth
@@ -528,7 +527,7 @@ const Signup = () => {
                         name="address"
                         autoComplete="address"
                         multiline
-                        rows={2}
+                        rows={1}
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         onFocus={() => setAddressError("")}

@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import Appointment from "../models/appointment.js";
 import Notification from "../models/notification.js";
 import redisClient from "../utils/redis.js";
-import { sendconfirmation } from "../routes/sendMails.js";
+import { sendconfirmation ,sendPrescriptionEmail } from "../routes/sendMails.js";
 import Medication from "../models/medication.js";
 
 
@@ -235,6 +235,19 @@ export const addPrescription = async (req, res) => {
     const doctorId = userId;
     const newPrescription = new Medication({ doctorId, patientId, medicines, notes });
     await newPrescription.save();
+     // Fetch patient & doctor details
+    const patient = await User.findById(patientId);
+    const doctor = await User.findById(doctorId);
+
+    // Send email to patient
+    await sendPrescriptionEmail({
+      to: patient.email,
+      patientName: patient.name,
+      doctorName: doctor.name,
+      medicines,
+      notes,
+    });
+
     res.status(201).json({ message: 'Prescription saved successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });

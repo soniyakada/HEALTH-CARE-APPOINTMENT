@@ -1,4 +1,5 @@
 import  { useState } from 'react';
+import Swal from 'sweetalert2';
 import {
   Button,
   Dialog,
@@ -35,13 +36,22 @@ function MedicationModal({ open, onClose, patientId, userId }) {
         `${API_URL}/postmedication`,
         { userId, patientId, medicines, notes },
       );
-      alert('Prescription saved!');
+       
+    await Swal.fire({
+      icon: 'success',
+      title: 'Prescription Saved!',
+      text: 'The medication details have been successfully saved.',
+    });
       onClose();
       setMedicines([{ name: '', dosage: '', frequency: '', duration: '' }]);
       setNotes('');
     } catch (err) {
       console.error(err);
-      alert('Failed to save prescription');
+       Swal.fire({
+      icon: 'error',
+      title: 'Failed to Save',
+      text: 'There was an error while saving the prescription.',
+    });
     }
   };
 

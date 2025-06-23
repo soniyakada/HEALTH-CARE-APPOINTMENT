@@ -15,6 +15,7 @@ import {
   AccessTime, 
   Phone,
 } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
@@ -65,7 +66,9 @@ function Home() {
                   size="large" 
                   sx={{ px: 4, py: 1.5, borderRadius: 2 }}
                 >
-                  Our Services
+                 <Link to="/services" className="hover:text-indigo-600">
+                 Our Services
+                 </Link>
                 </Button>
               </Stack>
             </Grid>
@@ -184,7 +187,7 @@ function Home() {
                   <strong>Appointment:</strong> (123) 456-7891
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Email:</strong> info@medicalcare.com
+                  <strong>Email:</strong> healthcare.notify@gmail.com
                 </Typography>
               </Paper>
             </Grid>

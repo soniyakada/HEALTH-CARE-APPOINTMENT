@@ -1,4 +1,7 @@
 import { transporter } from "../utils/nodemailer.js";
+import dotenv from 'dotenv';
+dotenv.config(); // This should be at the very top
+
 
 export const sendconfirmation = async (email, status ,name ,doctorname) => {
   const mailOptions = {
@@ -36,4 +39,27 @@ export const sendOTPEmail = async (email, otp) => {
   };
 
   return transporter.sendMail(mailOptions);
+};
+
+export const sendPrescriptionEmail = async ({ to, patientName, doctorName, medicines, notes }) => {
+  const medList = medicines.map(
+    (med, idx) =>
+      `<li><strong>${idx + 1}.</strong> ${med.name} - ${med.dosage}, ${med.frequency} for ${med.duration}</li>`
+  ).join('');
+
+  const htmlContent = `
+    <h2>🩺 Prescription from ${doctorName}</h2>
+    <p>Dear ${patientName},</p>
+    <p>Here is your prescription:</p>
+    <ul>${medList}</ul>
+    <p><strong>Additional Notes:</strong> ${notes || 'N/A'}</p>
+    <p>Stay healthy!<br/>Your Healthcare Team</p>
+  `;
+
+  await transporter.sendMail({
+    from: `"Healthcare App" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: 'Your Digital Prescription',
+    html: htmlContent,
+  });
 };
