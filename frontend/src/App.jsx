@@ -15,6 +15,7 @@ import Book from "./components/Book";
 import ProfilePage from "./components/ProfilePage";
 import PatientPrescriptions from "./components/PatientPrescriptions.jsx";
 import Services from "./components/Service.jsx";
+import HowToUse from "./components/Howtouse.jsx";
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
             <Route path="/profilepage/:userId" element={<ProfilePage />} />
             <Route path="/patient/:patientId/prescriptions" element={<PatientPrescriptions />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/howtouse" element={<HowToUse />} />
 
 
             {/* Catch-All Route for Invalid URLs */}

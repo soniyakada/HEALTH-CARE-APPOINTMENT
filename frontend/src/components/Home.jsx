@@ -1,6 +1,7 @@
 import "./Home.css";
 import doctor from "../assets/doctor.jpg";
 import Navbar from "./Navbar";
+import {  useNavigate } from "react-router-dom";
 import { 
   Container, 
   Typography, 
@@ -15,9 +16,9 @@ import {
   AccessTime, 
   Phone,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
   return (
     <>
       <Navbar />
@@ -58,6 +59,7 @@ function Home() {
                   variant="contained" 
                   size="large" 
                   sx={{ px: 4, py: 1.5, borderRadius: 2 }}
+                   onClick={()=>{navigate('/howtouse')}}
                 >
                   Book Appointment
                 </Button>
@@ -65,10 +67,10 @@ function Home() {
                   variant="outlined" 
                   size="large" 
                   sx={{ px: 4, py: 1.5, borderRadius: 2 }}
+                  onClick={()=>{navigate('/services')}}
                 >
-                 <Link to="/services" className="hover:text-indigo-600">
                  Our Services
-                 </Link>
+                
                 </Button>
               </Stack>
             </Grid>
