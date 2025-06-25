@@ -98,26 +98,26 @@ useEffect(() => {
     <>
       <div
         className="flex justify-center items-center bg-white"
-        style={{ gap: isShow ? "350px" : "62rem" }}
+        style={{ gap: isShow ? "310px" : "62rem" }}
       >
         <div>
           <img src={logo} className="h-16"></img>
         </div>
         {isShow && (
-          <div className="flex justify-center items-center gap-10 font-bold text-gray-700">
+          <div className="flex justify-center items-center ml-24 gap-8 font-bold text-gray-700">
             <Link to={`/profile/${userId}`}>
               <h3>Home</h3>
             </Link>
             <Link to={`/appointments/${userId}`}>
               <h3>Appointments</h3>
             </Link>
-            <Link to={`/notifications/${userId}`}>
-              <h3>Notifcation</h3>
+            <Link to={`/patient/${userId}/prescriptions`}>
+              <h3>Medication</h3>
             </Link>
           </div>
         )}
 
-        <div className="flex justify-center items-center gap-5">
+        <div className="flex justify-center items-center gap-3">
           <Link to={`/notifications/${userId}`}>
             <div className="relative cursor-pointer" onClick={handleBellClick}>
               <IoIosNotifications

@@ -57,7 +57,7 @@ export default function Services() {
          background: "linear-gradient(to right, #e8f5fe, #ffffff)",
     }}>
       <h2 className="text-4xl font-bold text-center text-indigo-700 mb-12">
-        Our Healthcare+ Services
+        Our HealthCare+ Services
       </h2>
 
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
