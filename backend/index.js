@@ -15,9 +15,16 @@ const app = express();
 const PORT = process.env.PORT; 
 const server = http.createServer(app);
 
+// Simple CORS config (only allow your frontend)
+app.use(cors({
+  origin: process.env.FRONTEND_URL, 
+  credentials: true,
+  methods:['GET', 'POST', 'PUT','DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-type', 'Authorization']
+}));
+
 app.use(express.json()); // Handles JSON data.
 app.use(express.urlencoded({ extended: true })); //Use express.urlencoded() to parse data submitted via HTML forms.
-app.use(cors());
 app.use(helmet());
 
 const io = new Server(server, {
