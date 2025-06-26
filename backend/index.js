@@ -10,6 +10,9 @@ import doctorRoute from './routes/doctorRoute.js';
 import { Server } from 'socket.io';
 import { initSocket } from './utils/socket.js';
 import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 const app = express();
 const PORT = process.env.PORT; 
@@ -22,6 +25,11 @@ app.use(cors({
   methods:['GET', 'POST', 'PUT','DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-type', 'Authorization']
 }));
+
+
+// for __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(express.json()); // Handles JSON data.
 app.use(express.urlencoded({ extended: true })); //Use express.urlencoded() to parse data submitted via HTML forms.
@@ -53,6 +61,11 @@ app.get("/", (req, res) => {
 
 app.use((req, res, next) => {
   res.status(404).send('Sorry, the page you are looking for does not exist!');
+});
+
+// Serve frontend for any route not handled
+app.use('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 
