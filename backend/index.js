@@ -11,7 +11,7 @@ import { Server } from 'socket.io';
 import { initSocket } from './utils/socket.js';
 import helmet from 'helmet';
 import path from 'path';
-import { fileURLToPath } from 'url';
+
 
 
 const app = express();
@@ -27,9 +27,14 @@ app.use(cors({
 }));
 
 
-// for __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// React app ka static build serve karo
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Catch-all route for React Router
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 
 app.use(express.json()); // Handles JSON data.
 app.use(express.urlencoded({ extended: true })); //Use express.urlencoded() to parse data submitted via HTML forms.
