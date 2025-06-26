@@ -68,9 +68,7 @@ const handleOpenReview = async (doctor) => {
 
 const doctorId = selectedDoctor ? selectedDoctor._id : null;
 
-
-
-  const handleSubmitReview = async() => {
+const handleSubmitReview = async() => {
      const res = await axios.get(`${API_URL}/token/${userId}`);
      // Extract the token from the response
       const token = res.data.token;
@@ -92,7 +90,7 @@ const doctorId = selectedDoctor ? selectedDoctor._id : null;
   const navigate = useNavigate();
 
   const onHandleappointment = (doctor) => {
-    navigate(`/appointment/${userId}`, { state: { doctor } });
+    navigate(`/appointment/${userId}/${doctor._id}`);
   };
 
 

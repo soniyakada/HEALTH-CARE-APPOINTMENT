@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useParams} from "react-router-dom";
+import { useParams} from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
 import axios from "axios";
 import Calendar from "react-calendar";
@@ -9,10 +9,9 @@ import "./Form.css";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AppointmentForm = () => {
-  const { id } = useParams();
-  const location = useLocation();
+  const { id ,doctorId} = useParams();
   const [date, setDate] = useState(new Date());
-  const [doctor, setDoctor] = useState(location.state?.doctor || "");
+  const [doctor, setDoctor] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
   const [bookedSlots, setBookedSlots] = useState([]);
   const [patient, setPatient] = useState("");
@@ -32,11 +31,30 @@ const AppointmentForm = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (doctor) {
-      setDoctor(doctor);
-    }
-  }, [doctor]);
+   useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const tokenRes = await axios.get(`${API_URL}/token/${id}`);
+        const token = tokenRes.data.token;
+        
+        const response = await axios.get(`${API_URL}/doctor/${doctorId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setDoctor(response.data.doctor);
+
+      } catch (error) {
+        console.error("Error fetching doctor profile:", error);
+        setError("Failed to load doctor profile. Please try again later.");
+    
+      }
+    };
+    
+    fetchDoctor();
+  }, [doctorId]);
+
+
 
   // Fetch booked slots whenever selectedDate or doctorId changes
   useEffect(() => {
@@ -44,7 +62,7 @@ const AppointmentForm = () => {
       try {
         const formattedDate = date.toISOString().split("T")[0];
         const response = await axios.get(
-          `${API_URL}/doctor/${doctor._id}/booked-slots?date=${formattedDate}`
+          `${API_URL}/doctor/${doctorId}/booked-slots?date=${formattedDate}`
         );
         setBookedSlots(response.data.bookedSlots);
       } catch (error) {
@@ -58,7 +76,7 @@ const AppointmentForm = () => {
     };
 
     fetchBookedSlots();
-  }, [date, doctor._id]);
+  }, [date, doctorId]);
 
   useEffect(() => {
     const fetchPatient = async () => {

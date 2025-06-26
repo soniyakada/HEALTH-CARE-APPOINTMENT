@@ -47,9 +47,7 @@ const DoctorProfile = ({ userId }) => {
     setSelectedPatientId(patientId);
     setOpenModal(true);
     };
-
-  console.log(".docotros sfksjfkjakf",doctor)
-
+    
   const updateAppointmentStatus = async (id, status, email) => {
     try {
       const res = await axios.get(`${API_URL}/token/${userId}`);

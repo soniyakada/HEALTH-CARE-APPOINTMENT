@@ -28,7 +28,7 @@ function App() {
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/profile/:id" element={<Profile />}></Route>
             <Route
-              path="/appointment/:id"
+              path="/appointment/:id/:doctorId"
               element={<AppointmentForm />}
             ></Route>
             <Route path="/doctor/:id" element={<DoctorProfile />}></Route>
