@@ -69,9 +69,6 @@ const handleOpenReview = async (doctor) => {
 const doctorId = selectedDoctor ? selectedDoctor._id : null;
 
 const handleSubmitReview = async() => {
-     const res = await axios.get(`${API_URL}/token/${userId}`);
-     // Extract the token from the response
-      const token = res.data.token;
      await axios.post(
   `${API_URL}/reviews`,
   { userId,
@@ -80,9 +77,7 @@ const handleSubmitReview = async() => {
     doctorId
   },
   {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    withCredentials:true,
   }
       );
     handleCloseReview();
@@ -110,14 +105,8 @@ const fetchReviews = async (doctorId) => {
   const handleDoctor = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/token/${userId}`);
-
-      // Extract the token from the response
-      const token = res.data.token;
       const response = await axios.get(`${API_URL}/allDoctor`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Attach token in the header
-        },
+        withCredentials:true,
       });
       setDoctors(response.data);
     } catch (error) {

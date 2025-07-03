@@ -4,9 +4,9 @@ import {
   verifyOtpController,
   registerController,
   signinController,
-  getTokenController,
   logoutController
 } from "../controllers/authController.js";
+import authenticate from "../middleware/authenticate.js";
 
 const router = express.Router();
 
@@ -17,7 +17,6 @@ router.post("/verify-otp", verifyOtpController);
 // Authentication Routes
 router.post("/register", registerController);
 router.post("/signin", signinController);
-router.get("/token/:userId", getTokenController);
-router.post("/logout/:userId", logoutController);
+router.post("/logout",authenticate, logoutController);
 
 export default router;

@@ -57,15 +57,10 @@ function FindDoctor() {
     setError("");
 
     try {
-      const res = await axios.get(`${API_URL}/token/${userId}`);
-      const token = res.data.token;
-
-      const response = await axios.get(
+         const response = await axios.get(
         `${API_URL}/doctors/specialization/${specialization}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials:true,
         }
       );
       setFilteredDoctors(response.data.doctors);

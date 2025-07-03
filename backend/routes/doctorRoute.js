@@ -15,19 +15,19 @@ import {
 const router = express.Router();
 
 // Doctor search and profile routes
-router.get("/doctors/specialization/:specialization", authenticate, searchDoctorsBySpecialization);
-router.get("/doctor/:id", authenticate, getDoctorProfile);
-router.get("/allDoctor", authenticate, getAllDoctors);
+router.get("/doctors/specialization/:specialization", authenticate,searchDoctorsBySpecialization);
+router.get("/doctor/:id",authenticate, getDoctorProfile);
+router.get("/allDoctor",authenticate, getAllDoctors);
 
 // Appointment management
-router.put("/appointment/:id/status", authenticate, updateAppointmentStatus);
+router.put("/appointment/:id/status",authenticate, updateAppointmentStatus);
 
 // Notification routes
-router.get("/notifications", getNotifications);
+router.get("/notifications",authenticate, getNotifications);
 router.put("/notifications/mark-all-read", markAllNotificationsAsRead);
 // Add prescription
 router.post('/postmedication', addPrescription);
 
 // Get prescriptions for a patient
-router.get('/prescription/:patientId', getPrescriptionsByPatient);
+router.get('/prescription/:patientId',authenticate, getPrescriptionsByPatient);
 export default router;

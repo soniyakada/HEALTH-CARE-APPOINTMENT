@@ -155,15 +155,14 @@ export const signinController = async (req, res) => {
     // Generate JWT token
     const token = generateToken({ id: user._id, role: user.role });
 
-    // Store the token in the database
-    user.token = token;
-
-    await user.save();
-
     // Respond with the token and user details
-    res.status(200).json({
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,           // Set true in production (HTTPS)
+      sameSite: "Strict",     // Or "Lax" depending on frontend-backend domains
+      maxAge: 60 * 60 * 1000, // 1 hour
+    }).status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -176,49 +175,29 @@ export const signinController = async (req, res) => {
   }
 };
 
-export const getTokenController = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    // Find the user by ID
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Check if the user has a token
-    if (!user.token) {
-      return res.status(404).json({ message: "No token found for this user" });
-    }
-
-    // Respond with the token
-    res.status(200).json({
-      message: "Token retrieved successfully",
-      token: user.token,
-    });
-  } catch (error) {
-    console.error("Error fetching token:", error);
-    res.status(500).json({ message: "Error fetching token", error });
-  }
-};
-
 export const logoutController = async (req, res) => {
-  const { userId } = req.params;
+ 
 
   try {
-    // Find the user by ID
-    const user = await User.findById(userId);
+    const userId = req.user.id;
+    console.log("Logout request for user:", userId);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+      // Clear cookie with multiple approaches
+    res.clearCookie("token");
+    res.clearCookie("token", { path: "/" });
+    res.clearCookie("token", { 
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      path: "/" 
+    });
 
-    // Clear the token
-    user.token = null;
-    await user.save();
-
-    res.status(200).json({ message: "User logged out successfully" });
+    console.log("Cookie cleared successfully");
+    res.status(200).json({ 
+      message: "User logged out successfully",
+      userId: userId 
+    });
+    
   } catch (error) {
     console.error("Error during logout:", error);
     res.status(500).json({ message: "Error logging out", error });

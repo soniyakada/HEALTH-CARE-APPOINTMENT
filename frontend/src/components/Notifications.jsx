@@ -25,13 +25,9 @@ const Notifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(`${API_URL}/token/${userId}`);
-        const token = res.data.token;
         const response = await axios.get(`${API_URL}/notifications`, {
           params: { userId }, // Pass userId as a query parameter
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach token in the header
-          },
+          withCredentials:true,
         });
         
         const notificationData = response.data.notifications.notifications;
