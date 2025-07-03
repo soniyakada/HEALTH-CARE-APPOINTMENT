@@ -77,7 +77,9 @@ const Signin = () => {
       const response = await axios.post(`${API_URL}/signin`, {
         email,
         password,
-      });
+      }, {
+  withCredentials: true
+});
       const { user } = response.data;
       navigate(`/profile/${user.id}`);
     } catch (error) {

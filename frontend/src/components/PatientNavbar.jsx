@@ -15,7 +15,9 @@ function PatientNavbar({ userId, isShow }) {
   const [profileName, setProfileName] = useState("");
   const onHandleLogout = async () => {
     try {
-      await axios.post(`${API_URL}/logout/${userId}`);
+       await axios.post(`${API_URL}/logout`, {}, {
+      withCredentials: true,
+    });
     } catch (error) {
       console.error("Error", error.message);
     }
@@ -23,7 +25,9 @@ function PatientNavbar({ userId, isShow }) {
 
   const getFullName = async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/profile/${userId}`);
+      const { data } = await axios.get(`${API_URL}/profile`,{
+        withCredentials:true,
+      });
       setProfileName(data.user.name);
     } catch (error) {
       console.error(error);
@@ -37,13 +41,9 @@ function PatientNavbar({ userId, isShow }) {
 useEffect(() => {
   const getCount = async () => {
     try {
-      const res = await axios.get(`${API_URL}/token/${userId}`);
-      const token = res.data.token;
       const response = await axios.get(`${API_URL}/notifications`, {
         params: { userId },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+         withCredentials:true,
       });
       setCount(response.data.notifications.countOfNotification);
     } catch (error) {

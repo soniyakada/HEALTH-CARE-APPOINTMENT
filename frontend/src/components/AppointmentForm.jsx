@@ -34,13 +34,8 @@ const AppointmentForm = () => {
    useEffect(() => {
     const fetchDoctor = async () => {
       try {
-        const tokenRes = await axios.get(`${API_URL}/token/${id}`);
-        const token = tokenRes.data.token;
-        
         const response = await axios.get(`${API_URL}/doctor/${doctorId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        withCredentials:true,
         });
         setDoctor(response.data.doctor);
 
@@ -81,13 +76,9 @@ const AppointmentForm = () => {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const res = await axios.get(`${API_URL}/token/${id}`);
-        const token = res.data.token;
-
+       
         const response = await axios.get(`${API_URL}/patients/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials:true,
         });
 
         setPatient(response.data.patient);
@@ -116,9 +107,7 @@ const AppointmentForm = () => {
     }
 
     try {
-      const res = await axios.get(`${API_URL}/token/${id}`);
-      const token = res.data.token;
-
+      
       await axios.post(
         `${API_URL}/appointment`,
         {
@@ -128,9 +117,7 @@ const AppointmentForm = () => {
           timeSlot,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials:true,
         }
       );
 

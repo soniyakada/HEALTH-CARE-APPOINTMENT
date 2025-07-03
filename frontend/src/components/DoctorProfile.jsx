@@ -22,13 +22,8 @@ const DoctorProfile = ({ userId }) => {
     const fetchDoctor = async () => {
       try {
         setLoading(true);
-        const tokenRes = await axios.get(`${API_URL}/token/${userId}`);
-        const token = tokenRes.data.token;
-        
-        const response = await axios.get(`${API_URL}/doctor/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+         const response = await axios.get(`${API_URL}/doctor/${userId}`, {
+          withCredentials:true,
         });
         setDoctor(response.data.doctor);
         setLoading(false);
@@ -50,16 +45,11 @@ const DoctorProfile = ({ userId }) => {
     
   const updateAppointmentStatus = async (id, status, email) => {
     try {
-      const res = await axios.get(`${API_URL}/token/${userId}`);
-      const token = res.data.token;
-
       const resData = await axios.put(
         `${API_URL}/appointment/${id}/status`,
         { status , email },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials:true,
         }
       );
 
@@ -76,9 +66,7 @@ const DoctorProfile = ({ userId }) => {
 
       // Re-fetch doctor data
       const response = await axios.get(`${API_URL}/doctor/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+       withCredentials:true,
       });
       
       setDoctor(response.data.doctor);
@@ -103,7 +91,9 @@ const DoctorProfile = ({ userId }) => {
 
   const onHandleLogout = async () => {
     try {
-      await axios.post(`${API_URL}/logout/${userId}`);
+       await axios.post(`${API_URL}/logout`, {}, {
+      withCredentials: true,
+    });
       navigate('/signin')
     } catch (error) {
       console.error("Error", error.message);

@@ -30,7 +30,9 @@ const PatientPrescriptions = () => {
   useEffect(() => {
     const fetchPrescriptions = async () => {
       try {
-        const res = await axios.get(`${API_URL}/prescription/${patientId}`);
+        const res = await axios.get(`${API_URL}/prescription/${patientId}`,{
+          withCredentials:true,
+        });
         setPrescriptions(res.data.prescriptions);
       } catch {
         setError('Failed to load prescriptions');

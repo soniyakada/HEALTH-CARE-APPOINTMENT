@@ -10,8 +10,8 @@ import doctorRoute from './routes/doctorRoute.js';
 import { Server } from 'socket.io';
 import { initSocket } from './utils/socket.js';
 import helmet from 'helmet';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
+
 
 
 
@@ -19,6 +19,7 @@ import { fileURLToPath } from 'url';
 const app = express();
 const PORT = process.env.PORT; 
 const server = http.createServer(app);
+app.use(cookieParser());
 
 // Simple CORS config (only allow your frontend)
 app.use(cors({
@@ -28,10 +29,6 @@ app.use(cors({
   allowedHeaders: ['Content-type', 'Authorization']
 }));
 
-
-// These two lines create __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.use(express.json()); // Handles JSON data.
 app.use(express.urlencoded({ extended: true })); //Use express.urlencoded() to parse data submitted via HTML forms.
@@ -65,11 +62,5 @@ app.use((req, res, next) => {
   res.status(404).send('Sorry, the page you are looking for does not exist!');
 });
 
-// Then use __dirname as before
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
 
 server.listen(PORT);

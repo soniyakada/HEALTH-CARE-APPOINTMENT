@@ -6,15 +6,16 @@ import mongoose from 'mongoose';
 
 // Get user profile
 export const getUserProfile = async (req, res) => {
-  const userId = req.params.id;
+  try {
 
+  const userId = req.user?.id;
   // Validate the ID format
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return res.status(400).json({ message: "Invalid user ID format" });
   }
   const cacheKey = `user:profile:${userId}`;
 
-  try {
+ 
     // Check Redis cache
     const cachedData = await redisClient.get(cacheKey);
     if (cachedData) {

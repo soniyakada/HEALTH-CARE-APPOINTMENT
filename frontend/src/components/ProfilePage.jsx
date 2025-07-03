@@ -12,7 +12,9 @@ function ProfilePage() {
   useEffect(() => {
     async function fetchProfile() {
       try {
-        const { data } = await axios.get(`${API_URL}/profile/${userId}`);
+        const { data } = await axios.get(`${API_URL}/profile`,{
+          withCredentials:true,
+        });
         setUser(data.user);
       } catch (error) {
         console.error("Error fetching profile:", error);

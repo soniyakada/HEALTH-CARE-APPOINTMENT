@@ -16,19 +16,13 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const res = await axios.get(`${API_URL}/token/${id}`);
-
-        // Extract the token from the response
-        const token = res.data.token;
-        const response = await axios.get(`${API_URL}/profile/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Attach token in the header
-          },
-        });
+           const response = await axios.get(`${API_URL}/profile`,{
+           withCredentials: true,
+           });
         setUserDetails(response.data.user);
         setLoading(false);
       } catch (error) {
-        setErrorMessage("Error fetching user details");
+        setErrorMessage("Unauthorized user");
         console.error("Error fetching user details:", error);
         setLoading(false);
       }
@@ -44,12 +38,15 @@ const Profile = () => {
     );
   }
 
-  if (errorMessage) {
-    return <p className="text-xs text-red-500">{errorMessage}</p>;
-  }
-
   return (
     <>
+     <div className="flex justify-center items-center h-screen">
+     {errorMessage && (
+           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
+             <strong className="font-semibold">Oops!</strong> {errorMessage}
+           </div>
+         )}
+        </div> 
       {userDetails ? (
         <div className="">
           {/* Doctor Filter Section */}
