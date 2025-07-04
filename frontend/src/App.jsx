@@ -26,29 +26,17 @@ function App() {
             <Route path="/" element={<Home />}></Route>
             <Route path="/signin" element={<Signin />}></Route>
             <Route path="/signup" element={<Signup />}></Route>
-            <Route path="/profile/:id" element={<Profile />}></Route>
-            <Route
-              path="/appointment/:id/:doctorId"
-              element={<AppointmentForm />}
-            ></Route>
-            <Route path="/doctor/:id" element={<DoctorProfile />}></Route>
-            <Route
-              path="/doctor/:userId/patient-history"
-              element={<PatientHistory />}
-            />
-            <Route path="/notifications/:userId" element={<Notifications />} />
-            <Route
-              path="/appointments/:userId"
-              element={<AppointmentsPage />}
-            />
-            <Route
-              path="/medical-records/:userId"
-              element={<MedicalRecords />}
-            />
-            <Route path="/findDoctor/:userId" element={<FindDoctor />} />
-            <Route path="/book/:userId" element={<Book />} />
-            <Route path="/profilepage/:userId" element={<ProfilePage />} />
-            <Route path="/patient/:patientId/prescriptions" element={<PatientPrescriptions />} />
+            <Route path="/profile" element={<Profile />}></Route>
+            <Route path="/appointment/:doctorId" element={<AppointmentForm />}></Route>
+            <Route path="/doctor" element={<DoctorProfile />}></Route>
+            <Route path="/doctor/:userId/patient-history" element={<PatientHistory />}/>
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/appointments" element={<AppointmentsPage />}/>
+            <Route path="/medicalrecords" element={<MedicalRecords />}/>
+            <Route path="/findDoctor" element={<FindDoctor />} />
+            <Route path="/book" element={<Book />} />
+            <Route path="/profilepage" element={<ProfilePage />} />
+            <Route path="/patient/prescriptions" element={<PatientPrescriptions />} />
             <Route path="/services" element={<Services />} />
             <Route path="/howtouse" element={<HowToUse />} />
 

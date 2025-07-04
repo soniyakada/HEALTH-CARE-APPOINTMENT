@@ -1,17 +1,19 @@
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
-import { useState ,useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
-const PatientProfile = ({ userId }) => {
-  const [error ,setError] = useState("");
+
+const PatientProfile = () => {;
   const navigate = useNavigate();
+   const {user} = useAuth();
 
-   useEffect(() => {
-    if (!userId) {
-      setError("Something went wrong. User ID is missing.");
+    if (user) {
+    console.log("User ID:", user.id);
     }
-  }, [userId]);
+    // const userId = user?.id;
+
+
 
   const features = [
     {
@@ -43,38 +45,25 @@ const PatientProfile = ({ userId }) => {
   const handleFeatureClick = (feature) => {
     if (feature.route) {
       if (feature.title === "Appointments") {
-        navigate(`/appointments/${userId}`);
+        navigate(`/appointments`);
       } else if (feature.title === "Find Doctor") {
-        navigate(`/findDoctor/${userId}`);
+        navigate(`/findDoctor`);
       } else if (feature.title === "Medical Records") {
-        navigate(`/medical-records/${userId}`);
+        navigate(`/medicalrecords`);
       }else if(feature.title === "Medications"){
-        navigate(`/patient/${userId}/prescriptions`)
+        navigate(`/patient/prescriptions`)
       } else {
         navigate(feature.route);
       }
     }
   };
 
- //Show error if userId is missing
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen text-center">
-        <h1 className="text-2xl text-red-600 font-semibold mb-2">{error}</h1>
-        <button
-          onClick={() => navigate("/signin")}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Go to Login
-        </button>
-      </div>
-    );
-  }
+ 
 
   return (
     <>
       <div className="">
-        <PatientNavbar userId={userId} isShow={false} />
+        <PatientNavbar isShow={false} />
         <div className="h-72 bg-blue-400 ">
           <div className="flex flex-col gap-5 p-20">
             <h1 className="text-3xl font-semibold text-white">
@@ -89,7 +78,7 @@ const PatientProfile = ({ userId }) => {
               <span
                 className="bg-white p-3 rounded-md cursor-pointer"
                 onClick={() => {
-                  navigate(`/book/${userId}`);
+                  navigate(`/book`);
                 }}
               >
                 {" "}

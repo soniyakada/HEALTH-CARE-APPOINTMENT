@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   Button,
@@ -35,7 +36,6 @@ import {
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Book() {
-  const { userId } = useParams();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -45,6 +45,13 @@ function Book() {
   const [selectedDoctor, setSelectedDoctor] = useState(null); 
   const [reviewsMap, setReviewsMap] = useState({});
   const [allreviews, setAllreviews] = useState([]);
+  const {user} = useAuth();
+
+    if (user) {
+  console.log("User ID:", user.id);
+  
+  }
+  const userId = user?.id;
 
 
 
@@ -85,7 +92,7 @@ const handleSubmitReview = async() => {
   const navigate = useNavigate();
 
   const onHandleappointment = (doctor) => {
-    navigate(`/appointment/${userId}/${doctor._id}`);
+    navigate(`/appointment/${doctor._id}`);
   };
 
 
@@ -202,7 +209,7 @@ const fetchReviews = async (doctorId) => {
               color="secondary"
               size="large"
               component={Link}
-              to={`/findDoctor/${userId}`}
+              to={`/findDoctor`}
               startIcon={<FilterListIcon />}
               sx={{
                 borderRadius: "50px",

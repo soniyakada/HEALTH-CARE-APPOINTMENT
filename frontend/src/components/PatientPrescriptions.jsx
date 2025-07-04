@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import PatientNavbar from './PatientNavbar';
+import { useAuth } from "../context/AuthContext";
 import {
   Box,
   Typography,
@@ -21,11 +21,17 @@ import {
 } from '@mui/icons-material';
 
 const PatientPrescriptions = () => {
-  const { patientId } = useParams();
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const API_URL = import.meta.env.VITE_API_URL;
+   const {user} = useAuth();
+
+  if (user) {
+  console.log("User ID:", user.id);
+  }
+  const patientId = user?.id;
+
 
   useEffect(() => {
     const fetchPrescriptions = async () => {

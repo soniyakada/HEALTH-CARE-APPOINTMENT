@@ -1,28 +1,29 @@
 // Notifications.jsx
 import  { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams ,useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Bell } from "lucide-react"; // Import Bell icon from lucide-react
 import PatientNavbar from './PatientNavbar';
 const API_URL = import.meta.env.VITE_API_URL;
+import { useAuth } from "../context/AuthContext";
+
 
 
 const Notifications = () => {
-  const { userId } = useParams(); // Get the userId from the route params
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error ,setError] = useState("");
   const [apiError ,setApiError] = useState("");
-  const navigate = useNavigate();
+   const navigate = useNavigate();
+   const {user} = useAuth();
+  
+      if (user) {
+    console.log("User ID:", user.id);
+    
+    }
+    const userId = user?.id;
 
      useEffect(() => {
-       if (!userId) {
-         setError("Something went wrong. User ID is missing.");
-       }
-     }, [userId]);
-   
-
-  useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(`${API_URL}/notifications`, {

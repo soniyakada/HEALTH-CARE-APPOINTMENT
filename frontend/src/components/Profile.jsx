@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import DoctorProfile from "./DoctorProfile";
 import PatientProfile from "./PatientProfile";
 import loader from "../assets/loader.gif";
 import "./Profile.css";
 const API_URL = import.meta.env.VITE_API_URL;
+import { useAuth } from "../context/AuthContext";
+
 
 const Profile = () => {
-  const { id } = useParams(); // Get user ID from the URL
   const [userDetails, setUserDetails] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const {user} = useAuth();
 
+   if (user) {
+  console.log("User ID:", user.id);
+  
+  }
+  const userId = user?.id;
+  
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -28,8 +35,8 @@ const Profile = () => {
       }
     };
     fetchUserDetails();
-  }, [id]);
-
+  }, [userId]);
+ 
    if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -54,11 +61,11 @@ const Profile = () => {
           {/* Doctor Filter Section */}
           <div className=" doctor-background w-full h-screen rounded-lg">
             <div>
-              {userDetails.role === "doctor" && <DoctorProfile userId={id} />}
+              {userDetails.role === "doctor" && <DoctorProfile />}
             </div>
             {userDetails.role === "patient" && (
               <div>
-                <PatientProfile userId={id} />
+                <PatientProfile  />
               </div>
             )}
           </div>

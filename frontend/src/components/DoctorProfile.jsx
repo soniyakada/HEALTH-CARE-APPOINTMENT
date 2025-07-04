@@ -4,11 +4,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import MedicationModal from "./MedicationModal";
+import { useAuth } from "../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const socket = io(`${API_URL}`);
 
-const DoctorProfile = ({ userId }) => {
+const DoctorProfile = () => {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,12 @@ const DoctorProfile = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const {user} = useAuth();
+
+  if (user) {
+  console.log("User ID:", user.id);
+  }
+  const userId = user?.id;
 
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -29,13 +36,12 @@ const DoctorProfile = ({ userId }) => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching doctor profile:", error);
-        setError("Failed to load doctor profile. Please try again later.");
         setLoading(false);
       }
     };
     
     fetchDoctor();
-  }, [userId]);
+  }, []);
 
     const handleAddMedication = (userId, patientId) => {
     setSelectedUserId(userId);

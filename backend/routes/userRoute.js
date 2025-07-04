@@ -22,7 +22,7 @@ router.get('/doctor/:doctorId/booked-slots', getBookedSlots);
 router.get("/doctor/:id/patient-history", getPatientHistory);
 
 // Patient routes
-router.get("/patients/:id",authenticate, getPatientDetails);
+router.get("/patients",authenticate, getPatientDetails);
 router.get("/patients/:id/appointments", authenticate, getPatientAppointments);
 
 // Review routes

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 // Import MUI components
 import {
@@ -22,12 +22,19 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+
 const AppointmentsPage = () => {
-  const { userId } = useParams();
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error ,setError] = useState("");
   const navigate = useNavigate();
+  const {user} = useAuth();
+
+   if (user) {
+  console.log("User ID:", user.id);
+  
+  }
+  const userId = user?.id;
 
   useEffect(() => {
     if (!userId) {

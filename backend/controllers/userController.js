@@ -196,7 +196,7 @@ export const getPatientHistory = async (req, res) => {
 
 // Get patient details
 export const getPatientDetails = async (req, res) => {
-  const patientId = req.params.id;
+  const patientId = req.user.id;
 
   try {
     // Fetch the user by ID and populate appointments

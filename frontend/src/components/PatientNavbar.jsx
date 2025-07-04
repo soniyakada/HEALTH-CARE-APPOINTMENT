@@ -8,12 +8,20 @@ const API_URL = import.meta.env.VITE_API_URL;
 import io from "socket.io-client";
 import PropTypes from "prop-types";
 const socket = io(`${API_URL}`); // or wherever your backend is hosted
+import { useAuth } from "../context/AuthContext";
 
-function PatientNavbar({ userId, isShow }) {
+function PatientNavbar({ isShow }) {
   const navigate = useNavigate();
   const [count, setCount] = useState("");
   const [profileName, setProfileName] = useState("");
-  const onHandleLogout = async () => {
+   const {user} = useAuth();
+
+    if (user) {
+    console.log("User ID:", user.id);
+    }
+    const userId = user?.id;
+
+   const onHandleLogout = async () => {
     try {
        await axios.post(`${API_URL}/logout`, {}, {
       withCredentials: true,
@@ -105,20 +113,20 @@ useEffect(() => {
         </div>
         {isShow && (
           <div className="flex justify-center items-center ml-24 gap-8 font-bold text-gray-700">
-            <Link to={`/profile/${userId}`}>
+            <Link to={`/profile`}>
               <h3>Home</h3>
             </Link>
-            <Link to={`/appointments/${userId}`}>
+            <Link to={`/appointments`}>
               <h3>Appointments</h3>
             </Link>
-            <Link to={`/patient/${userId}/prescriptions`}>
+            <Link to={`/patient/prescriptions`}>
               <h3>Medication</h3>
             </Link>
           </div>
         )}
 
         <div className="flex justify-center items-center gap-3">
-          <Link to={`/notifications/${userId}`}>
+          <Link to={`/notifications`}>
             <div className="relative cursor-pointer" onClick={handleBellClick}>
               <IoIosNotifications
                 className="h-7 w-7"
@@ -139,7 +147,7 @@ useEffect(() => {
           <div
             className="h-10 w-10 rounded-full bg-gray-300 text-black flex items-center justify-center text-md font-bold cursor-pointer"
             onClick={() => {
-              navigate(`/profilepage/${userId}`);
+              navigate(`/profilepage`);
             }}
           >
             {getInitials(profileName)}

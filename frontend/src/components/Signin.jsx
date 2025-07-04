@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 
+
 // Material UI imports
 import { 
   Box, 
@@ -38,8 +39,9 @@ const Signin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -47,7 +49,6 @@ const Signin = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-
   const handleSignIn = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -74,14 +75,14 @@ const Signin = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/signin`, {
+      await axios.post(`${API_URL}/signin`, {
         email,
         password,
       }, {
   withCredentials: true
 });
-      const { user } = response.data;
-      navigate(`/profile/${user.id}`);
+    
+      navigate(`/profile`);
     } catch (error) {
       setMessage(error.response?.data?.message || "Login failed. Please check your credentials and try again.");
       setUserDetails(null);
