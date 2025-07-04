@@ -1,5 +1,6 @@
 import express from "express";
 import authenticate from "../middleware/authenticate.js";
+import { authorizeRoles } from "../middleware/authorizerole.js";
 import {
   getUserProfile,
   bookAppointment,
@@ -17,7 +18,7 @@ const router = express.Router();
 router.get("/profile", authenticate,getUserProfile);
 
 // Appointment routes
-router.post("/appointment",authenticate, bookAppointment);
+router.post("/appointment",authenticate, authorizeRoles("patient"), bookAppointment);
 router.get('/doctor/:doctorId/booked-slots', getBookedSlots);
 router.get("/doctor/:id/patient-history", getPatientHistory);
 

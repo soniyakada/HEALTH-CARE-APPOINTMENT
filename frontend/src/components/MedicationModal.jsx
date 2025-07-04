@@ -35,6 +35,7 @@ function MedicationModal({ open, onClose, patientId, userId }) {
       await axios.post(
         `${API_URL}/postmedication`,
         { userId, patientId, medicines, notes },
+        {withCredentials:true}
       );
        
     await Swal.fire({

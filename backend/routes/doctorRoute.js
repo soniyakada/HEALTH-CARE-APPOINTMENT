@@ -1,5 +1,6 @@
 import express from "express";
 import authenticate from "../middleware/authenticate.js";
+import { authorizeRoles } from "../middleware/authorizerole.js";
 import {
   searchDoctorsBySpecialization,
   getDoctorProfile,
@@ -20,13 +21,13 @@ router.get("/doctor/:id",authenticate, getDoctorProfile);
 router.get("/allDoctor",authenticate, getAllDoctors);
 
 // Appointment management
-router.put("/appointment/:id/status",authenticate, updateAppointmentStatus);
+router.put("/appointment/:id/status",authenticate, authorizeRoles("doctor"),updateAppointmentStatus);
 
 // Notification routes
 router.get("/notifications",authenticate, getNotifications);
 router.put("/notifications/mark-all-read", markAllNotificationsAsRead);
 // Add prescription
-router.post('/postmedication', addPrescription);
+router.post('/postmedication',authenticate,authorizeRoles("doctor"), addPrescription);
 
 // Get prescriptions for a patient
 router.get('/prescription/:patientId',authenticate, getPrescriptionsByPatient);
