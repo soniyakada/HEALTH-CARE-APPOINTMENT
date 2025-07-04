@@ -2,10 +2,19 @@ import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
 import { useState ,useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
-const PatientProfile = ({ userId }) => {
+
+const PatientProfile = () => {
   const [error ,setError] = useState("");
   const navigate = useNavigate();
+   const {user} = useAuth();
+
+    if (user) {
+  console.log("User ID:", user.id);
+  
+  }
+  const userId = user?.id;
 
    useEffect(() => {
     if (!userId) {
