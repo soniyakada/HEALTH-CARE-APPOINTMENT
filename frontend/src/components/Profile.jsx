@@ -19,6 +19,7 @@ const Profile = () => {
   
   }
   const userId = user?.id;
+  
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {

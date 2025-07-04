@@ -147,7 +147,7 @@ useEffect(() => {
           <div
             className="h-10 w-10 rounded-full bg-gray-300 text-black flex items-center justify-center text-md font-bold cursor-pointer"
             onClick={() => {
-              navigate(`/profilepage/${userId}`);
+              navigate(`/profilepage`);
             }}
           >
             {getInitials(profileName)}

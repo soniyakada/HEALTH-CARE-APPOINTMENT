@@ -51,7 +51,7 @@ function FindDoctor() {
   const userId = user?.id;
 
   const onHandleappointment = (doctor) => {
-    navigate(`/appointment/${userId}`, { state: { doctor } });
+    navigate(`/appointment/${doctor._id}`, { state: { doctor } });
   };
 
   const handleDoctorFilter = async () => {
