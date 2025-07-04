@@ -1,9 +1,10 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
 import PaymentsIcon from '@mui/icons-material/Payments';
+import { useAuth } from "../context/AuthContext";
 
 import {
   Box,
@@ -36,12 +37,18 @@ import {
 const API_URL = import.meta.env.VITE_API_URL;
 
 function FindDoctor() {
-  const { userId } = useParams();
   const [specialization, setSpecialization] = useState("");
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const {user} = useAuth();
+
+   if (user) {
+  console.log("User ID:", user.id);
+  
+  }
+  const userId = user?.id;
 
   const onHandleappointment = (doctor) => {
     navigate(`/appointment/${userId}`, { state: { doctor } });

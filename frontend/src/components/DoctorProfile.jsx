@@ -36,13 +36,12 @@ const DoctorProfile = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching doctor profile:", error);
-        setError("Failed to load doctor profile. Please try again later.");
         setLoading(false);
       }
     };
     
     fetchDoctor();
-  }, [userId]);
+  }, []);
 
     const handleAddMedication = (userId, patientId) => {
     setSelectedUserId(userId);

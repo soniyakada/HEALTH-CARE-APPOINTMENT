@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams , useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
+import { useAuth } from "../context/AuthContext";
 
 import {
   Box,
@@ -18,13 +19,19 @@ import {
 } from "@mui/icons-material";
 
 function MedicalRecords() {
-  const { userId } = useParams();
   const [pastAppointments, setPastAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error ,setError] = useState("");
   const [apiError ,setApiError] = useState("");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
+   const {user} = useAuth();
+  
+     if (user) {
+    console.log("User ID:", user.id);
+    
+    }
+    const userId = user?.id;
 
   useEffect(() => {
     if (!userId) {

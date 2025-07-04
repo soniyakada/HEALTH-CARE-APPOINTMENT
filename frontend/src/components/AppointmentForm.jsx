@@ -6,10 +6,12 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Swal from "sweetalert2";
 import "./Form.css";
+import { useAuth } from "../context/AuthContext";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const AppointmentForm = () => {
-  const { id ,doctorId} = useParams();
+  const { doctorId} = useParams();
   const [date, setDate] = useState(new Date());
   const [doctor, setDoctor] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
@@ -17,6 +19,14 @@ const AppointmentForm = () => {
   const [patient, setPatient] = useState("");
   const [error, setError] = useState("");
   const [apiError ,setApiError] = useState("");
+  const {user} = useAuth();
+  
+      if (user) {
+    console.log("User ID:", user.id);
+    
+    }
+    const id = user?.id;
+
 
    const availableTimeSlots = [
     "9:00 AM - 10:00 AM",
@@ -25,11 +35,7 @@ const AppointmentForm = () => {
     "3:00 PM - 4:00 PM",
   ];
 
-   useEffect(() => {
-    if (!id) {
-      setError("Something went wrong. User ID is missing.");
-    }
-  }, [id]);
+
 
    useEffect(() => {
     const fetchDoctor = async () => {
@@ -77,7 +83,7 @@ const AppointmentForm = () => {
     const fetchPatient = async () => {
       try {
        
-        const response = await axios.get(`${API_URL}/patients/${id}`, {
+        const response = await axios.get(`${API_URL}/patients`, {
           withCredentials:true,
         });
 

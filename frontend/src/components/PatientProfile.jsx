@@ -52,13 +52,13 @@ const PatientProfile = () => {
   const handleFeatureClick = (feature) => {
     if (feature.route) {
       if (feature.title === "Appointments") {
-        navigate(`/appointments/${userId}`);
+        navigate(`/appointments`);
       } else if (feature.title === "Find Doctor") {
-        navigate(`/findDoctor/${userId}`);
+        navigate(`/findDoctor`);
       } else if (feature.title === "Medical Records") {
-        navigate(`/medical-records/${userId}`);
+        navigate(`/medicalrecords`);
       }else if(feature.title === "Medications"){
-        navigate(`/patient/${userId}/prescriptions`)
+        navigate(`/patient/prescriptions`)
       } else {
         navigate(feature.route);
       }
@@ -83,7 +83,7 @@ const PatientProfile = () => {
   return (
     <>
       <div className="">
-        <PatientNavbar userId={userId} isShow={false} />
+        <PatientNavbar isShow={false} />
         <div className="h-72 bg-blue-400 ">
           <div className="flex flex-col gap-5 p-20">
             <h1 className="text-3xl font-semibold text-white">
@@ -98,7 +98,7 @@ const PatientProfile = () => {
               <span
                 className="bg-white p-3 rounded-md cursor-pointer"
                 onClick={() => {
-                  navigate(`/book/${userId}`);
+                  navigate(`/book`);
                 }}
               >
                 {" "}
