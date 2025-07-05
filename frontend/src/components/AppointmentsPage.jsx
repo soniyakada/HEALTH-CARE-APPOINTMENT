@@ -31,7 +31,7 @@ const AppointmentsPage = () => {
   const {user} = useAuth();
 
    if (user) {
-  console.log("User ID:", user.id);
+  // console.log("User ID:", user.id);
   
   }
   const userId = user?.id;

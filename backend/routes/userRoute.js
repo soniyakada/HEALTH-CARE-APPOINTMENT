@@ -9,7 +9,8 @@ import {
   getPatientDetails,
   getPatientAppointments,
   addReview,
-  getDoctorReviews
+  getDoctorReviews,
+  verifyDoctorController
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -30,4 +31,6 @@ router.get("/patients/:id/appointments", authenticate, getPatientAppointments);
 router.post('/reviews',authenticate,addReview);
 router.get('/reviews/:doctorId', getDoctorReviews);
 
+//Admin routes
+router.put('/admin/verifydoctor/:doctorId',authenticate, authorizeRoles("admin"),verifyDoctorController);
 export default router;

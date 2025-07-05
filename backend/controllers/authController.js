@@ -146,6 +146,12 @@ export const signinController = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+     // If doctor is not verified
+    if (user.role === 'doctor' && !user.verifyStatus) {
+      return res.status(403).json({ message: "Doctor not verified by admin" });
+    }
+
+
     // Compare the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -191,8 +197,6 @@ export const logoutController = async (req, res) => {
       sameSite: "Strict",
       path: "/" 
     });
-
-    console.log("Cookie cleared successfully");
     res.status(200).json({ 
       message: "User logged out successfully",
       userId: userId 

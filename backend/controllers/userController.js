@@ -3,6 +3,7 @@ import Appointment from "../models/appointment.js";
 import Review from "../models/review.js";
 import redisClient from "../utils/redis.js";
 import mongoose from 'mongoose';
+import { doctorverificationmail } from "../routes/sendMails.js";
 
 // Get user profile
 export const getUserProfile = async (req, res) => {
@@ -344,5 +345,35 @@ export const getDoctorReviews = async (req, res) => {
       success: false,
       message: 'Failed to fetch reviews'
     });
+  }
+
+
+  
+};
+
+//Admin Routess
+export const verifyDoctorController = async (req, res) => {
+  try {
+    const { doctorId } = req.params
+    const doctor = await User.findById(doctorId);
+   
+
+    if (!doctor || doctor.role !== 'doctor') {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    doctor.verifyStatus = true;
+    await doctor.save();
+
+     try {
+      await doctorverificationmail(doctor); // Await the mail function
+    } catch (emailErr) {
+      console.error("Failed to send verification email", emailErr);
+      // Optional: you can still proceed even if email fails
+    }
+
+    res.status(200).json({ message: "Doctor verified successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error verifying doctor", error: err });
   }
 };

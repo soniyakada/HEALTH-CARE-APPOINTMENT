@@ -16,6 +16,7 @@ import ProfilePage from "./components/ProfilePage";
 import PatientPrescriptions from "./components/PatientPrescriptions.jsx";
 import Services from "./components/Service.jsx";
 import HowToUse from "./components/Howtouse.jsx";
+import AdminDashboard from "./components/AdminDashboard.jsx";
 
 function App() {
   return (
@@ -35,10 +36,11 @@ function App() {
             <Route path="/medicalrecords" element={<MedicalRecords />}/>
             <Route path="/findDoctor" element={<FindDoctor />} />
             <Route path="/book" element={<Book />} />
-            <Route path="/profilepage" element={<ProfilePage />} />
+            <Route path="/profilepage/:userId" element={<ProfilePage />} />
             <Route path="/patient/prescriptions" element={<PatientPrescriptions />} />
             <Route path="/services" element={<Services />} />
             <Route path="/howtouse" element={<HowToUse />} />
+            <Route path="/admindashboard" element={<AdminDashboard/>}></Route>
 
 
             {/* Catch-All Route for Invalid URLs */}

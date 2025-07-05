@@ -9,13 +9,11 @@ const PatientProfile = () => {;
    const {user} = useAuth();
 
     if (user) {
-    console.log("User ID:", user.id);
+    // console.log("User ID:", user.id);
     }
     // const userId = user?.id;
 
-
-
-  const features = [
+    const features = [
     {
       title: "Appointments",
       desc: "Schedule or view your upcoming appointments",
@@ -57,8 +55,6 @@ const PatientProfile = () => {;
       }
     }
   };
-
- 
 
   return (
     <>

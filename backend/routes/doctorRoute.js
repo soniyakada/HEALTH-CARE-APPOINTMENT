@@ -12,6 +12,7 @@ import {
   getPrescriptionsByPatient
 
 } from "../controllers/doctorController.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
@@ -31,4 +32,16 @@ router.post('/postmedication',authenticate,authorizeRoles("doctor"), addPrescrip
 
 // Get prescriptions for a patient
 router.get('/prescription/:patientId',authenticate, getPrescriptionsByPatient);
+
+//For use Admin 
+router.get("/admin/users", authenticate, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const users = await User.find();
+    console.log("[][]",users)
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user", error });
+  }
+});
+
 export default router;

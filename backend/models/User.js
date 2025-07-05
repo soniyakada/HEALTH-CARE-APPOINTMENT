@@ -64,8 +64,9 @@ const userSchema = new mongoose.Schema({
       return this.role === 'doctor';
     },
   },
-  token:{
-    type:String,
+  verifyStatus: {
+    type: Boolean,
+    default: false,
   },
 
   // Audit Information

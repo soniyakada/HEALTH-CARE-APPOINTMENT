@@ -3,6 +3,7 @@ import axios from "axios";
 import DoctorProfile from "./DoctorProfile";
 import PatientProfile from "./PatientProfile";
 import loader from "../assets/loader.gif";
+import AdminDashboard from "./AdminDashboard";
 import "./Profile.css";
 const API_URL = import.meta.env.VITE_API_URL;
 import { useAuth } from "../context/AuthContext";
@@ -15,8 +16,6 @@ const Profile = () => {
   const {user} = useAuth();
 
    if (user) {
-  console.log("User ID:", user.id);
-  
   }
   const userId = user?.id;
   
@@ -68,6 +67,10 @@ const Profile = () => {
                 <PatientProfile  />
               </div>
             )}
+            <div>
+              {userDetails.role === "admin" && <AdminDashboard/>}
+            </div>
+
           </div>
         </div>
       ) : (

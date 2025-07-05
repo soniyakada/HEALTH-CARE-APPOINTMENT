@@ -58,7 +58,7 @@ const AppointmentForm = () => {
 
 
   // Fetch booked slots whenever selectedDate or doctorId changes
-  useEffect(() => {
+ 
     const fetchBookedSlots = async () => {
       try {
         const formattedDate = date.toISOString().split("T")[0];
@@ -76,6 +76,7 @@ const AppointmentForm = () => {
       }
     };
 
+   useEffect(() => {
     fetchBookedSlots();
   }, [date, doctorId]);
 
@@ -126,7 +127,7 @@ const AppointmentForm = () => {
           withCredentials:true,
         }
       );
-
+      fetchBookedSlots();
       Swal.fire({
         icon: "success",
         title: "Appointment Booked!",
@@ -134,6 +135,7 @@ const AppointmentForm = () => {
         timer: 2000,
         showConfirmButton: false,
       });
+     
       setError("");
     } catch (err) {
       setError("Failed to book appointment", err.message);

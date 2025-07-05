@@ -37,13 +37,14 @@ function MedicationModal({ open, onClose, patientId, userId }) {
         { userId, patientId, medicines, notes },
         {withCredentials:true}
       );
-       
+         onClose();
+         
     await Swal.fire({
       icon: 'success',
       title: 'Prescription Saved!',
       text: 'The medication details have been successfully saved.',
     });
-      onClose();
+    
       setMedicines([{ name: '', dosage: '', frequency: '', duration: '' }]);
       setNotes('');
     } catch (err) {

@@ -27,7 +27,7 @@ function ProfilePage() {
   const getInitials = (name) =>
     name
       ?.split(" ")
-      .map((n) => n[0].toUpperCase())
+      .map((n) => n[0])
       .join("");
 
   if (!user) {
@@ -46,21 +46,18 @@ function ProfilePage() {
         <div className="flex flex-col items-center gap-4 mb-6">
           <div className="h-24 w-24 rounded-full bg-yellow-600 text-white text-3xl font-bold flex items-center justify-center">
             {getInitials(user.name)}
-          </div>
-          <h2 className="text-2xl font-semibold">{user.name}</h2>
-          <p className="text-gray-500 text-sm capitalize">{user.role}</p>
-          <p>Email: <span className="text-gray-700">{user.email}</span></p>
+           </div>
+           <h2 className="text-2xl font-semibold">{user.name}</h2>
+           <p className="text-gray-500 text-sm capitalize">{user.role}</p>
+           <p>Email: <span className="text-gray-700">{user.email}</span></p>
            <p>Phone: <span className="text-gray-700">{user.contactNumber || "N/A"}</span></p>
            <p>Gender: <span className="text-gray-700">{user.gender || "N/A"}</span></p>
            <p>Date of Birth: <span className="text-gray-700">{new Date(user.dateOfBirth).toLocaleDateString()}</span></p>
            <p>Address: <span className="text-gray-700">{user.address || "N/A"}</span></p>
-          
-        </div>
-   
-
-      </div>
-    </div>
-    </>
+           </div>
+          </div>
+       </div>
+      </>
   );
 }
 

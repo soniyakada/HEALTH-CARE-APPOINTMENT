@@ -27,8 +27,8 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  console.log("--------------->User------->",user);
-  // 🔓 Logout function
+
+  // Logout function
   const logout = async () => {
     await axios.post(`${API_URL}/logout`, {}, {
       withCredentials: true,
