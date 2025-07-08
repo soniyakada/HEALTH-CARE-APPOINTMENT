@@ -234,6 +234,7 @@ export const getPatientDetails = async (req, res) => {
 // Get patient appointments
 export const getPatientAppointments = async (req, res) => {
   const patientId = req.params.id;
+  console.log("[][][][][]====>",typeof patientId);
   const cacheKey = `patient:${patientId}:appointments`;
   try {
     // Check if cached in Redis
@@ -242,7 +243,7 @@ export const getPatientAppointments = async (req, res) => {
       return res.status(200).json(JSON.parse(cachedAppointments));
     }
 
-    const patient = await User.findById(patientId);
+    const patient = await User.findOne({ _id: patientId }) // or req.body.id or req.query.id;
     if (!patient || patient.role !== "patient") {
       return res
         .status(404)

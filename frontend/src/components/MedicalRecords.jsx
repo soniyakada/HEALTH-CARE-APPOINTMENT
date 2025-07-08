@@ -32,7 +32,6 @@ function MedicalRecords() {
     const userId = user?.id;
 
 
-  useEffect(() => {
     const fetchAppointments = async () => {
       try {
           const response = await axios.get(
@@ -51,6 +50,8 @@ function MedicalRecords() {
         setLoading(false);
       }
     };
+    
+  useEffect(() => {
    fetchAppointments();
   }, [userId]);
 

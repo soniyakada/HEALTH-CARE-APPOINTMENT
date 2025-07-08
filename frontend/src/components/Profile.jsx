@@ -9,14 +9,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 import { useAuth } from "../context/AuthContext";
 
 
+
 const Profile = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-  const {user} = useAuth();
+  
+  const {user ,loading} = useAuth();
 
-   if (user) {
-  }
   const userId = user?.id;
   
   useEffect(() => {
@@ -26,23 +25,23 @@ const Profile = () => {
            withCredentials: true,
            });
         setUserDetails(response.data.user);
-        setLoading(false);
+       
       } catch (error) {
         setErrorMessage("Unauthorized user");
         console.error("Error fetching user details:", error);
-        setLoading(false);
+       
       }
     };
     fetchUserDetails();
   }, [userId]);
  
-   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+ if (loading) {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <img src={loader} alt="Loading..." className="w-16 h-16" />
+    </div>
+  );
+}
 
   return (
     <>
@@ -74,7 +73,7 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        <p>{loader}</p>
+        <p>{loading}</p>
       )}
     </>
   );

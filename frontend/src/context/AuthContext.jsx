@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);   // Stores { id, name, email, role }
   const [loading, setLoading] = useState(true); // Shows spinner while checking auth
 
-  // ✅ Fetch user on first load (based on token in cookies)
+  // Fetch user on first load (based on token in cookies)
   useEffect(() => {
     const fetchUser = async () => {
       try {

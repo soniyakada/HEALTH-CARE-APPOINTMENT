@@ -49,7 +49,6 @@ export const searchDoctorsBySpecialization = async (req, res) => {
 // Get doctor profile with appointments
 export const getDoctorProfile = async (req, res) => {
   const doctorId = req.params.id;
-
   try {
     // Check Redis cache
     const cacheKey = `doctor:${doctorId}`;

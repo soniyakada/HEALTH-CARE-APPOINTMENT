@@ -86,7 +86,11 @@ const handleSubmitReview = async() => {
   {
     withCredentials:true,
   }
-      );
+   );
+   
+ 
+    await fetchReviews(doctorId); 
+   
     handleCloseReview();
   };
   const navigate = useNavigate();

@@ -25,7 +25,7 @@ const DoctorProfile = () => {
   }
   const userId = user?.id;
 
-  useEffect(() => {
+ 
     const fetchDoctor = async () => {
       try {
         setLoading(true);
@@ -40,6 +40,8 @@ const DoctorProfile = () => {
       }
     };
     
+    
+  useEffect(() => {
     fetchDoctor();
   }, []);
 
