@@ -4,6 +4,7 @@ import PatientNavbar from "./PatientNavbar";
 import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // Import MUI components
 import {
@@ -19,21 +20,17 @@ import {
   EventAvailable as EventAvailableIcon,
   LocalHospital as LocalHospitalIcon,
 } from "@mui/icons-material";
+import Footer from "./Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 
 const AppointmentsPage = () => {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
   const [error ,setError] = useState("");
   const navigate = useNavigate();
   const {user} = useAuth();
-
-   if (user) {
-  // console.log("User ID:", user.id);
-  
-  }
   const userId = user?.id;
 
   useEffect(() => {
@@ -45,7 +42,7 @@ const AppointmentsPage = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-       
+       setProcessing(true);
         const response = await axios.get(
           `${API_URL}/patients/${userId}/appointments`,
           {
@@ -54,10 +51,10 @@ const AppointmentsPage = () => {
         );
 
         setUpcomingAppointments(response.data.upcomingAppointments);
-        setLoading(false);
+        setProcessing(false);
       } catch (error) {
         console.error("Error fetching appointments:", error);
-        setLoading(false);
+        setProcessing(false);
       }
     };
 
@@ -70,13 +67,7 @@ const AppointmentsPage = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
- if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen" >
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+
 
   //Show error if userId is missing
   if (error) {
@@ -134,7 +125,10 @@ const AppointmentsPage = () => {
           </Typography>
         </Box>
 
-        {upcomingAppointments.length > 0 ? (
+        {processing ?   <div className="flex justify-center items-center h-64">
+      <CircularProgress />
+    </div>:
+    upcomingAppointments.length > 0 ? (
           <div className="space-y-4">
             {upcomingAppointments.map((appointment) => (
               <Paper
@@ -269,6 +263,7 @@ const AppointmentsPage = () => {
           </Paper>
         )}
       </Container>
+      <Footer/>
     </>
   );
 };

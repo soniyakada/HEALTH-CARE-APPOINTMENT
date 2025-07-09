@@ -64,17 +64,13 @@ export const sendPrescriptionEmail = async ({ to, patientName, doctorName, medic
   });
 };
 
-
-
 // Send OTP Email
 export const doctorverificationmail = async (doctor) => {
-  console.log("before");
   const mailOptions = {
     from: process.env.EMAIL_USER || "gmail",
     to: doctor.email,
     subject:  "Your Doctor Account is Verified!",
     html: ` Dear Dr. ${doctor.name},\n\nCongratulations! Your account has been successfully verified by the admin.\n\nYou can now log in and access your dashboard.\n\nBest regards,\nHealthCare Team`,
   };
-  console.log("After");
   return transporter.sendMail(mailOptions);
 };

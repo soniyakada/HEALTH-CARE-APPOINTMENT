@@ -13,40 +13,28 @@ import { useAuth } from "../context/AuthContext";
 function PatientNavbar({ isShow }) {
   const navigate = useNavigate();
   const [count, setCount] = useState("");
-  const [profileName, setProfileName] = useState("");
-   const {user} = useAuth();
+  const { user, setUser } = useAuth();
+  const userId = user?.id;
+  const profileName = user?.name;
 
-    if (user) {
-    // console.log("User ID:", user.id);
-    }
-    const userId = user?.id;
+   
+  // Logout handler
 
-   const onHandleLogout = async () => {
+  const onHandleLogout = async () => {
     try {
        await axios.post(`${API_URL}/logout`, {}, {
       withCredentials: true,
     });
+    setUser(null);
+    navigate("/signin");
     } catch (error) {
       console.error("Error", error.message);
     }
   };
 
-  const getFullName = async () => {
-    try {
-      const { data } = await axios.get(`${API_URL}/profile`,{
-        withCredentials:true,
-      });
-      setProfileName(data.user.name);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // Fetch notification count
 
   useEffect(() => {
-    getFullName();
-  }, []);
-
-useEffect(() => {
   const getCount = async () => {
     try {
       const response = await axios.get(`${API_URL}/notifications`, {
@@ -58,32 +46,21 @@ useEffect(() => {
       console.error("Error fetching notifications:", error);
     }
   };
-
-  // Initial fetch
   getCount();
-
-  // Run every 40 seconds
-  const interval = setInterval(getCount, 4000); // 40000 ms = 40 sec
-
-  // Cleanup on unmount or userId change
+  const interval = setInterval(getCount, 10000); 
   return () => clearInterval(interval);
-}, [userId]);
+  }, [userId]);
 
 
-  const getInitials = (name) => {
-    if (!name) return "";
-    const parts = name.trim().split(" ");
-    const first = parts[0]?.charAt(0).toUpperCase() || "";
-    const last = parts[1]?.charAt(0).toUpperCase() || "";
-    return first + last;
-  };
+
+  // WebSocket notifications
 
   useEffect(() => {
     if (userId) {
       socket.emit("join", userId);
     }
     socket.on("receive_notification", ({ message }) => {
-      toast.info(message); // or push a toast/notification
+      toast.info(message);
     });
 
     return () => {
@@ -91,7 +68,9 @@ useEffect(() => {
     };
   }, [userId]);
 
-  // Bell icon click handler
+  
+  // Mark notifications as read
+
   async function handleBellClick() {
     try {
       await axios.put(`${API_URL}/notifications/mark-all-read`, { userId });
@@ -101,6 +80,16 @@ useEffect(() => {
       console.error("Error marking notifications as read:", error);
     }
   }
+
+  // Profile initials
+  
+  const getInitials = (name) => {
+    if (!name) return "";
+    const parts = name.trim().split(" ");
+    const first = parts[0]?.charAt(0).toUpperCase() || "";
+    const last = parts[1]?.charAt(0).toUpperCase() || "";
+    return first + last;
+  };
 
   return (
     <>
@@ -126,8 +115,12 @@ useEffect(() => {
         )}
 
         <div className="flex justify-center items-center gap-3">
-          <Link to={`/notifications`}>
-            <div className="relative cursor-pointer" onClick={handleBellClick}>
+         
+            <div className="relative cursor-pointer"  onClick={async () => {
+            await handleBellClick(); // mark as read first
+            navigate("/notifications"); // then go to page
+            }}
+            >
               <IoIosNotifications
                 className="h-7 w-7"
                 style={{ color: "#DAA520" }}
@@ -138,8 +131,7 @@ useEffect(() => {
                 </span>
               )}
             </div>
-          </Link>
-
+       
           <Link to="/signin" onClick={onHandleLogout}>
             <h3 className="font-bold text-gray-700">Logout</h3>
           </Link>
@@ -161,7 +153,6 @@ useEffect(() => {
 
 // Add this at the bottom
 PatientNavbar.propTypes = {
-  userId: PropTypes.string.isRequired,
   isShow: PropTypes.bool.isRequired,
 };
 

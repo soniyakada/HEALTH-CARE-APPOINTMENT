@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import { useAuth } from "../context/AuthContext";
 
 
 // Material UI imports
@@ -38,6 +39,7 @@ const Signin = () => {
   const [passError, setPassError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useAuth();
 
 
   const navigate = useNavigate();
@@ -75,12 +77,11 @@ const Signin = () => {
     }
 
     try {
-      await axios.post(`${API_URL}/signin`, {
-        email,
-        password,
-      }, {
-  withCredentials: true
-});
+      const res = await axios.post(`${API_URL}/signin`, {
+      email,
+      password,}, {withCredentials: true}
+      );
+      setUser(res.data.user);
     
       navigate(`/profile`);
     } catch (error) {
@@ -164,7 +165,7 @@ const Signin = () => {
   return (
     <>
       <Navbar />
-    <Box sx={containerStyles}>
+      <Box sx={containerStyles}>
     
       
       <Container component="main" sx={formContainerStyles}>

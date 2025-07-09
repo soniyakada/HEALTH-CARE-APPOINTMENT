@@ -20,15 +20,10 @@ const AppointmentForm = () => {
   const [error, setError] = useState("");
   const [apiError ,setApiError] = useState("");
   const {user} = useAuth();
-  
-      if (user) {
-    console.log("User ID:", user.id);
-    
-    }
-    const id = user?.id;
+  const id = user?.id;
 
 
-   const availableTimeSlots = [
+  const availableTimeSlots = [
     "9:00 AM - 10:00 AM",
     "10:00 AM - 11:00 AM",
     "2:00 PM - 3:00 PM",

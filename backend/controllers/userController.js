@@ -234,7 +234,6 @@ export const getPatientDetails = async (req, res) => {
 // Get patient appointments
 export const getPatientAppointments = async (req, res) => {
   const patientId = req.params.id;
-  console.log("[][][][][]====>",typeof patientId);
   const cacheKey = `patient:${patientId}:appointments`;
   try {
     // Check if cached in Redis

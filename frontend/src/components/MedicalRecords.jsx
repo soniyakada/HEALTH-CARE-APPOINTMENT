@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import PatientNavbar from "./PatientNavbar";
 import { useAuth } from "../context/AuthContext";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import {
   Box,
@@ -16,30 +17,27 @@ import {
   AccessTime as AccessTimeIcon,
   Assignment as AssignmentIcon,
 } from "@mui/icons-material";
+import Footer from "./Footer";
 
 function MedicalRecords() {
   const [pastAppointments, setPastAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
+   const [processing, setProcessing] = useState(false);
   const [apiError ,setApiError] = useState("");
  
   const API_URL = import.meta.env.VITE_API_URL;
    const {user} = useAuth();
-  
-     if (user) {
-    console.log("User ID:", user.id);
-    
-    }
     const userId = user?.id;
 
 
     const fetchAppointments = async () => {
       try {
+          setProcessing(true);
           const response = await axios.get(
           `${API_URL}/patients/${userId}/appointments`,
           {withCredentials:true,}
         );
         setPastAppointments(response.data.pastAppointments);
-        setLoading(false);
+        setProcessing(false);
       } catch (error) {
         console.error("Error fetching appointments:", error);
         setApiError(
@@ -47,7 +45,7 @@ function MedicalRecords() {
         error?.message ||
         "Error fetching appointments."
       );
-        setLoading(false);
+        setProcessing(false);
       }
     };
     
@@ -59,16 +57,6 @@ function MedicalRecords() {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-
-   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  
 
   return (
     <>
@@ -113,7 +101,9 @@ function MedicalRecords() {
            </div>
          )}
 
-        {pastAppointments.length > 0 ? (
+           {processing ?   <div className="flex justify-center items-center h-64">
+              <CircularProgress />
+            </div>:pastAppointments.length > 0 ? (
           <div className="space-y-4">
             {pastAppointments.map((appointment) => (
               <Paper
@@ -210,6 +200,7 @@ function MedicalRecords() {
           </Paper>
         )}
       </Container>
+      <Footer/>
     </>
   );
 }

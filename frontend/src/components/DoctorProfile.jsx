@@ -12,31 +12,28 @@ const socket = io(`${API_URL}`);
 const DoctorProfile = () => {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const {user} = useAuth();
+  const { user, loading } = useAuth();
 
-  if (user) {
-  console.log("User ID:", user.id);
-  }
+if (loading) return <div>Loading...</div>;  // show spinner or skeleton
+
+ console.log("-----",user);
   const userId = user?.id;
-
+console.log("--userid---",user);
  
     const fetchDoctor = async () => {
       try {
-        setLoading(true);
+ 
          const response = await axios.get(`${API_URL}/doctor/${userId}`, {
           withCredentials:true,
         });
         setDoctor(response.data.doctor);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching doctor profile:", error);
-        setLoading(false);
       }
     };
     
@@ -116,14 +113,7 @@ const DoctorProfile = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
+ 
   if (error) {
     return (
       <div className="p-6 max-w-4xl mx-auto">

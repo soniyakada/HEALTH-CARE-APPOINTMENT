@@ -15,7 +15,6 @@ const AdminDashboard = () => {
     try {
       const res = await axios.get(`${API_URL}/admin/users`, { withCredentials: true });
       const allUsers = res.data;
-      console.log("-----admin-------",allUsers);
       setDoctors(allUsers.filter(user => user.role === 'doctor'));
       setPatients(allUsers.filter(user => user.role === 'patient'));
     } catch (err) {

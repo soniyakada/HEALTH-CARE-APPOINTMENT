@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
 import { useAuth } from "../context/AuthContext";
@@ -7,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 const PatientProfile = () => {;
   const navigate = useNavigate();
    const {user} = useAuth();
+
 
     if (user) {
     // console.log("User ID:", user.id);
@@ -138,9 +138,5 @@ const PatientProfile = () => {;
   );
 };
 
-// Add this at the bottom
-PatientProfile.propTypes = {
-  userId: PropTypes.string.isRequired,
-};
 
 export default PatientProfile;

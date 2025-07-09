@@ -10,7 +10,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Shows spinner while checking auth
 
   // Fetch user on first load (based on token in cookies)
-  useEffect(() => {
+  
+  
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${API_URL}/me`, {
@@ -23,7 +24,8 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
+   
+   useEffect(() => {
     fetchUser();
   }, []);
 

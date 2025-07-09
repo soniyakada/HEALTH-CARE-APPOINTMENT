@@ -165,7 +165,7 @@ export const signinController = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,           // Set true in production (HTTPS)
-      sameSite: "Strict",     // Or "Lax" depending on frontend-backend domains
+      sameSite: "Lax",     // Or "Lax" depending on frontend-backend domains
       maxAge: 60 * 60 * 1000, // 1 hour
     }).status(200).json({
       message: "Login successful",
@@ -186,9 +186,8 @@ export const logoutController = async (req, res) => {
 
   try {
     const userId = req.user.id;
-    console.log("Logout request for user:", userId);
-
-      // Clear cookie with multiple approaches
+   
+    // Clear cookie with multiple approaches
     res.clearCookie("token");
     res.clearCookie("token", { path: "/" });
     res.clearCookie("token", { 
