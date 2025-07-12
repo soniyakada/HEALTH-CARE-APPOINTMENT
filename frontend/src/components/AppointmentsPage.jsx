@@ -98,7 +98,7 @@ const AppointmentsPage = () => {
             gutterBottom
             sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
-            <CalendarIcon fontSize="medium" />
+            <CalendarIcon fontSize="large" />
             Appointments
           </Typography>
         </Container>

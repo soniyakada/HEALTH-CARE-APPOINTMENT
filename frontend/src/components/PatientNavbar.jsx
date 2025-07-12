@@ -102,7 +102,7 @@ function PatientNavbar({ isShow }) {
             <Link to="/patient/prescriptions" className="hover:text-blue-600 transition">
               Medication
             </Link>
-             <Link to="/patient/prescriptions" className="hover:text-blue-600 transition">
+             <Link to="/medicalrecords" className="hover:text-blue-600 transition">
               Medical Records
             </Link>
           </div>

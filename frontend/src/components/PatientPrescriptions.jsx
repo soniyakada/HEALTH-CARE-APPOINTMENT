@@ -67,7 +67,7 @@ const PatientPrescriptions = () => {
             gutterBottom
             sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
           >
-            <PharmacyIcon fontSize="medium" />
+            <PharmacyIcon fontSize="large" />
             Prescriptions
           </Typography>
         </Container>
