@@ -25,7 +25,7 @@ router.get("/doctor/:id/patient-history", getPatientHistory);
 
 // Patient routes
 router.get("/patients",authenticate, getPatientDetails);
-router.get("/patients/:id/appointments", authenticate, getPatientAppointments);
+router.get("/patients/appointments", authenticate, getPatientAppointments);
 
 // Review routes
 router.post('/reviews',authenticate,addReview);

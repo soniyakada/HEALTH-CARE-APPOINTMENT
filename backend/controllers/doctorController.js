@@ -148,7 +148,7 @@ export const updateAppointmentStatus = async (req, res) => {
 
 // Get notifications for a patient
 export const getNotifications = async (req, res) => {
-  const { userId } = req.query; // Get userId from query string
+  const  userId  = req.user.id // Get userId from query string
   const cacheKey = `notifications:${userId}`;
 
   try {
@@ -256,8 +256,8 @@ export const addPrescription = async (req, res) => {
 
 export const getPrescriptionsByPatient = async (req, res) => {
   try {
-    const { patientId } = req.params;
-    const prescriptions = await Medication.find({ patientId }).populate('doctorId', 'name').sort({createdAt : -1});
+    const  patientId = req.user.id;
+    const prescriptions = await Medication.find({  patientId }).populate('doctorId', 'name').sort({createdAt : -1});
     res.status(200).json({ prescriptions });
   } catch (err) {
     res.status(500).json({ error: err.message });

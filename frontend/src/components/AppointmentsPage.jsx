@@ -30,21 +30,25 @@ const AppointmentsPage = () => {
   const [processing, setProcessing] = useState(false);
   const [error ,setError] = useState("");
   const navigate = useNavigate();
-  const {user} = useAuth();
+  const { user, loading } = useAuth();
   const userId = user?.id;
 
+  //Only after loading completes and userId is missing
   useEffect(() => {
-    if (!userId) {
+    if (!loading && !userId) {
       setError("Something went wrong. User ID is missing.");
     }
-  }, [userId]);
+  }, [loading, userId]);
+
 
   useEffect(() => {
+     if (!userId) return;
+
     const fetchAppointments = async () => {
       try {
        setProcessing(true);
         const response = await axios.get(
-          `${API_URL}/patients/${userId}/appointments`,
+          `${API_URL}/patients/appointments`,
           {
             withCredentials:true,
           }
@@ -122,6 +126,9 @@ const AppointmentsPage = () => {
             Upcoming Appointments ({upcomingAppointments.length})
           </Typography>
         </Box>
+        {loading && <div className="flex justify-center items-center h-64">
+      <CircularProgress />
+    </div> }
 
         {processing ?   <div className="flex justify-center items-center h-64">
       <CircularProgress />
@@ -131,7 +138,7 @@ const AppointmentsPage = () => {
             {upcomingAppointments.map((appointment) => (
               <Paper
                 key={appointment._id}
-                elevation={2}
+                elevation={6}
                 sx={{
                   p: 3,
                   borderRadius: 2,

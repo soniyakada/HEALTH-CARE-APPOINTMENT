@@ -15,17 +15,24 @@ const Notifications = () => {
   const [apiError ,setApiError] = useState("");
 
 
-  const { user } = useAuth();
+   const { user, loading } = useAuth();
   const userId = user?.id;
 
+   useEffect(() => {
+    if (!loading && !userId) {
+      setApiError("Something went wrong. User ID is missing.");
+    }
+  }, [loading, userId]);
 
 
     useEffect(() => {
+
+    if (!userId) return;
+
     const fetchNotifications = async () => {
       try {
         setProcessing(true);
         const response = await axios.get(`${API_URL}/notifications`, {
-          params: { userId }, // Pass userId as a query parameter
           withCredentials:true,
         });
         
@@ -65,7 +72,12 @@ const Notifications = () => {
              <strong className="font-semibold">Oops!</strong> {apiError}
            </div>
          )}
-         {processing ? (
+    
+         {loading && <div className="flex justify-center items-center h-64">
+              <CircularProgress />
+        </div> }
+
+        {processing ? (
            // 1. Loading State
            <div className="flex justify-center items-center h-64">
              <CircularProgress />

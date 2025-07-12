@@ -233,7 +233,7 @@ export const getPatientDetails = async (req, res) => {
 
 // Get patient appointments
 export const getPatientAppointments = async (req, res) => {
-  const patientId = req.params.id;
+  const patientId = req.user.id;
   const cacheKey = `patient:${patientId}:appointments`;
   try {
     // Check if cached in Redis
@@ -250,7 +250,7 @@ export const getPatientAppointments = async (req, res) => {
     }
 
     // Fetch all appointments for the patient
-    const appointments = await Appointment.find({ patient: req.params.id })
+    const appointments = await Appointment.find({ patient: patientId })
       .populate("doctor", "name specialization") // Populate doctor details
       .sort({ createdAt: -1 }); // Sort by date (ascending)
     

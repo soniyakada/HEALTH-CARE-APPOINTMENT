@@ -27,11 +27,12 @@ router.put("/appointment/:id/status",authenticate, authorizeRoles("doctor"),upda
 // Notification routes
 router.get("/notifications",authenticate, getNotifications);
 router.put("/notifications/mark-all-read", markAllNotificationsAsRead);
+
 // Add prescription
-router.post('/postmedication',authenticate,authorizeRoles("doctor"), addPrescription);
+router.post('/postmedication',authenticate, authorizeRoles("doctor"), addPrescription);
 
 // Get prescriptions for a patient
-router.get('/prescription/:patientId',authenticate, getPrescriptionsByPatient);
+router.get('/prescription',authenticate, getPrescriptionsByPatient);
 
 //For use Admin 
 router.get("/admin/users", authenticate, authorizeRoles("admin"), async (req, res) => {

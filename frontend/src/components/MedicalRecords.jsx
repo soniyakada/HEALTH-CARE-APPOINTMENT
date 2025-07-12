@@ -25,15 +25,23 @@ function MedicalRecords() {
   const [apiError ,setApiError] = useState("");
  
   const API_URL = import.meta.env.VITE_API_URL;
-   const {user} = useAuth();
+  const { user, loading } = useAuth();
     const userId = user?.id;
+
+      useEffect(() => {
+    if (!loading && !userId) {
+      setApiError("Something went wrong. User ID is missing.");
+    }
+  }, [loading, userId]);
 
 
     const fetchAppointments = async () => {
+          if (!userId) return;
+
       try {
           setProcessing(true);
           const response = await axios.get(
-          `${API_URL}/patients/${userId}/appointments`,
+          `${API_URL}/patients/appointments`,
           {withCredentials:true,}
         );
         setPastAppointments(response.data.pastAppointments);
@@ -100,6 +108,10 @@ function MedicalRecords() {
              <strong className="font-semibold">Oops!</strong> {apiError}
            </div>
          )}
+          
+          {loading && <div className="flex justify-center items-center h-64">
+                <CircularProgress />
+          </div> }
 
            {processing ?   <div className="flex justify-center items-center h-64">
               <CircularProgress />
@@ -108,7 +120,7 @@ function MedicalRecords() {
             {pastAppointments.map((appointment) => (
               <Paper
                 key={appointment._id}
-                elevation={2}
+                elevation={6}
                 sx={{
                   p: 3,
                   borderRadius: 2,
