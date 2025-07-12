@@ -54,27 +54,6 @@ const PatientPrescriptions = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  if (error) {
-    return (
-      <>
-        <PatientNavbar userId={patientId} isShow={true} />
-        <Container maxWidth="lg" sx={{ mt: 4 }}>
-          <Paper
-            elevation={1}
-            sx={{
-              p: 4,
-              textAlign: 'center',
-              borderRadius: 2,
-              bgcolor: 'error.light',
-              color: 'error.contrastText',
-            }}
-          >
-            <Typography variant="h6">{error}</Typography>
-          </Paper>
-        </Container>
-      </>
-    );
-  }
 
   return (
     <>
@@ -111,6 +90,12 @@ const PatientPrescriptions = () => {
             Your Prescriptions ({prescriptions.length})
           </Typography>
         </Box>
+
+         {error && (
+           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
+             <strong className="font-semibold">Oops!</strong> {error}
+           </div>
+         )}
 
         {processing ? <div className="flex justify-center items-center h-64">
               <CircularProgress />
