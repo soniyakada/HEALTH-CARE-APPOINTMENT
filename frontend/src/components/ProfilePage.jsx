@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import PatientNavbar from "./PatientNavbar";
 import CircularProgress from "@mui/material/CircularProgress";
+import Footer from "./Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -55,6 +56,7 @@ function ProfilePage() {
            </div>}
           </div>
        </div>
+       <Footer/>
       </>
   );
 }

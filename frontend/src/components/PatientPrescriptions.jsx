@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import PatientNavbar from './PatientNavbar';
-import { useAuth } from "../context/AuthContext";
-import CircularProgress from "@mui/material/CircularProgress";
+import { useAuth } from '../context/AuthContext';
+import CircularProgress from '@mui/material/CircularProgress';
 import Footer from './Footer';
 
 import {
@@ -10,12 +10,9 @@ import {
   Typography,
   Container,
   Paper,
-  Grid,
 } from '@mui/material';
 import {
   LocalPharmacy as PharmacyIcon,
-  CalendarToday as CalendarIcon,
-  Person as PersonIcon,
   Assignment as AssignmentIcon,
   Notes as NotesIcon,
 } from '@mui/icons-material';
@@ -25,25 +22,20 @@ const PatientPrescriptions = () => {
   const [processing, setProcessing] = useState(true);
   const [error, setError] = useState('');
   const API_URL = import.meta.env.VITE_API_URL;
-   const {user} = useAuth();
-
-  if (user) {
-  console.log("User ID:", user.id);
-  }
+  const { user } = useAuth();
   const patientId = user?.id;
-
 
   useEffect(() => {
     const fetchPrescriptions = async () => {
       try {
-        const res = await axios.get(`${API_URL}/prescription/${patientId}`,{
-          withCredentials:true,
+        const res = await axios.get(`${API_URL}/prescription/${patientId}`, {
+          withCredentials: true,
         });
         setPrescriptions(res.data.prescriptions);
       } catch {
         setError('Failed to load prescriptions');
       } finally {
-         setProcessing(false);
+        setProcessing(false);
       }
     };
 
@@ -55,14 +47,12 @@ const PatientPrescriptions = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-
   return (
     <>
       <PatientNavbar userId={patientId} isShow={true} />
 
       {/* Hero Section */}
       <Box
-        className="ring-4"
         sx={{
           backgroundColor: 'rgb(96, 165, 250)',
           color: 'white',
@@ -83,8 +73,8 @@ const PatientPrescriptions = () => {
         </Container>
       </Box>
 
-      {/* Prescriptions List */}
-      <Container maxWidth="lg" sx={{ mb: 6 }}>
+      {/* Prescriptions Section */}
+      <Container maxWidth="md" sx={{ mb: 6 }}>
         <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
           <AssignmentIcon sx={{ mr: 1 }} color="primary" />
           <Typography variant="h5" fontWeight="500">
@@ -92,94 +82,88 @@ const PatientPrescriptions = () => {
           </Typography>
         </Box>
 
-         {error && (
-           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
-             <strong className="font-semibold">Oops!</strong> {error}
-           </div>
-         )}
-
-        {processing ? <div className="flex justify-center items-center h-64">
-              <CircularProgress />
-            </div>: prescriptions.length > 0 ? (
-          <Grid container spacing={7}>
-  {prescriptions.map((prescription, index) => (
-    <Grid item xs={12} sm={6} md={4} key={index}>
-      <Paper
-        elevation={2}
-        sx={{
-          p: 2,
-          borderRadius: 2,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          border: '1px solid rgba(0,0,0,0.1)',
-        }}
-      >
-        {/* Doctor & Date */}
-        <Box sx={{ mb: 1 }}>
-          <Typography
-            variant="subtitle1"
-            fontWeight="600"
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            <PersonIcon color="primary" fontSize="small" />
-            Dr. {prescription.doctorId?.name || 'Doctor'}
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-            color="text.secondary"
-          >
-            <CalendarIcon fontSize="small" />
-            {formatDate(prescription.createdAt)}
-          </Typography>
-        </Box>
-
-        {/* Medicines */}
-        <Box sx={{ mb: 1 }}>
-          <Typography variant="body2" fontWeight="bold" sx={{ mb: 1 }}>
-            Medicines:
-          </Typography>
-          {prescription.medicines.slice(0, 2).map((med, medIndex) => (
-            <Box key={medIndex} sx={{ mb: 0.5 }}>
-              <Typography variant="body2" color="primary" fontWeight="600">
-                {med.name}
-              </Typography>
-              <Typography variant="caption">
-                {med.dosage}, {med.frequency}, {med.duration}
-              </Typography>
-            </Box>
-          ))}
-          {prescription.medicines.length > 2 && (
-            <Typography variant="caption" color="text.secondary">
-              +{prescription.medicines.length - 2} more...
-            </Typography>
-          )}
-        </Box>
-
-        {/* Notes */}
-        {prescription.notes && (
-          <Box>
-            <Typography
-              variant="body2"
-              fontWeight="bold"
-              sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-            >
-              <NotesIcon fontSize="small" /> Notes:
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {prescription.notes.length > 40
-                ? `${prescription.notes.slice(0, 40)}...`
-                : prescription.notes}
-            </Typography>
-          </Box>
+        {/* Error Message */}
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center"
+            role="alert">
+            <strong className="font-semibold">Oops!</strong> {error}
+          </div>
         )}
-      </Paper>
-    </Grid>
-  ))}
-</Grid>
 
+        {/* Loader */}
+        {processing ? (
+          <div className="flex justify-center items-center h-64">
+            <CircularProgress />
+          </div>
+        ) : prescriptions.length > 0 ? (
+          prescriptions.map((prescription, index) => (
+            <Paper
+              key={index}
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                backgroundColor: 'white',
+                borderLeft: '5px solid #3b82f6',
+                boxShadow: '0px 2px 8px rgba(0,0,0,0.05)',
+                mb: 3,
+              }}
+            >
+              {/* Doctor & Date */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 1,
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight="600">
+                  Dr. {prescription.doctorId?.name || 'Doctor'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {formatDate(prescription.createdAt)}
+                </Typography>
+              </Box>
+
+              {/* Medicines */}
+              <Box sx={{ mb: 1 }}>
+                {prescription.medicines.map((med, medIndex) => (
+                  <Box
+                    key={medIndex}
+                    sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}
+                  >
+                    <PharmacyIcon
+                      sx={{ fontSize: 16, color: '#3b82f6', mr: 1 }}
+                    />
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        fontWeight="600"
+                        sx={{ lineHeight: 1 }}
+                      >
+                        {med.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {med.dosage}, {med.frequency}, {med.duration}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+              {/* Notes */}
+              {prescription.notes && (
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                  <NotesIcon sx={{ fontSize: 16, color: '#3b82f6', mr: 1 }} />
+                  <Typography variant="caption" color="text.secondary">
+                    {prescription.notes}
+                  </Typography>
+                </Box>
+              )}
+            </Paper>
+          ))
         ) : (
           <Paper
             elevation={1}
@@ -187,6 +171,7 @@ const PatientPrescriptions = () => {
               p: 4,
               textAlign: 'center',
               borderRadius: 2,
+              backgroundColor: 'white',
             }}
           >
             <PharmacyIcon
@@ -201,7 +186,8 @@ const PatientPrescriptions = () => {
           </Paper>
         )}
       </Container>
-  <Footer/>
+
+      <Footer />
     </>
   );
 };

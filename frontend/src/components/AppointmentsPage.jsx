@@ -135,7 +135,7 @@ const AppointmentsPage = () => {
                 sx={{
                   p: 3,
                   borderRadius: 2,
-                  border: "1px solid rgba(0,0,0,0.05)",
+                   borderLeft: '5px solid #3b82f6',
                 }}
               >
                 <Grid container spacing={85}>
