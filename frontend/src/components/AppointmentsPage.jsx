@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import CircularProgress from "@mui/material/CircularProgress";
 
-// Import MUI components
 import {
   Box,
   Typography,
@@ -24,35 +23,29 @@ import Footer from "./Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
 const AppointmentsPage = () => {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [processing, setProcessing] = useState(false);
-  const [error ,setError] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const userId = user?.id;
 
-  //Only after loading completes and userId is missing
   useEffect(() => {
     if (!loading && !userId) {
       setError("Something went wrong. User ID is missing.");
     }
   }, [loading, userId]);
 
-
   useEffect(() => {
-     if (!userId) return;
+    if (!userId) return;
 
     const fetchAppointments = async () => {
       try {
-       setProcessing(true);
-        const response = await axios.get(
-          `${API_URL}/patients/appointments`,
-          {
-            withCredentials:true,
-          }
-        );
+        setProcessing(true);
+        const response = await axios.get(`${API_URL}/patients/appointments`, {
+          withCredentials: true,
+        });
 
         setUpcomingAppointments(response.data.upcomingAppointments);
         setProcessing(false);
@@ -65,21 +58,19 @@ const AppointmentsPage = () => {
     fetchAppointments();
   }, [userId]);
 
-  // Format date for better display
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  
-  //Show error if userId is missing
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center">
         <h1 className="text-2xl text-red-600 font-semibold mb-2">{error}</h1>
         <button
           onClick={() => navigate("/signin")}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
           Go to Login
         </button>
       </div>
@@ -91,9 +82,8 @@ const AppointmentsPage = () => {
       <PatientNavbar userId={userId} isShow={true} />
       <ToastContainer />
 
-      {/* Hero Section - simplified version */}
+      {/* Hero */}
       <Box
-        className="ring-4"
         sx={{
           backgroundColor: "rgb(96, 165, 250)",
           color: "white",
@@ -106,19 +96,15 @@ const AppointmentsPage = () => {
             variant="h4"
             fontWeight="bold"
             gutterBottom
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
           >
-            <CalendarIcon fontSize="Medium" />
+            <CalendarIcon fontSize="medium" />
             Appointments
           </Typography>
         </Container>
       </Box>
 
-      {/* Appointments List Section */}
+      {/* Appointments */}
       <Container maxWidth="lg" sx={{ mb: 6 }}>
         <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
           <EventAvailableIcon sx={{ mr: 1 }} color="primary" />
@@ -126,32 +112,32 @@ const AppointmentsPage = () => {
             Upcoming Appointments ({upcomingAppointments.length})
           </Typography>
         </Box>
-        {loading && <div className="flex justify-center items-center h-64">
-      <CircularProgress />
-    </div> }
 
-        {processing ?   <div className="flex justify-center items-center h-64">
-      <CircularProgress />
-    </div>:
-    upcomingAppointments.length > 0 ? (
+        {loading || processing ? (
+          <div className="flex justify-center items-center h-64">
+            <CircularProgress />
+          </div>
+        ) : upcomingAppointments.length > 0 ? (
           <div className="space-y-4">
             {upcomingAppointments.map((appointment) => (
               <Paper
                 key={appointment._id}
-                elevation={6}
+                elevation={8}
                 sx={{
                   p: 3,
                   borderRadius: 2,
-                   borderLeft: '5px solid #3b82f6',
+                  backgroundColor: "white",
+                  borderLeft: "5px solid #3b82f6",
+                  boxShadow: "0px 2px 8px rgba(0,0,0,0.05)",
                 }}
               >
-                <Grid container spacing={85}>
+                <Grid container spacing={90}>
                   {/* Doctor Info */}
                   <Grid item xs={12} md={6}>
-                    <Typography variant="h6" color="primary">
+                    <Typography variant="subtitle1" fontWeight={600} color="primary">
                       Dr. {appointment.doctor?.name || "Doctor"}
                     </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary">
                       {appointment.doctor?.specialization || "Specialist"}
                     </Typography>
 
@@ -165,14 +151,14 @@ const AppointmentsPage = () => {
                         }}
                       >
                         <LocalHospitalIcon color="primary" fontSize="small" />
-                        <Typography variant="body1">
+                        <Typography variant="body2" color="text.secondary">
                           <strong>Symptoms:</strong> {appointment.symptoms}
                         </Typography>
                       </Box>
                     )}
                   </Grid>
 
-                  {/* Appointment Date/Time/Status */}
+                  {/* Date, Time, Status */}
                   <Grid item xs={12} md={6}>
                     <Box
                       sx={{
@@ -202,7 +188,7 @@ const AppointmentsPage = () => {
                         }}
                       >
                         <CalendarIcon color="primary" fontSize="small" />
-                        <Typography variant="body1">
+                        <Typography variant="body2" color="text.secondary">
                           <strong>Date:</strong> {formatDate(appointment.date)}
                         </Typography>
                       </Box>
@@ -216,7 +202,7 @@ const AppointmentsPage = () => {
                         }}
                       >
                         <AccessTimeIcon color="primary" fontSize="small" />
-                        <Typography variant="body1">
+                        <Typography variant="body2" color="text.secondary">
                           <strong>Time:</strong> {appointment.timeSlot}
                         </Typography>
                       </Box>
@@ -234,7 +220,7 @@ const AppointmentsPage = () => {
                       >
                         <EventAvailableIcon color="primary" fontSize="small" />
                         <Typography
-                          variant="body2"
+                          variant="caption"
                           fontWeight="medium"
                           color="primary"
                         >
@@ -254,6 +240,7 @@ const AppointmentsPage = () => {
               p: 4,
               textAlign: "center",
               borderRadius: 2,
+              backgroundColor: "white",
             }}
           >
             <CalendarIcon
@@ -263,12 +250,13 @@ const AppointmentsPage = () => {
               No Upcoming Appointments
             </Typography>
             <Typography color="text.secondary">
-              You dont have any appointments scheduled.
+              You do not have any appointments scheduled.
             </Typography>
           </Paper>
         )}
       </Container>
-      <Footer/>
+
+      <Footer />
     </>
   );
 };

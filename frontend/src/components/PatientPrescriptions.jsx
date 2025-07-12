@@ -67,14 +67,14 @@ const PatientPrescriptions = () => {
             gutterBottom
             sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
           >
-            <PharmacyIcon fontSize="Medium" />
+            <PharmacyIcon fontSize="medium" />
             Prescriptions
           </Typography>
         </Container>
       </Box>
 
       {/* Prescriptions Section */}
-      <Container maxWidth="md" sx={{ mb: 6 }}>
+      <Container maxWidth="lg" sx={{ mb: 6 }}>
         <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
           <AssignmentIcon sx={{ mr: 1 }} color="primary" />
           <Typography variant="h5" fontWeight="500">
@@ -86,7 +86,8 @@ const PatientPrescriptions = () => {
         {error && (
           <div
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center"
-            role="alert">
+            role="alert"
+          >
             <strong className="font-semibold">Oops!</strong> {error}
           </div>
         )}
@@ -100,7 +101,7 @@ const PatientPrescriptions = () => {
           prescriptions.map((prescription, index) => (
             <Paper
               key={index}
-              elevation={0}
+              elevation={8}
               sx={{
                 p: 3,
                 borderRadius: 2,
@@ -119,7 +120,7 @@ const PatientPrescriptions = () => {
                   mb: 1,
                 }}
               >
-                <Typography variant="subtitle1" fontWeight="600">
+                <Typography variant="subtitle1" fontWeight={600} color="primary">
                   Dr. {prescription.doctorId?.name || 'Doctor'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -134,15 +135,9 @@ const PatientPrescriptions = () => {
                     key={medIndex}
                     sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}
                   >
-                    <PharmacyIcon
-                      sx={{ fontSize: 16, color: '#3b82f6', mr: 1 }}
-                    />
+                    <PharmacyIcon sx={{ fontSize: 16, color: '#3b82f6', mr: 1 }} />
                     <Box>
-                      <Typography
-                        variant="body2"
-                        fontWeight="600"
-                        sx={{ lineHeight: 1 }}
-                      >
+                      <Typography variant="body2" fontWeight={600}>
                         {med.name}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">

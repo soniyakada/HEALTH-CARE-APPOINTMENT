@@ -3,6 +3,7 @@ import axios from "axios";
 import PatientNavbar from "./PatientNavbar";
 import { useAuth } from "../context/AuthContext";
 import CircularProgress from "@mui/material/CircularProgress";
+import Footer from "./Footer";
 
 import {
   Box,
@@ -17,48 +18,46 @@ import {
   AccessTime as AccessTimeIcon,
   Assignment as AssignmentIcon,
 } from "@mui/icons-material";
-import Footer from "./Footer";
 
 function MedicalRecords() {
   const [pastAppointments, setPastAppointments] = useState([]);
-   const [processing, setProcessing] = useState(false);
-  const [apiError ,setApiError] = useState("");
- 
+  const [processing, setProcessing] = useState(false);
+  const [apiError, setApiError] = useState("");
+
   const API_URL = import.meta.env.VITE_API_URL;
   const { user, loading } = useAuth();
-    const userId = user?.id;
+  const userId = user?.id;
 
-      useEffect(() => {
+  useEffect(() => {
     if (!loading && !userId) {
       setApiError("Something went wrong. User ID is missing.");
     }
   }, [loading, userId]);
 
+  const fetchAppointments = async () => {
+    if (!userId) return;
 
-    const fetchAppointments = async () => {
-          if (!userId) return;
-
-      try {
-          setProcessing(true);
-          const response = await axios.get(
-          `${API_URL}/patients/appointments`,
-          {withCredentials:true,}
-        );
-        setPastAppointments(response.data.pastAppointments);
-        setProcessing(false);
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-        setApiError(
+    try {
+      setProcessing(true);
+      const response = await axios.get(
+        `${API_URL}/patients/appointments`,
+        { withCredentials: true }
+      );
+      setPastAppointments(response.data.pastAppointments);
+      setProcessing(false);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      setApiError(
         error?.response?.data?.message ||
         error?.message ||
         "Error fetching appointments."
       );
-        setProcessing(false);
-      }
-    };
-    
+      setProcessing(false);
+    }
+  };
+
   useEffect(() => {
-   fetchAppointments();
+    fetchAppointments();
   }, [userId]);
 
   const formatDate = (dateString) => {
@@ -72,7 +71,6 @@ function MedicalRecords() {
 
       {/* Hero Section */}
       <Box
-        className="ring-4"
         sx={{
           backgroundColor: "rgb(96, 165, 250)",
           color: "white",
@@ -93,7 +91,7 @@ function MedicalRecords() {
         </Container>
       </Box>
 
-      {/* Medical Records List */}
+      {/* Appointment Cards */}
       <Container maxWidth="lg" sx={{ mb: 6 }}>
         <Box sx={{ mb: 3, display: "flex", alignItems: "center" }}>
           <AssignmentIcon sx={{ mr: 1 }} color="primary" />
@@ -102,38 +100,37 @@ function MedicalRecords() {
           </Typography>
         </Box>
 
-         {/* Error Alert Box */}
-         {apiError && (
-           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
-             <strong className="font-semibold">Oops!</strong> {apiError}
-           </div>
-         )}
-          
-          {loading && <div className="flex justify-center items-center h-64">
-                <CircularProgress />
-          </div> }
+        {apiError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
+            <strong className="font-semibold">Oops!</strong> {apiError}
+          </div>
+        )}
 
-           {processing ?   <div className="flex justify-center items-center h-64">
-              <CircularProgress />
-            </div>:pastAppointments.length > 0 ? (
+        {loading || processing ? (
+          <div className="flex justify-center items-center h-64">
+            <CircularProgress />
+          </div>
+        ) : pastAppointments.length > 0 ? (
           <div className="space-y-4">
             {pastAppointments.map((appointment) => (
               <Paper
                 key={appointment._id}
-                elevation={6}
+                elevation={8}
                 sx={{
                   p: 3,
                   borderRadius: 2,
+                  backgroundColor: 'white',
                   borderLeft: '5px solid #3b82f6',
+                  boxShadow: '0px 2px 8px rgba(0,0,0,0.05)',
                 }}
               >
-                <Grid container spacing={85}>
+                <Grid container spacing={90}>
                   {/* Doctor Info */}
                   <Grid item xs={12} md={6}>
-                    <Typography variant="h6" color="primary">
+                    <Typography variant="subtitle1" fontWeight={600} color="primary">
                       Dr. {appointment.doctor?.name || "Doctor"}
                     </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary">
                       {appointment.doctor?.specialization || "Specialist"}
                     </Typography>
                   </Grid>
@@ -168,7 +165,7 @@ function MedicalRecords() {
                         }}
                       >
                         <CalendarIcon color="primary" fontSize="small" />
-                        <Typography variant="body1">
+                        <Typography variant="body2" color="text.secondary">
                           <strong>Date:</strong> {formatDate(appointment.date)}
                         </Typography>
                       </Box>
@@ -181,7 +178,7 @@ function MedicalRecords() {
                         }}
                       >
                         <AccessTimeIcon color="primary" fontSize="small" />
-                        <Typography variant="body1">
+                        <Typography variant="body2" color="text.secondary">
                           <strong>Time:</strong> {appointment.timeSlot}
                         </Typography>
                       </Box>
@@ -198,6 +195,7 @@ function MedicalRecords() {
               p: 4,
               textAlign: "center",
               borderRadius: 2,
+              backgroundColor: "white",
             }}
           >
             <AssignmentIcon
@@ -212,7 +210,7 @@ function MedicalRecords() {
           </Paper>
         )}
       </Container>
-      <Footer/>
+      <Footer />
     </>
   );
 }

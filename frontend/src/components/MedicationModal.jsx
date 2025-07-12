@@ -30,32 +30,50 @@ function MedicationModal({ open, onClose, patientId, userId }) {
     setMedicines([...medicines, { name: '', dosage: '', frequency: '', duration: '' }]);
   };
 
-  const handleSubmit = async () => {
-    try {
-      await axios.post(
-        `${API_URL}/postmedication`,
-        { userId, patientId, medicines, notes },
-        {withCredentials:true}
-      );
-         onClose();
-         
-    await Swal.fire({
+ const handleSubmit = async () => {
+  // Show loading alert
+  Swal.fire({
+    title: 'Saving Prescription...',
+    text: 'Please wait while we save your data.',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
+  try {
+    await axios.post(
+      `${API_URL}/postmedication`,
+      { userId, patientId, medicines, notes },
+      { withCredentials: true }
+    );
+
+    Swal.close(); // Close loading spinner immediately
+    onClose();    // Close the modal right after saving
+
+    // Reset form fields
+    setMedicines([{ name: '', dosage: '', frequency: '', duration: '' }]);
+    setNotes('');
+
+    // Show success message
+    Swal.fire({
       icon: 'success',
       title: 'Prescription Saved!',
       text: 'The medication details have been successfully saved.',
     });
-    
-      setMedicines([{ name: '', dosage: '', frequency: '', duration: '' }]);
-      setNotes('');
-    } catch (err) {
-      console.error(err);
-       Swal.fire({
+
+  } catch (err) {
+    Swal.close();
+    console.error(err);
+    Swal.fire({
       icon: 'error',
       title: 'Failed to Save',
       text: 'There was an error while saving the prescription.',
     });
-    }
-  };
+  }
+};
+
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
