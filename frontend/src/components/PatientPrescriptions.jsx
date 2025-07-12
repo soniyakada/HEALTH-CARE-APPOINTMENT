@@ -3,6 +3,7 @@ import axios from 'axios';
 import PatientNavbar from './PatientNavbar';
 import { useAuth } from "../context/AuthContext";
 import CircularProgress from "@mui/material/CircularProgress";
+import Footer from './Footer';
 
 import {
   Box,
@@ -200,6 +201,7 @@ const PatientPrescriptions = () => {
           </Paper>
         )}
       </Container>
+  <Footer/>
     </>
   );
 };
