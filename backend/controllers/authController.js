@@ -206,3 +206,24 @@ export const logoutController = async (req, res) => {
     res.status(500).json({ message: "Error logging out", error });
   }
 };
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email role");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const filteredUser = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    res.status(200).json({ user: filteredUser });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user", error: error.message });
+  }
+};
