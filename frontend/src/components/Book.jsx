@@ -47,13 +47,8 @@ function Book() {
   const [allreviews, setAllreviews] = useState([]);
   const {user} = useAuth();
 
-    if (user) {
-  // console.log("User ID:", user.id);
-  
-  }
+
   const userId = user?.id;
-
-
 
 // handleOpenReview ko doctor parameter leke update kijiye:
 const handleOpenReview = async (doctor) => {

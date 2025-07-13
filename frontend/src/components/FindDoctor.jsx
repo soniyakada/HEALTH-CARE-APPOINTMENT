@@ -44,10 +44,6 @@ function FindDoctor() {
   const navigate = useNavigate();
   const {user} = useAuth();
 
-   if (user) {
-  // console.log("User ID:", user.id);
-  
-  }
   const userId = user?.id;
 
   const onHandleappointment = (doctor) => {

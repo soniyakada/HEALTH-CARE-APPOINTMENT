@@ -1,17 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import PatientNavbar from "./PatientNavbar";
-import { useAuth } from "../context/AuthContext";
 
 
 const PatientProfile = () => {;
   const navigate = useNavigate();
-   const {user} = useAuth();
-
-
-    if (user) {
-    // console.log("User ID:", user.id);
-    }
-    // const userId = user?.id;
 
     const features = [
     {

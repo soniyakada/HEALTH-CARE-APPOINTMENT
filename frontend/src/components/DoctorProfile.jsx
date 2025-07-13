@@ -21,11 +21,9 @@ const DoctorProfile = () => {
 
 if (loading) return <div>Loading...</div>;  // show spinner or skeleton
 
- console.log("-----",user);
   const userId = user?.id;
-console.log("--userid---",user);
- 
-    const fetchDoctor = async () => {
+
+  const fetchDoctor = async () => {
       try {
  
          const response = await axios.get(`${API_URL}/doctor/${userId}`, {

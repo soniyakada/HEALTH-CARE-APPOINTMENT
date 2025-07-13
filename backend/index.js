@@ -51,7 +51,6 @@ app.use(doctorRoute);
 connectDB();
 
 if (process.env.NODE_ENV !== 'production') {
-  console.log('Debug log');
 }
 
 app.get("/", (req, res) => {
