@@ -1,6 +1,6 @@
 import express from "express";
 import authenticate from "../middleware/authenticate.js";
-import { authorizeRoles } from "../middleware/authorizerole.js";
+import { authorizeRoles } from "../middleware/authorizeRole.js";
 import {
   searchDoctorsBySpecialization,
   getDoctorProfile,
