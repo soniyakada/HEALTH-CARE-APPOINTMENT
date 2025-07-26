@@ -36,7 +36,7 @@ app.use(helmet());
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // any frontend origin allowed
+    origin: process.env.FRONTEND_URL, // any frontend origin allowed
     methods: ["GET", "POST"],
   },
 });
