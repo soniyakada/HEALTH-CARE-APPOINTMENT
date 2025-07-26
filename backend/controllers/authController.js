@@ -165,7 +165,7 @@ export const signinController = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,           // Set true in production (HTTPS)
-      sameSite: "Lax",     // Or "Lax" depending on frontend-backend domains
+      sameSite: "None",     // Or "Lax" depending on frontend-backend domains
       maxAge: 60 * 60 * 1000, // 1 hour
     }).status(200).json({
       message: "Login successful",
